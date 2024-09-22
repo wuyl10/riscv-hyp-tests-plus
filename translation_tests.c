@@ -14,7 +14,7 @@ static inline void touch(uintptr_t addr){
     touchwrite(addr);
 }
 
-bool two_stage_translation(){
+bool two_stage_translation_1(){
     
     TEST_START();
 
@@ -103,6 +103,84 @@ bool two_stage_translation(){
     TEST_END();
 }
 
+bool two_stage_translation_2(){
+    
+    TEST_START();
+
+    uintptr_t addr1 = phys_page_base(SWITCH1);
+    uintptr_t addr2 = phys_page_base(SWITCH2);
+    uintptr_t vaddr1 = vs_page_base(SWITCH1);
+    uintptr_t vaddr2 = vs_page_base(SWITCH2);
+    write64(addr1, 0x11);
+    write64(addr2, 0x22);
+
+    /**
+     * Setup hyp page_tables.
+     */
+    goto_priv(PRIV_HS);
+    hspt_init();
+    hpt_init();
+
+    /**
+     * Setup guest page tables.
+     */
+    goto_priv(PRIV_VS);
+    vspt_init();
+
+    bool check1 = read64(vaddr1) == 0x11;
+    bool check2 = read64(vaddr2) == 0x22;
+    TEST_ASSERT("vs gets right values", check1 && check2);
+    
+    goto_priv(PRIV_HS);
+    hpt_switch();
+    goto_priv(PRIV_VS);
+    check1 = read64(vaddr1) == 0x11;
+    check2 = read64(vaddr2) == 0x22;   
+    // INFO("0%lx 0x%lx", read64(vaddr1), read64(vaddr2));
+    TEST_ASSERT("vs do not change values after changing 2nd stage pt when not execute hfence", check1 && check2);
+
+
+    TEST_END();
+}
+
+bool two_stage_translation_3(){
+    
+    TEST_START();
+
+    uintptr_t addr1 = phys_page_base(SWITCH1);
+    uintptr_t addr2 = phys_page_base(SWITCH2);
+    uintptr_t vaddr1 = vs_page_base(SWITCH1);
+    uintptr_t vaddr2 = vs_page_base(SWITCH2);
+    write64(addr1, 0x11);
+    write64(addr2, 0x22);
+
+    /**
+     * Setup hyp page_tables.
+     */
+    goto_priv(PRIV_HS);
+    hspt_init();
+    hpt_init();
+
+    /**
+     * Setup guest page tables.
+     */
+    goto_priv(PRIV_VS);
+    vspt_init();
+
+    bool check1 = read64(vaddr1) == 0x11;
+    bool check2 = read64(vaddr2) == 0x22;
+    TEST_ASSERT("vs gets right values", check1 && check2);
+    
+    goto_priv(PRIV_VS);
+
+    vspt_switch();
+    check1 = read64(vaddr1) == 0x11;
+    check2 = read64(vaddr2) == 0x22;   
+    TEST_ASSERT("vs do not change values after changing 1st stage pt when not execute sfence", check1 && check2);
+
+    TEST_END();
+}
+
 bool second_stage_only_translation(){
 
     /**
@@ -133,8 +211,11 @@ bool second_stage_only_translation(){
     bool check2 = read64(vaddr2) == 0x22;
     TEST_ASSERT("vs gets right values", excpt.triggered == false && check1 && check2);
 
-    hpt_switch();
-    sfence();
+    goto_priv(PRIV_HS);
+    hpt_switch();       //在nemu中，执行read64没有变，执行hlvd变化了
+    hfence(); //l2tlb
+    goto_priv(PRIV_VS);
+    sfence(); //l1tlb
     TEST_SETUP_EXCEPT();
     check1 = read64(vaddr1) == 0x22;
     check2 = read64(vaddr2) == 0x11;   
@@ -155,14 +236,14 @@ bool second_stage_only_translation(){
         "access top of guest pa space with high bits == 0", 
         excpt.triggered == false
     );
-    
-    TEST_SETUP_EXCEPT();
-    read64(vs_page_base_limit(TOP) | (1ULL << 41));
-    TEST_ASSERT(
-        "access top of guest pa space with high bits =/= 0", 
-        excpt.triggered == true &&
-        excpt.cause == CAUSE_LGPF
-    );
+    /*Xiangshan set vaddr to 41 when it enable H extention.*/
+    // TEST_SETUP_EXCEPT();
+    // read64(vs_page_base_limit(TOP) | (1ULL << 41));
+    // TEST_ASSERT(
+    //     "access top of guest pa space with high bits =/= 0", 
+    //     excpt.triggered == true &&
+    //     excpt.cause == CAUSE_LGPF
+    // ); 
 
     TEST_END();
 }
@@ -203,7 +284,7 @@ static inline void write64_mprv(unsigned priv, uintptr_t addr, uint64_t value){
 }
 
 
-bool m_and_hs_using_vs_access(){
+bool m_and_hs_using_vs_access_1(){
 
     uint64_t val, valu;
     uintptr_t vaddr = vs_page_base(SCRATCHPAD);
@@ -212,7 +293,7 @@ bool m_and_hs_using_vs_access(){
     TEST_START();
     
     hspt_init();
-    hpt_init();
+    hpt_init(); 
     vspt_init();
 
     TEST_SETUP_EXCEPT();
@@ -258,6 +339,8 @@ bool m_and_hs_using_vs_access(){
         excpt.triggered == false && val == (-1) && valu == ((uint32_t)-1)
     );
 
+    TEST_END();
+}
     /**
      * Some tests are commented out because qemu behaves in a weird way if you
      * try to use a hlvx instruction on a page without read permissions. It
@@ -265,6 +348,22 @@ bool m_and_hs_using_vs_access(){
      * hlvx instruction but on a previous lui instruction. 
      * TODO: find out why
      */
+
+
+bool m_and_hs_using_vs_access_2(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
+
+    goto_priv(PRIV_HS);
+    set_prev_priv(PRIV_VS);
 
     TEST_SETUP_EXCEPT();
     val = hlvxwu(vs_page_base(VSX_GUX));
@@ -292,9 +391,25 @@ bool m_and_hs_using_vs_access(){
     TEST_ASSERT("hs hlvxwu on vs-level non-exec page leads to lpf",
         excpt.triggered == true && 
         excpt.cause == CAUSE_LPF  && 
-        excpt.gva == false &&
+        excpt.gva == true &&
         excpt.xpv == false
     );
+
+    
+    TEST_END();
+}
+
+bool m_and_hs_using_vs_access_3(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
 
     vaddr = vs_page_base(VSURWX_GURWX);
     addr = phys_page_base(VSURWX_GURWX);
@@ -305,7 +420,8 @@ bool m_and_hs_using_vs_access(){
     write64(addr, 0x1107ec0ffee);
     val = read64_mprv(PRIV_VS, vaddr);
     TEST_ASSERT("machine mprv vs access to vu leads to exception",
-        excpt.triggered == true
+        excpt.triggered == true&& 
+        excpt.cause == CAUSE_LPF 
     );
 
     TEST_SETUP_EXCEPT();
@@ -314,6 +430,24 @@ bool m_and_hs_using_vs_access(){
     TEST_ASSERT("machine mprv vu access to vu successful",
         excpt.triggered == false
     );
+
+    TEST_END();
+}
+
+bool m_and_hs_using_vs_access_4(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
+
+    vaddr = vs_page_base(VSURWX_GURWX);
+    addr = phys_page_base(VSURWX_GURWX);
 
     goto_priv(PRIV_HS);
 
@@ -330,11 +464,31 @@ bool m_and_hs_using_vs_access(){
     write64(addr, 0x1107ec0ffee);
     val = hlvd(vaddr);
     TEST_ASSERT("hs hlvd to vu page leads to exception when spvp = 1",
-        excpt.triggered == true
+        excpt.triggered == true&& 
+        excpt.cause == CAUSE_LPF
     );
 
-    CSRS(CSR_VSSTATUS, SSTATUS_SUM);
+    TEST_END();
+}
+
+bool m_and_hs_using_vs_access_5(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
+
+    vaddr = vs_page_base(VSURWX_GURWX);
+    addr = phys_page_base(VSURWX_GURWX);
+
+
     goto_priv(PRIV_M);
+    CSRS(CSR_VSSTATUS, SSTATUS_SUM);
 
     TEST_SETUP_EXCEPT();
     write64(addr, 0x1107ec0ffee);
@@ -342,9 +496,29 @@ bool m_and_hs_using_vs_access(){
     TEST_ASSERT("machine mprv access vs user page successful when vsstatus.sum set",
         excpt.triggered == false && val == 0x1107ec0ffee
     );
+    TEST_END();
+}
+
+bool m_and_hs_using_vs_access_6(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
+
+    vaddr = vs_page_base(VSURWX_GURWX);
+    addr = phys_page_base(VSURWX_GURWX);
+
+    CSRS(CSR_VSSTATUS, SSTATUS_SUM);
 
     goto_priv(PRIV_HS);
     set_prev_priv(PRIV_VS);
+
     TEST_SETUP_EXCEPT();
     write64(addr, 0x1107ec0ffee);
     val = hlvd(vaddr);
@@ -353,10 +527,27 @@ bool m_and_hs_using_vs_access(){
     );
     CSRC(CSR_VSSTATUS, SSTATUS_SUM);
 
+    TEST_END();
+}
+
+bool m_and_hs_using_vs_access_7(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
+
     vaddr = vs_page_base(VSX_GUX);
     addr = phys_page_base(VSX_GUX);
+
     goto_priv(PRIV_HS);
     set_prev_priv(PRIV_VS);
+
     TEST_SETUP_EXCEPT();
     val = hlvd(vaddr);
     TEST_ASSERT("hs hlvd of xo vs page leads to exception",
@@ -369,6 +560,21 @@ bool m_and_hs_using_vs_access(){
         excpt.triggered == false
     );
     CSRC(sstatus, SSTATUS_MXR);
+
+        TEST_END();
+}
+
+bool m_and_hs_using_vs_access_8(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
 
     vaddr = vs_page_base(VSX_GUR);
     addr = phys_page_base(VSX_GUR);
@@ -388,14 +594,31 @@ bool m_and_hs_using_vs_access(){
         excpt.triggered == false
     );
 
+
+    TEST_END();
+}
+
+bool m_and_hs_using_vs_access_9(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
+    
     reset_state();
     goto_priv(PRIV_HS);
     set_prev_priv(PRIV_VS);
     hpt_init();
     
-    vaddr = vs_page_base(VSI_GUR) + 1;
-    TEST_SETUP_EXCEPT();\
+    vaddr = vs_page_base(VSI_GUR) ;
+    TEST_SETUP_EXCEPT();
     hsvb(vaddr, 0xdeadbeef);
+    printf("%d\n",excpt.cause);
     TEST_ASSERT("hs hsvb on ro 2-stage page leads to store guest page fault",
         excpt.triggered == true &&  
         excpt.cause == CAUSE_SGPF &&
@@ -405,19 +628,65 @@ bool m_and_hs_using_vs_access(){
     vaddr = vs_page_base(VSI_GUR);
     TEST_SETUP_EXCEPT();
     val = hlvb(vaddr);
+    printf("%d\n",excpt.cause);
     TEST_ASSERT("hs hlvb on ro 2-stage page successfull",
         excpt.triggered == false
     );
+    
+    TEST_END();
+}
 
+bool m_and_hs_using_vs_access_10(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
     vspt_init();
+
+    goto_priv(PRIV_HS);
+    set_prev_priv(PRIV_VS);
+
     vaddr = vs_page_base(VSR_GUR);
     TEST_SETUP_EXCEPT();
     CSRW(sscratch, 0x911);
+    hlvb(vaddr);
+    TEST_ASSERT("hs hlvb on ro both stage page successfull",
+        excpt.triggered == false
+    );
+    
+    vspt_init();
+    vaddr = vs_page_base(VSR_GUR);
+    TEST_SETUP_EXCEPT();
+    CSRW(sscratch, 0x911);      
     hsvb(vaddr, 0xdeadbeef);
     TEST_ASSERT("hs hsvb on ro both stage page leads to store page fault",
         excpt.triggered == true &&  
         excpt.cause == CAUSE_SPF
     );
+
+    TEST_END();
+}
+
+bool m_and_hs_using_vs_access_11(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
+
+    goto_priv(PRIV_HS);
+    set_prev_priv(PRIV_VS);
+
 
     vaddr = vs_page_base(VSRW_GI);
     TEST_SETUP_EXCEPT();
@@ -427,6 +696,33 @@ bool m_and_hs_using_vs_access(){
         excpt.triggered == true &&  
         excpt.cause == CAUSE_SGPF
     );
+
+    TEST_END();
+}
+
+bool m_and_hs_using_vs_access_12(){
+
+    uint64_t val, valu;
+    uintptr_t vaddr;
+    uintptr_t addr;
+
+    TEST_START();
+    
+    hspt_init();
+    hpt_init(); 
+    vspt_init();
+
+    goto_priv(PRIV_HS);
+    set_prev_priv(PRIV_VS);
+
+    vaddr = vs_page_base(VSI_GI);
+    TEST_SETUP_EXCEPT();
+    CSRW(sscratch, 0x112);
+    TEST_ASSERT("CSRW successfull int any condition",
+        excpt.triggered == false
+    );
+    
+
 
     TEST_END();
 

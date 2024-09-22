@@ -77,7 +77,7 @@ enum test_page {
     VSURWX_GRW,
     VSURWX_GRX,
     VSURWX_GR,
-    VSURWX_GX,
+    VSV_GV,
     VSURW_GRWX,
     VSURW_GRW,
     VSURW_GRX,

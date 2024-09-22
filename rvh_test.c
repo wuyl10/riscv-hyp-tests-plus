@@ -20,8 +20,8 @@ uint64_t ecall(uint64_t a0, uint64_t a1)
     ecall_args[1] = a1;
 
     asm volatile("ecall" ::: "memory");
-
     return ecall_args[0];
+
 }
 
 static inline bool is_user(int priv) {
@@ -34,21 +34,21 @@ void set_prev_priv(int priv){
         case PRIV_M: {
             uint64_t temp = CSRR(mstatus);
             temp &= ~((3ULL << 11) | (1ULL << 39));
-            if(priv == PRIV_VS || priv == PRIV_HS) temp |= (1ULL << 11);
-            if(priv == PRIV_VU || priv == PRIV_VS) temp |= (1ULL << 39);
+            if(priv == PRIV_VS || priv == PRIV_HS) temp |= (1ULL << 11);    //mpp   
+            if(priv == PRIV_VU || priv == PRIV_VS) temp |= (1ULL << 39);     //mpv
             CSRW(mstatus, temp);
         }
         break;
         case PRIV_HS:{
             uint64_t temp = CSRR(sstatus);
             temp &= ~(0x1ULL << 8);
-            if(priv == PRIV_HS || priv == PRIV_VS) temp |= (0x1ULL << 8);
+            if(priv == PRIV_HS || priv == PRIV_VS) temp |= (0x1ULL << 8);   //spp
             CSRW(sstatus, temp);
 
-            temp = CSRR(CSR_HSTATUS);
+            temp = CSRR(CSR_HSTATUS);   //p101
             temp &= ~(0x3ULL << 7);
-            if(priv == PRIV_VS) temp |= (1ULL << 8);
-            if(priv == PRIV_VU || priv == PRIV_VS) temp |= (0x1ULL << 7);
+            if(priv == PRIV_VS) temp |= (1ULL << 8);        //spvp
+            if(priv == PRIV_VU || priv == PRIV_VS) temp |= (0x1ULL << 7);       //spv
             CSRW(CSR_HSTATUS, temp);
         }
         break;
@@ -126,7 +126,6 @@ void goto_priv(int target_priv){
         VERBOSE("entering %s mode...", priv_strs[target_priv]);
 
     on_going = true;
-
     if(target_priv > curr_priv){
         ecall(ECALL_GOTO_PRIV, target_priv);
     } else {
@@ -208,7 +207,7 @@ uint64_t mhandler(){
     DEBUG("mpp = 0x%lx", (CSRR(mstatus) >> 11) & 0x3);
     DEBUG("mpv = 0x%lx", (CSRR(mstatus) >> 39) & 0x1);
     DEBUG("gva = 0x%lx", (CSRR(mstatus) >> MSTATUS_GVA_OFF) & 0x1);
-
+    
     if(is_ecall(cause) && ecall_args[0] == ECALL_GOTO_PRIV){
         goto_priv(ecall_args[1]); 
     } else if(!excpt.testing){
@@ -242,7 +241,6 @@ uint64_t mhandler(){
     real_priv = curr_priv;
     return_from_exception(temp_priv, curr_priv, cause, epc);
 }
-
 uint64_t hshandler(){
 
     real_priv = PRIV_HS;
@@ -263,9 +261,12 @@ uint64_t hshandler(){
     DEBUG("spvp = 0x%lx", (CSRR(CSR_HSTATUS) >> 8) & 0x1);
     DEBUG("gva = 0x%lx", (CSRR(CSR_HSTATUS) >> HSTATUS_GVA_OFF) & 0x1);
 
-    if(is_ecall(cause) && ecall_args[0] == ECALL_GOTO_PRIV){
+
+    if(is_ecall(cause) && ecall_args[0] == ECALL_GOTO_PRIV){ 
         goto_priv(ecall_args[1]); 
     } else if(is_ecall(cause)) {
+        printf("%d\n",ECALL_GOTO_PRIV);
+        printf("%d\n",ecall_args[0]);
         ERROR("unknown ecall"); 
     } else if(!excpt.testing){
         ERROR("untested exception!");
@@ -314,7 +315,7 @@ uint64_t vshandler(){
     DEBUG("sepc = 0x%lx", epc);
     DEBUG("stval = 0x%lx", tval);
     
-    if(is_ecall(cause) && ecall_args[0] == ECALL_GOTO_PRIV){
+    if(is_ecall(cause) && ecall_args[0] ==ECALL_GOTO_PRIV ){
         goto_priv(ecall_args[1]); 
     } else if(!excpt.testing){
         ERROR("untested exception!");

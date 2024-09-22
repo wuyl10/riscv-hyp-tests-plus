@@ -33,6 +33,8 @@
 #define MSTATUS_TW   (1ULL << MSTATUS_TW_OFF)
 #define MSTATUS_GVA_OFF    (38)
 #define MSTATUS_GVA    (1ULL << MSTATUS_GVA_OFF)
+#define MSTATUS_TVM_OFF    (20)
+#define MSTATUS_TVM        (1ULL << MSTATUS_TVM_OFF)
 
 #define SATP_MODE_BARE (0ULL << SATP_MODE_OFF)
 #define SATP_MODE_32 (1ULL << SATP_MODE_OFF)
@@ -63,7 +65,9 @@
 #define SSTATUS_XS_INITIAL (1ULL << SSTATUS_XS_OFF)
 #define SSTATUS_XS_CLEAN (2ULL << SSTATUS_XS_OFF)
 #define SSTATUS_XS_DIRTY (3ULL << SSTATUS_XS_OFF)
+#define MSTATUS_SUM SSTATUS_SUM
 #define SSTATUS_SUM (1ULL << 18)
+#define MSTATUS_MXR SSTATUS_MXR
 #define SSTATUS_MXR (1ULL << 19)
 #define SSTATUS_SD (1ULL << 63)
 
@@ -84,24 +88,69 @@
 #define HIE_VSSIE (1ULL << 2)
 #define HIE_VSTIE (1ULL << 6)
 #define HIE_VSEIE (1ULL << 10)
+#define HIE_MEIE (1ULL << 11)
 #define HIE_SGEIE (1ULL << 12)
 
+#define MIE_MEIE (1ULL << 11)
+#define MIP_MEIP (1ULL << 11)
+#define MIE_MSIE (1ULL << 3)
+#define MIE_MSIP (1ULL << 3)
+
 #define HIP_VSSIP HIE_VSSIE
+#define MIP_MSIP MIE_MSIE
 #define HIP_VSTIP HIE_VSTIE
 #define HIP_VSEIP HIE_VSEIE
 #define HIP_SGEIP HIE_SGEIE
+#define HIP_MEIP HIE_MEIE
 
+/*
+CAUSE_USI (0 | CAUSE_INT_BIT)：用户模式软件中断（User Software Interrupt）。
+CAUSE_SSI (1 | CAUSE_INT_BIT)：监督模式软件中断（Supervisor Software Interrupt）。
+CAUSE_VSSI (2 | CAUSE_INT_BIT)：虚拟监督模式软件中断（Virtual Supervisor Software Interrupt）。
+CAUSE_UTI (4 | CAUSE_INT_BIT)：用户模式计时器中断（User Timer Interrupt）。
+CAUSE_STI (5 | CAUSE_INT_BIT)：监督模式计时器中断（Supervisor Timer Interrupt）。
+CAUSE_VSTI (6 | CAUSE_INT_BIT)：虚拟监督模式计时器中断（Virtual Supervisor Timer Interrupt）。
+CAUSE_UEI (8 | CAUSE_INT_BIT)：用户模式外部中断（User External Interrupt）。
+CAUSE_SEI (9 | CAUSE_INT_BIT)：监督模式外部中断（Supervisor External Interrupt）。
+CAUSE_VSEI (10 | CAUSE_INT_BIT)：虚拟监督模式外部中断（Virtual Supervisor External Interrupt）。
+CAUSE_MEI (11 | CAUSE_INT_BIT)：机器模式外部中断（Machine External Interrupt）。
+*/
 #define CAUSE_INT_BIT (1ULL << 63)
 #define CAUSE_MSK (CAUSE_INT_BIT - 1)
 #define CAUSE_USI (0 | CAUSE_INT_BIT)
 #define CAUSE_SSI (1 | CAUSE_INT_BIT)
 #define CAUSE_VSSI (2 | CAUSE_INT_BIT)
+#define CAUSE_MSI (2 | CAUSE_INT_BIT)
 #define CAUSE_UTI (4 | CAUSE_INT_BIT)
 #define CAUSE_STI (5 | CAUSE_INT_BIT)
 #define CAUSE_VSTI (6 | CAUSE_INT_BIT)
 #define CAUSE_UEI (8 | CAUSE_INT_BIT)
 #define CAUSE_SEI (9 | CAUSE_INT_BIT)
 #define CAUSE_VSEI (10 | CAUSE_INT_BIT)
+#define CAUSE_MEI (11 | CAUSE_INT_BIT)
+
+
+/*
+CAUSE_IAM (0): 指令地址不对齐（Instruction Address Misaligned）
+CAUSE_IAF (1): 指令访问故障（Instruction Access Fault）
+CAUSE_ILI (2): 非法指令（Illegal Instruction）
+CAUSE_BKP (3): 断点（Breakpoint）
+CAUSE_LAM (4): 载入地址不对齐（Load Address Misaligned）
+CAUSE_LAF (5): 载入访问故障（Load Access Fault）
+CAUSE_SAM (6): 存储地址不对齐（Store/AMO Address Misaligned）
+CAUSE_SAF (7): 存储/原子操作访问故障（Store/AMO Access Fault）
+CAUSE_ECU (8): 环境调用来自用户模式（Environment Call from U-mode）
+CAUSE_ECS (9): 环境调用来自监管模式（Environment Call from S-mode）
+CAUSE_ECV (10): 环境调用来自虚拟监管模式（Environment Call from VS-mode）
+CAUSE_ECM (11): 环境调用来自机器模式（Environment Call from M-mode）
+CAUSE_IPF (12): 指令页故障（Instruction Page Fault）
+CAUSE_LPF (13): 载入页故障（Load Page Fault）
+CAUSE_SPF (15): 存储页故障（Store/AMO Page Fault）
+CAUSE_IGPF (20): 指令全局页故障（Instruction Guest-Page Fault）
+CAUSE_LGPF (21): 载入全局页故障（Load Guest-Page Fault）
+CAUSE_VRTI (22): 虚拟指令异常
+CAUSE_SGPF (23): 存储全局页故障（Store/AMO Guest-Page Fault）
+*/
 #define CAUSE_IAM (0)
 #define CAUSE_IAF (1)
 #define CAUSE_ILI (2)
@@ -129,9 +178,12 @@
 #define HIDELEG_UEI SIP_UEIP
 #define HIDELEG_SEI SIP_SEIP
 #define HIDELEG_VSSI HIP_VSSIP
+#define HIDELEG_MSI HIP_MSIP
 #define HIDELEG_VSTI HIP_VSTIP
 #define HIDELEG_VSEI HIP_VSEIP
 #define HIDELEG_SGEI HIP_SGEIP
+#define HIDELEG_MEI HIP_MEIP
+
 
 #define HEDELEG_IAM (1ULL << 0)
 #define HEDELEG_IAF (1ULL << 1)
@@ -169,6 +221,8 @@
 #define HCOUNTEREN_TM   (1ULL << 1)   
 #define HCOUNTEREN_IR   (1ULL << 2)
 #define HCOUNTEREN(N)   (1ULL << (N))
+
+#define MENVCFG_STCE  (1ULL << 63)
 
 #define TINST_ADDROFF_OFF (15)
 #define TINST_ADDROFF_LEN (5)

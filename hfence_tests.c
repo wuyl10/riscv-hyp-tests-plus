@@ -20,7 +20,7 @@ bool hfence_test() {
 
     val = hlvd(vaddr);
     cond = true;
-    hpt_switch();
+    vspt_switch();
     cond &= hlvd(vaddr) == val;
     hfence_vvma();
     cond &= hlvd(vaddr) != val;

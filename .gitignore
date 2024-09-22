@@ -1,6 +1,2 @@
 build*
 deploy*
-log*
-
-# Editor specific
-.vscode

@@ -73,8 +73,11 @@ struct {
     [VSURWX_GRWX]     =   {PTE_V | PTE_U | PTE_RWX, PTE_V | PTE_RWX},            
     [VSURWX_GRW]      =   {PTE_V | PTE_U | PTE_RWX, PTE_V | PTE_RW},         
     [VSURWX_GRX]      =   {PTE_V | PTE_U | PTE_RWX, PTE_V | PTE_RX},
-    [VSURWX_GR]       =   {PTE_V | PTE_U | PTE_RWX, PTE_V | PTE_R},         
-    [VSURWX_GX]       =   {PTE_V | PTE_U | PTE_RWX, PTE_V | PTE_X},          
+    [VSURWX_GR]       =   {PTE_V | PTE_U | PTE_RWX, PTE_V | PTE_R},   
+
+    //[VSURWX_GX]       =   {PTE_V | PTE_U | PTE_RWX, PTE_V | PTE_X}, 
+    [VSV_GV]          =   {PTE_V , PTE_V }, 
+
     [VSURW_GRWX]      =   {PTE_V | PTE_U | PTE_RW,  PTE_V | PTE_RWX},        
     [VSURW_GRW]       =   {PTE_V | PTE_U | PTE_RW,  PTE_V | PTE_RW},         
     [VSURW_GRX]       =   {PTE_V | PTE_U | PTE_RW,  PTE_V | PTE_RX},
