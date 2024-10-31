@@ -2,6 +2,33 @@
 #include <page_tables.h>
 
 
+// TEST_REGISTER(mhpmevent_csr_tests_1);
+// TEST_REGISTER(software_interrupt_msi);
+// TEST_REGISTER(external_interrupt_VSEI);
+// TEST_REGISTER(external_interrupt_SEI);
+// TEST_REGISTER(external_interrupt_MEI);
+
+// TEST_REGISTER(priv_change_16);    //测试点第13行
+// TEST_REGISTER(priv_change_15);    //测试点第13行
+// TEST_REGISTER(priv_change_14);    //测试点第27行
+// TEST_REGISTER(priv_change_13);    //测试点第11行
+// TEST_REGISTER(priv_change_12);    //测试点第14行
+// TEST_REGISTER(priv_change_11);    //测试点第18行
+// TEST_REGISTER(priv_change_10);    //测试点第22行
+// TEST_REGISTER(priv_change_9);    //测试点第28行
+// TEST_REGISTER(virtual_instruction_13);
+// TEST_REGISTER(virtual_instruction_14);
+// TEST_REGISTER(virtual_instruction_15);
+// TEST_REGISTER(virtual_instruction_16);
+
+
+// TEST_REGISTER(priv_instruction); 
+// TEST_REGISTER(mstateen_test_1); 
+// TEST_REGISTER(mstateen_test_2); 
+// TEST_REGISTER(mstateen_test_3); 
+// TEST_REGISTER(mstateen_test_4); 
+// TEST_REGISTER(mstateen_test_5); 
+// TEST_REGISTER(mstateen_test_6); 
 
 // TEST_REGISTER(cycle_test_1);
 // TEST_REGISTER(cycle_test_2);
@@ -47,19 +74,13 @@
 // TEST_REGISTER(timecmp_test_12);
 // TEST_REGISTER(timecmp_test_13);
 // TEST_REGISTER(timecmp_test_14);
-
-
-// TEST_REGISTER(software_interrupt_msi);
-// TEST_REGISTER(external_interrupt_VSEI);
-// TEST_REGISTER(external_interrupt_SEI);
-// TEST_REGISTER(external_interrupt_MEI);
-// TEST_REGISTER(priv_change_15);    //测试点第13行
-// TEST_REGISTER(priv_change_14);    //测试点第27行
-// TEST_REGISTER(priv_change_13);    //测试点第11行
-// TEST_REGISTER(priv_change_12);    //测试点第14行
-// TEST_REGISTER(priv_change_11);    //测试点第18行
-// TEST_REGISTER(priv_change_10);    //测试点第22行
-// TEST_REGISTER(priv_change_9);    //测试点第28行
+// TEST_REGISTER(timecmp_test_15);
+// TEST_REGISTER(timecmp_test_16);
+// TEST_REGISTER(timecmp_test_17);
+// TEST_REGISTER(timecmp_test_18);
+// TEST_REGISTER(timecmp_test_19);
+// TEST_REGISTER(timecmp_test_20);
+// TEST_REGISTER(timecmp_test_21);
 // TEST_REGISTER(mstatus_csr_tests_1); 
 // TEST_REGISTER(mstatus_csr_tests_2); 
 // TEST_REGISTER(mstatus_csr_tests_3); 
@@ -69,8 +90,6 @@
 // TEST_REGISTER(mhpmevent_csr_tests_1); 
 // TEST_REGISTER(tselect_csr_tests_1); 
 // TEST_REGISTER(mix_instruction_1); 
-
-
 // TEST_REGISTER(instruction_access_fault_10);
 // TEST_REGISTER(instruction_access_fault_9);
 // TEST_REGISTER(instruction_access_fault_8);
@@ -110,8 +129,7 @@
 // TEST_REGISTER(load_access_fault_4);
 // TEST_REGISTER(load_access_fault_3);
 // TEST_REGISTER(load_access_fault_2);
-// // TEST_REGISTER(load_access_fault_1);
-
+// TEST_REGISTER(load_access_fault_1);
 // TEST_REGISTER(priv_change_8);    
 // TEST_REGISTER(priv_change_7);   
 // TEST_REGISTER(priv_change_6);    
@@ -184,11 +202,9 @@
 // TEST_REGISTER(load_page_fault_7);
 // TEST_REGISTER(load_page_fault_8);
 // TEST_REGISTER(addr_unaligned);
-// TEST_REGISTER(priv_instruction); 
-
 // TEST_REGISTER(two_stage_translation_1);   
-// TEST_REGISTER(two_stage_translation_2);   
-// TEST_REGISTER(two_stage_translation_3);   
+// TEST_REGISTER(two_stage_translation_2);   //need that xiangshan run it alone
+// TEST_REGISTER(two_stage_translation_3);   //need that xiangshan run it alone
 
 // TEST_REGISTER(second_stage_only_translation);
 // TEST_REGISTER(m_and_hs_using_vs_access_1);
@@ -205,7 +221,7 @@
 // TEST_REGISTER(m_and_hs_using_vs_access_12);
 // TEST_REGISTER(check_xip_regs_3);
 // TEST_REGISTER(check_xip_regs_2);
-// TEST_REGISTER(check_xip_regs_1); //need that xiangshan run it alone
+// TEST_REGISTER(check_xip_regs_1);
 // TEST_REGISTER(interrupt_tests);
 // TEST_REGISTER(illegal_except_1);
 // TEST_REGISTER(illegal_except_2);
@@ -221,6 +237,7 @@
 // TEST_REGISTER(illegal_except_12);
 // TEST_REGISTER(illegal_except_13);
 // TEST_REGISTER(illegal_except_14);
+// TEST_REGISTER(illegal_except_15);      
 // TEST_REGISTER(virtual_instruction_1);
 // TEST_REGISTER(virtual_instruction_2);
 // TEST_REGISTER(virtual_instruction_3);
@@ -233,12 +250,6 @@
 // TEST_REGISTER(virtual_instruction_10);
 // TEST_REGISTER(virtual_instruction_11);
 // TEST_REGISTER(virtual_instruction_12);
-
-// TEST_REGISTER(virtual_instruction_13);
-// TEST_REGISTER(virtual_instruction_14);
-// TEST_REGISTER(virtual_instruction_15);
-// TEST_REGISTER(virtual_instruction_16);
-
 // TEST_REGISTER(hfence_test); //need that xiangshan run it alone
 // TEST_REGISTER(wfi_exception_tests_1);
 // TEST_REGISTER(wfi_exception_tests_2);
@@ -262,9 +273,12 @@
 // TEST_REGISTER(wfi_exception_tests_20);
 // TEST_REGISTER(wfi_exception_tests_21);    
 // TEST_REGISTER(wfi_exception_tests_22);    
-  TEST_REGISTER(tinst_tests_pf);
-  TEST_REGISTER(tinst_tests_gpf);
-// TEST_REGISTER(H_csr_tests);
-  
+// TEST_REGISTER(tinst_tests_pf);
+// TEST_REGISTER(tinst_tests_gpf);
+// TEST_REGISTER(random_instruction_tests);
 
-
+// TEST_REGISTER(ebreak_tests_1);
+// TEST_REGISTER(ebreak_tests_2);
+// TEST_REGISTER(ebreak_tests_3);
+// TEST_REGISTER(ebreak_tests_4);
+// TEST_REGISTER(ebreak_tests_5);

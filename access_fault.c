@@ -386,10 +386,13 @@ bool load_access_fault_10(){
     CSRS(CSR_PMPCFG0,1ULL << 7 );     //pmp0cfg的L位 
 
     printf("pmpcfg0=%llx \n",CSRR(CSR_PMPCFG0));
+    printf("pmpcfg2=%llx \n",CSRR(CSR_PMPCFG2));
 
+
+    goto_priv(PRIV_HS);
     TEST_SETUP_EXCEPT();    
 
-    ld(0x7f000000UL << 2);
+    ld(0x8f000000UL << 2);
 
     printf("%d\n",excpt.triggered);
     printf("%d\n",excpt.cause);
@@ -787,6 +790,7 @@ bool store_access_fault_10(){
 
     CSRS(CSR_PMPCFG0,1ULL << 7 );     //pmp0cfg的L位 
 
+    goto_priv(PRIV_HS);
     TEST_SETUP_EXCEPT();    
     
     sd(0x80300000UL << 2,0xdeadbeef);
@@ -1185,7 +1189,7 @@ bool amo_access_fault_10(){
 
     CSRS(CSR_PMPCFG0,1ULL << 7 );     //pmp0cfg的L位 
 
-    goto_priv(PRIV_M);
+    goto_priv(PRIV_HS);
     TEST_SETUP_EXCEPT();    
     
     amoand_d(0x80000000UL << 2 ,0xdeadbeef);
@@ -1370,19 +1374,24 @@ bool instruction_access_fault_5(){
     
     CSRW(CSR_PMPCFG0,(uint64_t)0x0);
     
+    CSRS(CSR_PMPCFG0,1ULL << 0 );      //pmp0cfg的R位
+    CSRS(CSR_PMPCFG0,1ULL << 1 );      //pmp0cfg的W位
+    CSRS(CSR_PMPCFG0,1ULL << 2 );      //pmp0cfg的X位
+    CSRS(CSR_PMPCFG0,1ULL << 3 );      //pmp0cfg的TOR模式
+    
     CSRS(CSR_PMPCFG0,1ULL << 8 );      //pmp1cfg的R位
     CSRS(CSR_PMPCFG0,1ULL << 9 );      //pmp1cfg的W位
     CSRC(CSR_PMPCFG0,1ULL << 10 );      //pmp1cfg的X位
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
 
-    CSRW(CSR_PMPADDR0, (uintptr_t)0x8000000);
-    CSRW(CSR_PMPADDR1, (uintptr_t)0x8100000);
+    CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000UL);
+    CSRW(CSR_PMPADDR1, (uintptr_t)0x81000000UL);
 
     CSRC(CSR_PMPCFG0,1ULL << 15 );       //pmp1cfg的L位 
 
     TEST_SETUP_EXCEPT();
     
-    TEST_EXEC_EXCEPT(0x8000100UL << 2);
+    TEST_EXEC_EXCEPT(0x80000100UL << 2);
 
     printf("%d\n",excpt.triggered);
     printf("%d\n",excpt.cause);
@@ -1575,14 +1584,14 @@ bool instruction_access_fault_10(){
     CSRS(CSR_PMPCFG0,1ULL << 2 );      //pmp0cfg的X位
     CSRS(CSR_PMPCFG0,1ULL << 3 );      //pmp0cfg的TOR模式
 
-    CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
+    CSRW(CSR_PMPADDR0, (uintptr_t)0x90000000);
 
     CSRS(CSR_PMPCFG0,1ULL << 7 );     //pmp0cfg的L位 
-
-    goto_priv(PRIV_M);
+    printf("pmpcfg0=%llx\n",CSRR(CSR_PMPCFG0));printf("pmpcfg2=%llx\n",CSRR(CSR_PMPCFG2));
+    goto_priv(PRIV_HS);
     TEST_SETUP_EXCEPT();    
     
-    TEST_EXEC_EXCEPT(0x90000000UL << 2);
+    TEST_EXEC_EXCEPT(0x9f000000UL << 2);
 
     TEST_ASSERT("An invalid address range was accessed and is not in the correct pmpaddr range leads to IAF",
         excpt.triggered == true &&

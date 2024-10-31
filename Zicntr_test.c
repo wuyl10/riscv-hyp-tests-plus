@@ -194,12 +194,12 @@ bool time_test_9() {
     CSRS(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
     CSRC(CSR_SCOUNTEREN, HCOUNTEREN_TM); 
 
-    goto_priv(PRIV_VU);
+    goto_priv(PRIV_HU);
 
     TEST_SETUP_EXCEPT();
     CSRR(CSR_TIME);
 
-    TEST_ASSERT("vu access to time casuses illegal instruction exception when mcounteren.tm=1 hcounteren.tm=1 scounteren.tm=0",
+    TEST_ASSERT("hu access to time casuses illegal instruction exception when mcounteren.tm=1 hcounteren.tm=1 scounteren.tm=0",
         excpt.triggered == true &&
         excpt.cause == CAUSE_ILI
     );
@@ -419,12 +419,12 @@ bool cycle_test_9() {
     CSRS(CSR_MCOUNTEREN, HCOUNTEREN_CY); 
     CSRC(CSR_SCOUNTEREN, HCOUNTEREN_CY); 
 
-    goto_priv(PRIV_VU);
+    goto_priv(PRIV_HU);
 
     TEST_SETUP_EXCEPT();
     CSRR(CSR_CYCLE);
 
-    TEST_ASSERT("vu access to cycle casuses illegal instruction exception when mcounteren.cy=1 scounteren.cy=0",
+    TEST_ASSERT("hu access to cycle casuses illegal instruction exception when mcounteren.cy=1 scounteren.cy=0",
         excpt.triggered == true &&
         excpt.cause == CAUSE_ILI
     );
@@ -644,12 +644,12 @@ bool instret_test_9() {
     CSRS(CSR_MCOUNTEREN, HCOUNTEREN_IR); 
     CSRC(CSR_SCOUNTEREN, HCOUNTEREN_IR); 
 
-    goto_priv(PRIV_VU);
+    goto_priv(PRIV_HU);
 
     TEST_SETUP_EXCEPT();
     CSRR(CSR_INSTRET);
 
-    TEST_ASSERT("vu access to instret casuses illegal instruction exception when mcounteren.ir=1 scounteren.ir=0",
+    TEST_ASSERT("hu access to instret casuses illegal instruction exception when mcounteren.ir=1 scounteren.ir=0",
         excpt.triggered == true &&
         excpt.cause == CAUSE_ILI
     );
@@ -693,6 +693,16 @@ bool timecmp_test_1() {
         excpt.cause == CAUSE_ILI
     );
 
+    goto_priv(PRIV_HU);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+
+    TEST_ASSERT("hu access to vstimecmp casuses illegal instruction exception when menvcfg.stce=1 mcounteren.tm=0",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_ILI
+    );
+
     TEST_END(); 
 }
 
@@ -719,7 +729,7 @@ bool timecmp_test_3() {
     TEST_START();    
     CSRC(CSR_MENVCFG, 1ULL << 63);  //STCE位 
 
-    goto_priv(PRIV_VS);
+    goto_priv(PRIV_VS); 
 
     TEST_SETUP_EXCEPT();
     CSRR(CSR_VSTIMECMP);
@@ -907,15 +917,18 @@ bool timecmp_test_12() {
 bool timecmp_test_13() {
 
     TEST_START();    
+    CSRS(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
     CSRS(CSR_MENVCFG,  1ULL << 63);     //stce位
     CSRC(CSR_HENVCFG,  1ULL << 63);     //stce位
+    printf("%llx\n",CSRR(CSR_MENVCFG));    printf("%llx\n",CSRR(CSR_HENVCFG));
 
     goto_priv(PRIV_VU);
 
     TEST_SETUP_EXCEPT();
-    CSRR(CSR_STIMECMP);
-
-    TEST_ASSERT("vu access to stimecmp casuses virtual instruction exception when menvcfg.stce=1 henvcfg.stce=0",
+    CSRR(CSR_VSTIMECMP);
+    printf("trigger=%d\n",excpt.triggered);
+    printf("cause=%d\n",excpt.cause);
+    TEST_ASSERT("vu access to vstimecmp casuses virtual instruction exception when menvcfg.stce=1 henvcfg.stce=0 mcounteren.tm=1",
         excpt.triggered == true &&
         excpt.cause == CAUSE_VRTI
     );
@@ -926,17 +939,183 @@ bool timecmp_test_13() {
 bool timecmp_test_14() {
 
     TEST_START();    
+    CSRS(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
     CSRS(CSR_MENVCFG,  1ULL << 63);     //stce位
     CSRC(CSR_HENVCFG,  1ULL << 63);     //stce位
+    printf("%llx\n",CSRR(CSR_MENVCFG));    printf("%llx\n",CSRR(CSR_HENVCFG));
 
     goto_priv(PRIV_VS);
 
     TEST_SETUP_EXCEPT();
-    CSRR(CSR_STIMECMP);
-
-    TEST_ASSERT("vs access to stimecmp casuses virtual instruction exception when menvcfg.stce=1 henvcfg.stce=0",
+    CSRR(CSR_VSTIMECMP);
+    printf("trigger=%d\n",excpt.triggered);
+    printf("cause=%d\n",excpt.cause);
+    TEST_ASSERT("vs access to vstimecmp casuses virtual instruction exception when menvcfg.stce=1 henvcfg.stce=0 mcounteren.tm=1",
         excpt.triggered == true &&
         excpt.cause == CAUSE_VRTI
+    );
+
+    TEST_END(); 
+}
+
+
+bool timecmp_test_15() {
+
+    TEST_START();    
+    CSRC(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
+    CSRS(CSR_MENVCFG,  1ULL << 63);     //stce位
+    CSRC(CSR_HENVCFG,  1ULL << 63);     //stce位
+    printf("%llx\n",CSRR(CSR_MENVCFG));    printf("%llx\n",CSRR(CSR_HENVCFG));
+
+    goto_priv(PRIV_VU);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+    printf("trigger=%d\n",excpt.triggered);
+    printf("cause=%d\n",excpt.cause);
+    TEST_ASSERT("vu access to vstimecmp casuses illegal instruction exception when menvcfg.stce=1 henvcfg.stce=0 mcounteren.tm=0",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_ILI
+    );
+
+    TEST_END(); 
+}
+
+bool timecmp_test_16() {
+
+    TEST_START();    
+    CSRC(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
+    CSRS(CSR_MENVCFG,  1ULL << 63);     //stce位
+    CSRC(CSR_HENVCFG,  1ULL << 63);     //stce位
+    printf("%llx\n",CSRR(CSR_MENVCFG));    printf("%llx\n",CSRR(CSR_HENVCFG));
+
+    goto_priv(PRIV_VS);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+    printf("trigger=%d\n",excpt.triggered);
+    printf("cause=%d\n",excpt.cause);
+    TEST_ASSERT("vs access to vstimecmp casuses illegal instruction exception when menvcfg.stce=1 henvcfg.stce=0 mcounteren.tm=0",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_ILI
+    );
+
+    TEST_END(); 
+}
+
+bool timecmp_test_17() {
+
+    TEST_START();    
+    CSRS(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
+    CSRS(CSR_MENVCFG,  1ULL << 63);     //stce位
+    CSRC(CSR_HENVCFG,  1ULL << 63);     //stce位
+    printf("%llx\n",CSRR(CSR_MENVCFG));    printf("%llx\n",CSRR(CSR_HENVCFG));
+
+    goto_priv(PRIV_VU);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+    printf("trigger=%d\n",excpt.triggered);
+    printf("cause=%d\n",excpt.cause);
+    TEST_ASSERT("vu access to vstimecmp casuses virtual instruction exception when menvcfg.stce=1 henvcfg.stce=0 mcounteren.tm=1",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_VRTI
+    );
+
+    TEST_END(); 
+}
+
+bool timecmp_test_18() {
+
+    TEST_START();    
+    CSRS(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
+    CSRS(CSR_MENVCFG,  1ULL << 63);     //stce位
+    CSRC(CSR_HENVCFG,  1ULL << 63);     //stce位
+    printf("%llx\n",CSRR(CSR_MENVCFG));    printf("%llx\n",CSRR(CSR_HENVCFG));
+
+    goto_priv(PRIV_VS);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+    printf("trigger=%d\n",excpt.triggered);
+    printf("cause=%d\n",excpt.cause);
+    TEST_ASSERT("vs access to vstimecmp casuses virtual instruction exception when menvcfg.stce=1 henvcfg.stce=0 mcounteren.tm=1",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_VRTI
+    );
+
+    TEST_END(); 
+}
+
+
+bool timecmp_test_19() {
+
+    TEST_START();    
+    CSRC(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
+    CSRS(CSR_MENVCFG,  1ULL << 63);     //stce位
+    CSRC(CSR_HENVCFG,  1ULL << 63);     //stce位
+    printf("%llx\n",CSRR(CSR_MENVCFG));    printf("%llx\n",CSRR(CSR_HENVCFG));
+
+    goto_priv(PRIV_VU);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+    printf("trigger=%d\n",excpt.triggered);
+    printf("cause=%d\n",excpt.cause);
+    TEST_ASSERT("vu access to vstimecmp casuses illegal instruction exception when menvcfg.stce=1 henvcfg.stce=0 mcounteren.tm=0",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_ILI
+    );
+
+    TEST_END(); 
+}
+
+bool timecmp_test_20() {
+
+    TEST_START();    
+    CSRC(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
+    CSRS(CSR_MENVCFG,  1ULL << 63);     //stce位
+    CSRC(CSR_HENVCFG,  1ULL << 63);     //stce位
+    printf("%llx\n",CSRR(CSR_MENVCFG));    printf("%llx\n",CSRR(CSR_HENVCFG));
+
+    goto_priv(PRIV_VS);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+    printf("trigger=%d\n",excpt.triggered);
+    printf("cause=%d\n",excpt.cause);
+    TEST_ASSERT("vs access to vstimecmp casuses illegal instruction exception when menvcfg.stce=1 henvcfg.stce=0 mcounteren.tm=0",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_ILI
+    );
+
+    TEST_END(); 
+}
+
+bool timecmp_test_21() {
+
+    TEST_START();    
+    CSRS(CSR_MENVCFG, 1ULL << 63);  //STCE位 
+    CSRC(CSR_MCOUNTEREN, HCOUNTEREN_TM); 
+
+    goto_priv(PRIV_VS);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+
+    TEST_ASSERT("vs access to vstimecmp casuses illegal instruction exception when menvcfg.stce=1 mcounteren.tm=0",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_ILI
+    );
+
+    goto_priv(PRIV_VU);
+
+    TEST_SETUP_EXCEPT();
+    CSRR(CSR_VSTIMECMP);
+
+    TEST_ASSERT("vu access to vstimecmp casuses illegal instruction exception when menvcfg.stce=1 mcounteren.tm=0",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_ILI
     );
 
     TEST_END(); 

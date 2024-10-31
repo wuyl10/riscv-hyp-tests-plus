@@ -161,6 +161,13 @@ static inline uint64_t next_instruction(uint64_t epc){
     else return epc + 2;
 }
 
+void excpt_info(){
+    const char* x = excpt.triggered ? "是" : "否";
+    printf("异常触发：%s\n",x);
+    printf("异常原因：%d\n",excpt.cause);
+}
+
+
 #define return_from_exception(from_priv, to_priv, cause, epc) {\
     uint64_t _temp_status;\
     switch(from_priv){\
@@ -265,8 +272,6 @@ uint64_t hshandler(){
     if(is_ecall(cause) && ecall_args[0] == ECALL_GOTO_PRIV){ 
         goto_priv(ecall_args[1]); 
     } else if(is_ecall(cause)) {
-        printf("%d\n",ECALL_GOTO_PRIV);
-        printf("%d\n",ecall_args[0]);
         ERROR("unknown ecall"); 
     } else if(!excpt.testing){
         ERROR("untested exception!");

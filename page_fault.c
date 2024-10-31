@@ -8,7 +8,6 @@ bool instruction_page_fault_1(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -49,7 +48,6 @@ bool instruction_page_fault_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -78,7 +76,6 @@ bool instruction_page_fault_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -119,7 +116,6 @@ bool instruction_page_fault_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -146,7 +142,6 @@ bool load_page_fault_1(){
     goto_priv(PRIV_HS); 
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -205,7 +200,6 @@ bool load_page_fault_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -235,7 +229,6 @@ bool load_page_fault_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -273,7 +266,6 @@ bool load_page_fault_4(){
     goto_priv(PRIV_HS); 
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -331,7 +323,6 @@ bool load_page_fault_5(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -360,7 +351,6 @@ bool load_page_fault_6(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -391,7 +381,6 @@ bool load_page_fault_7(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -420,7 +409,6 @@ bool load_page_fault_8(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -460,7 +448,6 @@ bool store_page_fault_1(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -511,7 +498,6 @@ bool store_page_fault_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -541,7 +527,6 @@ bool store_page_fault_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -574,7 +559,6 @@ bool store_page_fault_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -625,7 +609,6 @@ bool store_page_fault_5(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -654,7 +637,6 @@ bool store_page_fault_6(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -685,7 +667,6 @@ bool store_page_fault_7(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -714,7 +695,6 @@ bool store_page_fault_8(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -749,7 +729,6 @@ bool amo_page_fault_1(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -801,7 +780,6 @@ bool amo_page_fault_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -830,7 +808,6 @@ bool amo_page_fault_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
  
@@ -864,7 +841,6 @@ bool amo_page_fault_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -916,7 +892,6 @@ bool amo_page_fault_5(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -945,7 +920,6 @@ bool amo_page_fault_6(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
  

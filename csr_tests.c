@@ -63,7 +63,6 @@ TEST_START();
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     //执行load指令时，设置了mstatus.SUM=0，在S模式下访问U模式可以访问的页表项
@@ -90,7 +89,6 @@ bool mstatus_csr_tests_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     //执行load指令时，设置了mstatus.SUM=1，在S模式下访问U模式可以访问的页表项
@@ -120,7 +118,6 @@ bool mstatus_csr_tests_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
     //执行load指令时，设置了mstatus.MXR=0，只能从只读页面读取，如果此时pte.r=0
     goto_priv(PRIV_M);
@@ -150,7 +147,6 @@ bool mstatus_csr_tests_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
     //执行load指令时，设置了mstatus.MXR=1，能从可读可执行页面读取，如果此时页表项pte.r=0&&pte.x=0
 
@@ -240,37 +236,17 @@ bool tselect_csr_tests_1(){
 }
 
 
-bool H_csr_tests(){
+bool random_instruction_tests(){
 
     TEST_START();
     TEST_SETUP_EXCEPT();
     goto_priv(PRIV_M);
 
-    CSRR(CSR_HSTATUS);
-    CSRW(CSR_HSTATUS,(uint64_t)-1);
-    CSRR(CSR_HSTATUS); 
-
-    CSRR(CSR_HIE);
-    CSRW(CSR_HIE,(uint64_t)-1);
-    CSRR(CSR_HIE); 
-
-    CSRR(CSR_HCOUNTEREN);
-    CSRW(CSR_HCOUNTEREN,(uint64_t)-1);
-    CSRR(CSR_HCOUNTEREN); 
-
-    CSRR(CSR_HGEIE);
-    CSRW(CSR_HGEIE,(uint64_t)-1);
-    CSRR(CSR_HGEIE); 
-
-    CSRR(CSR_HENVCFG);
-    CSRW(CSR_HENVCFG,(uint64_t)-1);
-    CSRR(CSR_HENVCFG); 
-
-    CSRR(CSR_HIDELEG);
-    CSRW(CSR_HIDELEG,(uint64_t)-1);
-    CSRR(CSR_HIDELEG); 
-
-
+    for (int i = 0; i < 5; i++)
+    {
+        random_m_instruction();
+    }
+    
 
     TEST_END();
 

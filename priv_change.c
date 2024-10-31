@@ -9,7 +9,6 @@ bool priv_change_1(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init(); 
 
     //V=1，VS模式下发生异常，关闭代理，切换到M态处理异常，异常结束恢复到VS态
@@ -43,7 +42,6 @@ bool priv_change_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init(); 
 
     uintptr_t vaddr_f = vs_page_base(VSI_GI);      
@@ -77,7 +75,6 @@ bool priv_change_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init(); 
 
     uintptr_t vaddr_f = vs_page_base(VSI_GI);      
@@ -112,7 +109,6 @@ bool priv_change_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init(); 
 
     uintptr_t vaddr_f = vs_page_base(VSI_GI);      
@@ -231,6 +227,11 @@ bool priv_change_8(){
 
 
 
+    /*
+    当异常代理到了hs模式，那么处理的时候就会用hshandler处理。
+    当想去m模式，会ecall，进入异常，但是去m模式需要mhandler才能过去，在hs模式下去处理这类异常是不行的，可是由于开启了异常代理，然后就一直循环执行hshandler出错。
+    因此在开启异常代理后，不能在后面执行goto_priv(PRIV_M);否则会无限循环出错
+    */
 bool priv_change_9(){
     TEST_START();
 
@@ -253,7 +254,9 @@ bool priv_change_9(){
     );
 
 
-    TEST_END();
+    if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
+         printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
+    }
 }
 
 
@@ -280,7 +283,9 @@ bool priv_change_10(){
         curr_priv == PRIV_HU
     );
 
-    TEST_END();
+    if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
+         printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
+    }
 }
 
 
@@ -306,7 +311,9 @@ bool priv_change_11(){
     ); 
 
 
-    TEST_END();
+    if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
+         printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
+    }
 }
 
 
@@ -333,7 +340,9 @@ bool priv_change_12(){
     ); 
 
 
-    TEST_END();
+    if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
+         printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
+    }
 
 }
 
@@ -358,7 +367,9 @@ bool priv_change_13(){
         curr_priv == PRIV_VU
     );
 
-    TEST_END();
+    if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
+         printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
+    }
 }
 
 bool priv_change_14(){
@@ -383,7 +394,9 @@ bool priv_change_14(){
         curr_priv == PRIV_VU
     );
 
-    TEST_END();
+    if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
+         printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
+    }
 
 }
 
@@ -408,7 +421,36 @@ bool priv_change_15(){
         curr_priv == PRIV_VS
     );
 
-    TEST_END();
+    if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
+         printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
+    }
+
+}
+
+bool priv_change_16(){
+    TEST_START();
+
+    //V=1，VS模式下发生异常，打开代理medeleg/mideleg，打开代理hedeleg/hideleg，切换到HS态处理异常，异常结束执行sret恢复到VU态
+    goto_priv(PRIV_M);
+    reset_state();
+    CSRW(medeleg,(uint64_t)-1);
+    CSRW(mideleg,(uint64_t)-1);     
+    CSRW(CSR_HIDELEG,(uint64_t)-1);
+    CSRW(CSR_HEDELEG,(uint64_t)-1);   
+
+    TEST_SETUP_EXCEPT();    
+    goto_priv(PRIV_VS);     
+    CSRR(CSR_MSTATUS);
+    
+    TEST_ASSERT("vs trigger except that priv change to vs mode and sret to vs mod when medeleg/mideleg==1 and hedeleg/hideleg==0",         
+        excpt.triggered == true && 
+        excpt.priv == PRIV_VS &&
+        curr_priv == PRIV_VS
+    );
+
+    if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
+         printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
+    }
 
 }
 

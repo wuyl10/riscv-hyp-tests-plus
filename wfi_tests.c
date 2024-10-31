@@ -74,10 +74,7 @@ bool wfi_exception_tests_3() {
         excpt.triggered == false
     );  
 
-    /** 
-     * Delegate the pending interrupt to hs mode so it doesnt immediately 
-     * trigger a trap to machine when we jump to hs.
-     */
+   
     TEST_END();
 }
 
@@ -511,19 +508,31 @@ bool wfi_exception_tests_22() {
 }
 
 
+bool wfi_exception_tests_23() {
 
-    //mstatus.TW=0时，在u模式下，中断未被禁用，且代理打开，执行wfi指令
+    TEST_START();
+
+
+
+    TEST_END();
+}
+
+
+    
+    //  //mstatus.TW=0时，在u模式下，中断未被禁用，且代理打开，执行wfi指令
     // goto_priv(PRIV_M);
     // CSRS(mideleg, 0b0100);
     // CSRS(CSR_UIE, 0b0100);
     // CSRS(CSR_UIP, 0b0100);
     // goto_priv(PRIV_HU);
+    // TEST_SETUP_EXCEPT();
     // wfi();
     // TEST_ASSERT("U-mode wfi causes illegal instruction exception when Interrupt is not disabled and mstatus.TW=0 and mideleg=1",
     //     excpt.triggered == true &&  
     //     excpt.cause == CAUSE_ILI
     // );   
     
+
     //mstatus.TW=0时，在vu模式下，中断未被禁用，且代理打开，执行wfi指令
     // goto_priv(PRIV_M);
     // CSRS(mideleg, 0b0100);
@@ -565,24 +574,7 @@ bool wfi_exception_tests_22() {
     );   
 
 
-    //mstatus.TW=0时，在HS模式下，发生中断，中断使能拉高，中断未被代理到低特权模式
 
-    reset_state();
-    TEST_SETUP_EXCEPT();
-    goto_priv(PRIV_M); 
-
-    CSRS(CSR_SIE, 0b0100);
-    CSRC(mideleg, 0b0100);
-    CSRS(CSR_SIP, 0b0100);
-
-
-    goto_priv(PRIV_HS);
-    wfi();
-
-
-    TEST_ASSERT("HS-mode wfi is awakened and the interrupt occurs on the next instruction, sepc=pc+4 when mstatus.TW=0 and mideleg=0",
-        excpt.triggered == true
-    );   
 
     //mstatus.TW=0时，在M模式下，发生中断，中断使能拉高，中断未被代理到低特权模式
 

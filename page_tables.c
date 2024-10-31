@@ -136,7 +136,7 @@ struct {
     [TOP]             =   {PTE_V | PTE_RWX,         PTE_V | PTE_U | PTE_RWX},     
 };      
 
-pte_t hspt[3][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));
+pte_t hspt[3][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));         //这是GCC的一个编译器属性，用来指定变量的对齐方式。在这里，hspt 被指定要按照页大小（PAGE_SIZE，通常是4KB）对齐
 
 void hspt_init(){
 
@@ -162,7 +162,7 @@ void hspt_init(){
     addr = TEST_PPAGE_BASE;
     for(int i = 0; i < TEST_PAGE_MAX; i++){
         hspt[2][i] = (addr >> 2) | PTE_AD |
-            test_page_perm_table[i].vs;  
+            test_page_perm_table[i].vs;
         addr += PAGE_SIZE;
     }
 
@@ -229,7 +229,7 @@ void vspt_init(){
     addr = TEST_VPAGE_BASE;
     for(int i = 0; i < TEST_PAGE_MAX; i++){
         vspt[3][i] = (addr >> 2) | PTE_AD |
-            test_page_perm_table[i].vs;  
+            test_page_perm_table[i].vs;
         addr +=  PAGE_SIZE;
     }
 
@@ -305,7 +305,7 @@ void hpt_init(){
     addr = TEST_PPAGE_BASE;
     for(int i = 0; i < TEST_PAGE_MAX; i++){
         hpt[2][i] = (addr >> 2) | PTE_AD |
-            test_page_perm_table[i].h;  
+            test_page_perm_table[i].h; 
         addr +=  PAGE_SIZE;
     }
 
@@ -333,6 +333,37 @@ void hpt_init(){
     } else {
         ERROR("trying to set hs hgatp from lower privilege");
     }
+}
+
+void page_table_add_vs_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | PTE_AD | test_page_perm_table[i].vs;
+
+    addr = 0x100000000 + i*0x1000;
+    vspt[3][i] = (addr >> 2) | PTE_AD | test_page_perm_table[i].vs;
+}
+
+void page_table_del_vs_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].vs;
+
+    addr = 0x100000000 + i*0x1000;
+    vspt[3][i] = (addr >> 2) | test_page_perm_table[i].vs;
+}
+
+
+void page_table_add_h_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].h;
+}
+
+void page_table_del_h_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].h;
 }
 
 void hspt_switch(){

@@ -35,7 +35,6 @@ bool two_stage_translation_1(){
     /**
      * Setup guest page tables.
      */
-    goto_priv(PRIV_VS);
     vspt_init();
 
     bool check1 = read64(vaddr1) == 0x11;
@@ -106,6 +105,7 @@ bool two_stage_translation_1(){
 bool two_stage_translation_2(){
     
     TEST_START();
+    goto_priv(PRIV_M);
 
     uintptr_t addr1 = phys_page_base(SWITCH1);
     uintptr_t addr2 = phys_page_base(SWITCH2);
@@ -124,9 +124,9 @@ bool two_stage_translation_2(){
     /**
      * Setup guest page tables.
      */
-    goto_priv(PRIV_VS);
     vspt_init();
 
+    goto_priv(PRIV_VS);
     bool check1 = read64(vaddr1) == 0x11;
     bool check2 = read64(vaddr2) == 0x22;
     TEST_ASSERT("vs gets right values", check1 && check2);
@@ -164,9 +164,9 @@ bool two_stage_translation_3(){
     /**
      * Setup guest page tables.
      */
-    goto_priv(PRIV_VS);
     vspt_init();
 
+    goto_priv(PRIV_VS);
     bool check1 = read64(vaddr1) == 0x11;
     bool check2 = read64(vaddr2) == 0x22;
     TEST_ASSERT("vs gets right values", check1 && check2);

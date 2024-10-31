@@ -8,7 +8,6 @@ bool load_guest_page_fault_1(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -50,7 +49,6 @@ bool load_guest_page_fault_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -83,7 +81,6 @@ bool load_guest_page_fault_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     uintptr_t vaddr;
@@ -111,7 +108,6 @@ bool load_guest_page_fault_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -145,7 +141,6 @@ bool load_guest_page_fault_5(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -182,7 +177,6 @@ bool load_guest_page_fault_6(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -223,7 +217,6 @@ bool load_guest_page_fault_7(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -255,7 +248,6 @@ bool load_guest_page_fault_8(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     uintptr_t vaddr;
@@ -283,7 +275,6 @@ bool load_guest_page_fault_9(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -316,7 +307,6 @@ bool load_guest_page_fault_10(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -355,7 +345,6 @@ bool load_guest_page_fault_11(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     uintptr_t vaddr;
@@ -390,7 +379,6 @@ bool load_guest_page_fault_12(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     // vspt_init();
 
 
@@ -429,7 +417,6 @@ bool load_guest_page_fault_13(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     uintptr_t vaddr;
@@ -458,10 +445,8 @@ bool load_guest_page_fault_14(){
     TEST_START();
 
     goto_priv(PRIV_HS);
-    hspt_init();
     hpt_init();
     hspt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -498,7 +483,6 @@ bool load_guest_page_fault_15(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -537,7 +521,6 @@ bool store_guest_page_fault_1(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -580,7 +563,6 @@ bool store_guest_page_fault_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -612,7 +594,6 @@ bool store_guest_page_fault_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -646,7 +627,6 @@ bool store_guest_page_fault_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -681,7 +661,6 @@ bool store_guest_page_fault_5(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -716,7 +695,6 @@ bool store_guest_page_fault_6(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -758,7 +736,6 @@ bool store_guest_page_fault_7(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -789,7 +766,6 @@ bool store_guest_page_fault_8(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -822,7 +798,6 @@ bool store_guest_page_fault_9(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -856,7 +831,6 @@ bool store_guest_page_fault_10(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_M);
@@ -890,7 +864,6 @@ bool amo_guest_page_fault_1(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -935,7 +908,6 @@ bool amo_guest_page_fault_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -966,7 +938,6 @@ bool amo_guest_page_fault_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1001,7 +972,6 @@ bool amo_guest_page_fault_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1037,7 +1007,6 @@ bool amo_guest_page_fault_5(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1078,7 +1047,6 @@ bool instruction_guest_page_fault_1(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1110,7 +1078,6 @@ bool instruction_guest_page_fault_2(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1142,7 +1109,6 @@ bool instruction_guest_page_fault_3(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1173,7 +1139,6 @@ bool instruction_guest_page_fault_4(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1209,7 +1174,6 @@ bool instruction_guest_page_fault_5(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1247,7 +1211,6 @@ bool instruction_guest_page_fault_6(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 
@@ -1258,9 +1221,9 @@ bool instruction_guest_page_fault_6(){
     goto_priv(PRIV_VS);
 
     //执行取指指令时，在VS模式下
-    TEST_SETUP_EXCEPT();
     vaddr = vs_page_base(VSRWX_GURWX);
-
+    
+    TEST_SETUP_EXCEPT();
     TEST_EXEC_EXCEPT(vaddr); 
 
     TEST_ASSERT("vs mode fetche instruction successful when pte.x=1",
@@ -1278,7 +1241,6 @@ bool instruction_guest_page_fault_7(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
 

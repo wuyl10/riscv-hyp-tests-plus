@@ -25,6 +25,9 @@ cp "${source_dir}nemu/${file_name}.asm" "${target_dir}nemu+bin/${des_name}.asm"
 cp "${source_dir}spike/${file_name}.asm" "${target_dir}spike+elf/${des_name}.asm"
 
 
+
+#############注释test_register.c中测试点###################
+
 # 定义源文件和目标文件夹的路径
 source_file="test_register.c"
 source_dir="./build/"

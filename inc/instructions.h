@@ -506,6 +506,8 @@ static inline int* add_address(uintptr_t addr, int offset) {
 
 
 
+void random_m_instruction();
+
 #endif /* __ASSEMBLER__ */
 
 #endif /* INSTRUCTIONS_H */

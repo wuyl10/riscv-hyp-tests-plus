@@ -3,14 +3,14 @@
 
 #include <rvh_test.h>
 
-#define PAGE_SIZE 0x1000ULL
-#define PT_SIZE (PAGE_SIZE)
-#define PAGE_ADDR_MSK (~(PAGE_SIZE - 1))
-#define PAGE_SHIFT (12)
-#define SUPERPAGE_SIZE(N) ((PAGE_SIZE) << (((2-N))*9))
+#define PAGE_SIZE 0x1000ULL                                                         //定义了页的大小为 0x1000（即 4096 字节）
+#define PT_SIZE (PAGE_SIZE)                                                         //页表的大小定义为和页大小一致。即一个页表占用的空间与一个页面相同
+#define PAGE_ADDR_MSK (~(PAGE_SIZE - 1))                                            //定义了一个掩码，用于提取物理地址的页面对齐部分。这个掩码会屏蔽掉页面内的偏移量。具体地，PAGE_SIZE - 1 会得到 0xFFF，取反 ~ 后得到 0xFFFFFFFFFFFFF000，这样可以屏蔽掉地址中的最低 12 位，得到对齐的页面地址。
+#define PAGE_SHIFT (12)                                                             //页偏移为12位
+#define SUPERPAGE_SIZE(N) ((PAGE_SIZE) << (((2-N))*9))                              //这是一个用于计算超级页大小的宏
 
-#define PT_LVLS (3)  // assumes sv39 for rv64
-#define PTE_INDEX_SHIFT(LEVEL) ((9 * (PT_LVLS - 1 - (LEVEL))) + 12)
+#define PT_LVLS (3)                                                                 //定义页表的层级数为3，表示当前假设使用的是 RISC-V 中的 Sv39 虚拟内存机制                                 
+#define PTE_INDEX_SHIFT(LEVEL) ((9 * (PT_LVLS - 1 - (LEVEL))) + 12)                 
 #define PTE_ADDR_MSK BIT_MASK(12, 44)
 
 #define PTE_INDEX(LEVEL, ADDR) (((ADDR) >> PTE_INDEX_SHIFT(LEVEL)) & (0x1FF))
@@ -26,6 +26,7 @@
 #define PTE_DIRTY (1ULL << 7)
 
 #define PTE_V PTE_VALID
+#define PTE_A PTE_ACCESS
 #define PTE_AD (PTE_ACCESS | PTE_DIRTY)
 #define PTE_U PTE_USER
 #define PTE_R (PTE_READ)

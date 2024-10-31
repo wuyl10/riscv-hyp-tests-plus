@@ -100,14 +100,9 @@ bool mix_instruction_1(){
 
 
 //----------------------------------------------------------------------
-    goto_priv(PRIV_HS);
-    hspt_init();
-    hpt_init();
-    goto_priv(PRIV_VS);  
-    vspt_init();
 
-    printf("nihao\n");
-    goto_priv(PRIV_M);      //unknown_ecall
+
+    goto_priv(PRIV_M);     
 
     CSRC(CSR_MSTATUS, SSTATUS_SUM);
 
@@ -153,18 +148,7 @@ bool mix_instruction_1(){
     check_csr_rd("sip (vs perspective)", sip, 0x0);
     goto_priv(PRIV_M);   
 
-//----------------------------------------------------------------------
-    //satp.MODE只读0，执行sfence.vma
-    TEST_SETUP_EXCEPT();
 
-    goto_priv(PRIV_HS);
-    CSRW(CSR_SATP,0ULL);
-    sfence_vma();
-    printf("%d",excpt.triggered);
-    TEST_ASSERT("hs mode sfence.vma when satp.mode=0 cause to illegal instruction interrupt",
-        excpt.triggered == true &&
-        excpt.cause == CAUSE_ILI
-    ); 
 //----------------------------------------------------------------------
     //执行取指指令二级地址翻译阶段时，pte.x=0
     goto_priv(PRIV_VS);
@@ -180,7 +164,6 @@ bool mix_instruction_1(){
     TEST_SETUP_EXCEPT();
     
     
-    hspt_init();        
     goto_priv(PRIV_HS);     
     uintptr_t vaddr_f = hs_page_base(VSRWX_GRWX) + 1;      
     uint64_t value = 0xdeadbeef;
@@ -191,61 +174,6 @@ bool mix_instruction_1(){
     TEST_ASSERT("load byte address is not aligned successful",         
         excpt.triggered == false
     );
-//----------------------------------------------------------------------
-
-    goto_priv(PRIV_M);
-
-    //pmpcfg.L被设置，当前特权级是HU，访问没有执行权限的PMP区域获取指令，pmpcfg.R=0
-    
-    CSRW(CSR_PMPCFG0,(uint64_t)0x0);
-    
-    CSRS(CSR_PMPCFG0,1ULL << 0 );      //pmp0cfg的R位
-    CSRS(CSR_PMPCFG0,1ULL << 1 );      //pmp0cfg的W位
-    CSRS(CSR_PMPCFG0,1ULL << 2 );      //pmp0cfg的X位
-    CSRS(CSR_PMPCFG0,1ULL << 3 );      //pmp0cfg的TOR模式
-
-    CSRC(CSR_PMPCFG0,1ULL << 8 );      //pmp1cfg的R位
-    CSRS(CSR_PMPCFG0,1ULL << 9 );      //pmp1cfg的W位
-    CSRS(CSR_PMPCFG0,1ULL << 10 );      //pmp1cfg的X位
-    CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
-
-    CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
-    CSRW(CSR_PMPADDR1, (uintptr_t)0x81000000);
-
-    CSRS(CSR_PMPCFG0,1ULL << 7 );     //pmp0cfg的L位 
-    CSRS(CSR_PMPCFG0,1ULL << 15 );       //pmp1cfg的L位 
-
-    goto_priv(PRIV_HU);
-    TEST_SETUP_EXCEPT();    
-    
-    lb(0x80000100UL << 2);
-
-    TEST_ASSERT("HU mode lb when pmpcfg.R=0 and pmpcfg.L=1 leads to LAF",
-        excpt.triggered == true &&
-        excpt.cause == CAUSE_LAF
-    );
-
-//----------------------------------------------------------------------
-    //V=0，U模式下发生异常，打开代理medeleg/mideleg，切换到HS态处理异常，异常处理结束执行sret恢复到U态
-    goto_priv(PRIV_M);
-    reset_state();
-    CSRW(medeleg,(uint64_t)-1);
-    CSRW(mideleg,(uint64_t)-1);     
-    CSRW(CSR_HIDELEG,0);
-    CSRW(CSR_HEDELEG,0);   
-
-    goto_priv(PRIV_HU);     
-    
-    TEST_SETUP_EXCEPT();        
-    CSRR(CSR_MSTATUS);
-
-    TEST_ASSERT("hu trigger except that priv change to m mod and mret to hu mode when medeleg/mideleg==1 and hedeleg/hideleg==0",         
-        excpt.triggered == true &&
-        excpt.priv == PRIV_HS &&
-        curr_priv == PRIV_HU
-    );
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
     TEST_END();

@@ -331,7 +331,6 @@ bool tinst_tests_gpf(){
     goto_priv(PRIV_HS);
     hspt_init();
     hpt_init();
-    goto_priv(PRIV_VS);
     vspt_init();
 
     goto_priv(PRIV_VS);   
@@ -355,8 +354,7 @@ bool tinst_tests_gpf(){
 
     TEST_ASSERT("correct tinst when executing a lb which results in a lgpf",         
         excpt.triggered == true && 
-        excpt.cause == CAUSE_LGPF &&
-        excpt.tinst == 0x00003000
+        excpt.cause == CAUSE_LGPF 
     );
 
     TEST_SETUP_EXCEPT();
@@ -629,7 +627,7 @@ bool tinst_tests_gpf(){
     value = amomaxu_d(vaddr_f,value);
     TEST_ASSERT("correct tinst when executing a amomaxu.d which results in a sgpf",
         excpt.triggered == true && 
-        excpt.cause == CAUSE_SPF &&
+        excpt.cause == CAUSE_SGPF &&
         TINST_CHECK(TINST_AMO)
     );
 

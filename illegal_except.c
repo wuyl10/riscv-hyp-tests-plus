@@ -17,13 +17,16 @@ bool illegal_except_1() {
     //     excpt.cause == CAUSE_ILI
     // ); 
 
-    // //访问有效，CSRoptype非跳转行为，且访问CSR地址不在CSR mapping地址范围内
+    //访问有效，CSRoptype非跳转行为，且访问CSR地址不在CSR mapping地址范围内
+    
     // CSRR(CSR_INVALID);
     // TEST_SETUP_EXCEPT();
     // TEST_ASSERT("CSR addr not match the csr mapping leads to illegal instruction interrupt",
     //     excpt.triggered == true &&
     //     excpt.cause == CAUSE_ILI
     // ); 
+    // printf("%d",excpt.triggered);
+    // printf("%d",excpt.cause);
 
     //当前权限满足最低CSR访问权限，CSR写行为，但访问的CSR只读
     goto_priv(PRIV_M);
@@ -452,6 +455,28 @@ bool illegal_except_14() {
     TEST_ASSERT("hs mode sret cause to ili when mstatus.TSR=1",
         excpt.triggered == true &&
         excpt.cause == CAUSE_ILI
+    ); 
+
+    TEST_END();
+
+}
+
+bool illegal_except_15() {
+
+    TEST_START();
+    //mstatus.TSR=1时，执行sret指令
+    TEST_SETUP_EXCEPT();
+    goto_priv(PRIV_M);
+    CSRC(CSR_MSTATUS,1ULL << 22);    //TSR位
+
+    goto_priv(PRIV_HS);
+    set_prev_priv(PRIV_VS);
+
+    TEST_EXEC_SRET();
+
+
+    TEST_ASSERT("hs mode sret successful when mstatus.TSR=0",
+        excpt.triggered == false
     ); 
 
     TEST_END();
