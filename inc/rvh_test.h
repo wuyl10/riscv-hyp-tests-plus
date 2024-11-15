@@ -132,6 +132,19 @@ extern size_t test_table_size;
     /*if(!test_status) goto failed; /**/\
 }
 
+
+
+//v扩展时防止被编译成向量指令干扰测试环境
+// 使用宏控制是否启用向量扩展
+// 如果启用了向量扩展，声明函数
+#ifdef __riscv_vector
+__attribute__((target("arch=rv64imac_zicsr")))
+void test_setup_except_function();
+
+#define TEST_SETUP_EXCEPT() test_setup_except_function()
+
+#else
+// 如果没有使用向量扩展，保持原有的宏定义
 #define TEST_SETUP_EXCEPT() {\
     __sync_synchronize();\
     excpt.testing = true;\
@@ -140,6 +153,8 @@ extern size_t test_table_size;
     __sync_synchronize();\
     DEBUG("setting up exception test");\
 }
+#endif
+
 
 
 #define TEST_EXEC_EXCEPT(addr) {\

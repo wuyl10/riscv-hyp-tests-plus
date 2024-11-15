@@ -63,12 +63,12 @@ bool check_misa_h(){
     TEST_END();
 }
 
+
 void main(){
 
     INFO("risc-v hypervisor extension tests");
     // printf("%f\n",CSRR(CSR_SSCRATCH));
     if(check_misa_h()){
-        
         reset_state();
         for(int i = 0; i < test_table_size; i++){
             reset_state();

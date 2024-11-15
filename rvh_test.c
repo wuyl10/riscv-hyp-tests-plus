@@ -24,6 +24,21 @@ uint64_t ecall(uint64_t a0, uint64_t a1)
 
 }
 
+
+//v扩展时防止被编译成向量指令干扰测试环境
+#ifdef __riscv_vector
+__attribute__((target("arch=rv64imac_zicsr")))
+void test_setup_except_function() {
+    __sync_synchronize();
+    excpt.testing = true;
+    excpt.triggered = false;
+    excpt.fault_inst = 0;
+    __sync_synchronize();
+    DEBUG("setting up exception test");
+}
+#endif
+
+
 static inline bool is_user(int priv) {
     return priv == PRIV_VU || priv == PRIV_HU;
 }

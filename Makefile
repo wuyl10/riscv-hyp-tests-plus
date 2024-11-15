@@ -40,7 +40,7 @@ c_srcs := main.c page_tables.c rvh_test.c instruction.c interrupt_tests.c\
 	external_interrupt.c software_interrupt.c\
 	 page_fault.c guest_page_fault.c access_fault.c\
 	 csr_tests.c Zicntr_test.c mix_instruction.c\
-	 ebreak_tests.c stateen_test.c\
+	 ebreak_tests.c stateen_test.c vec.c\
 	$(addprefix $(plat_dir)/, $(notdir $(wildcard $(plat_dir)/*.c)))
 asm_srcs := boot.S handlers.S  $(wildcard $(plat_dir)/*.S)
 ld_file:=linker.ld
@@ -55,7 +55,7 @@ ld_file_final:=$(build_dir)/$(ld_file)
 deps:=$(patsubst  %.o, %.d, $(objs)) $(ld_file_final).d
 dirs:=$(sort $(dir $(objs) $(deps)))
 
-GENERIC_FLAGS += -march=rv64imac_zicsr -mabi=lp64 -g3 -mcmodel=medany -O3 $(inc_dirs)
+GENERIC_FLAGS += -march=rv64imac_zicsr_v -mabi=lp64 -g3 -mcmodel=medany -O3 $(inc_dirs)
 # GENERIC_FLAGS += -march=rv64imafdcv_zicsr_zifencei_zihintpause -mabi=lp64 -g3 -mcmodel=medany -O3 $(inc_dirs)
 
 

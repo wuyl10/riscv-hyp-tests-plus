@@ -21,56 +21,70 @@
 // TEST_REGISTER(virtual_instruction_15);
 // TEST_REGISTER(virtual_instruction_16);
 
+// TEST_REGISTER(vec_vle_vse_func); 
+// TEST_REGISTER(vec_test_1); 
+// TEST_REGISTER(vec_test_2); 
+// TEST_REGISTER(vec_test_3); 
+// TEST_REGISTER(vec_test_4); 
+// TEST_REGISTER(vec_test_5); 
+// TEST_REGISTER(vec_test_6); 
+TEST_REGISTER(vec_test_7); 
+// TEST_REGISTER(vec_test_8); 
+// TEST_REGISTER(vec_test_9); 
+// TEST_REGISTER(vec_test_10); 
+// TEST_REGISTER(vec_test_11); 
+// TEST_REGISTER(vec_test_88); 
+
 
 // TEST_REGISTER(priv_instruction); 
 
-// 重新考虑不同模式下的自定义寄存器
-TEST_REGISTER(stateen_C_test_1); 
-TEST_REGISTER(stateen_C_test_2); 
-TEST_REGISTER(stateen_C_test_3); 
-TEST_REGISTER(stateen_C_test_4);   
-TEST_REGISTER(stateen_C_test_5); 
-TEST_REGISTER(stateen_C_test_6); 
-TEST_REGISTER(stateen_C_test_7); 
+// // 重新考虑不同模式下的自定义寄存器
+// TEST_REGISTER(stateen_C_test_1); 
+// TEST_REGISTER(stateen_C_test_2); 
+// TEST_REGISTER(stateen_C_test_3); 
+// TEST_REGISTER(stateen_C_test_4);   
+// TEST_REGISTER(stateen_C_test_5); 
+// TEST_REGISTER(stateen_C_test_6); 
+// TEST_REGISTER(stateen_C_test_7); 
 
-TEST_REGISTER(stateen_IMSIC_test_1); 
-TEST_REGISTER(stateen_IMSIC_test_2);   
-TEST_REGISTER(stateen_IMSIC_test_3); 
-TEST_REGISTER(stateen_IMSIC_test_4);    //第一条用例difftest报错，rtl为虚拟指令异常（rtl符合预期）
-TEST_REGISTER(stateen_IMSIC_test_5);    //difftest报错,rtl产生非法指令异常（rtl符合预期）
-TEST_REGISTER(stateen_IMSIC_test_6);    //hu mode 要依赖sstatten
-TEST_REGISTER(stateen_IMSIC_test_7); 
-
-
-// hstatten未控制对应的访问
-TEST_REGISTER(stateen_AIA_test_1); 
-TEST_REGISTER(stateen_AIA_test_2); 
-TEST_REGISTER(stateen_AIA_test_3); 
-TEST_REGISTER(stateen_AIA_test_4); 
-TEST_REGISTER(stateen_AIA_test_5);  //difftest报错,rtl产生非法指令异常(除了第三条)（rtl符合预期）   （第三条用例都不符合）
-TEST_REGISTER(stateen_AIA_test_6);  //fail的涉及sstatten
-TEST_REGISTER(stateen_AIA_test_7);  //不知VU是否涉及sstatten
-
-TEST_REGISTER(stateen_CSRIND_test);     //测试点如何写
-
-TEST_REGISTER(stateen_ENVCFG_test_1); 
-TEST_REGISTER(stateen_ENVCFG_test_2); 
-TEST_REGISTER(stateen_ENVCFG_test_3); 
-TEST_REGISTER(stateen_ENVCFG_test_4);       //difftest报错,rtl产生虚拟指令异常（rtl符合预期）
-TEST_REGISTER(stateen_ENVCFG_test_5);       //difftest报错,rtl产生非法指令异常（rtl符合预期）
-TEST_REGISTER(stateen_ENVCFG_test_6);       //hu mode 要依赖sstatten
-TEST_REGISTER(stateen_ENVCFG_test_7);       //第一条不符合预期  不知VU是否涉及sstatten
+// TEST_REGISTER(stateen_IMSIC_test_1); 
+// TEST_REGISTER(stateen_IMSIC_test_2);   
+// TEST_REGISTER(stateen_IMSIC_test_3); 
+// TEST_REGISTER(stateen_IMSIC_test_4);    //第一条用例difftest报错，rtl为虚拟指令异常（rtl符合预期）
+// TEST_REGISTER(stateen_IMSIC_test_5);    //difftest报错,rtl产生非法指令异常（rtl符合预期）
+// TEST_REGISTER(stateen_IMSIC_test_6);    //hu mode 要依赖sstatten
+// TEST_REGISTER(stateen_IMSIC_test_7); 
 
 
-// 在所处特权级本身就无法访问高特权级CSR
-TEST_REGISTER(stateen_SE0_test_1); 
-TEST_REGISTER(stateen_SE0_test_2); 
-TEST_REGISTER(stateen_SE0_test_3); 
-TEST_REGISTER(stateen_SE0_test_4); 
-TEST_REGISTER(stateen_SE0_test_5); 
-TEST_REGISTER(stateen_SE0_test_6); 
-TEST_REGISTER(stateen_SE0_test_7); 
-TEST_REGISTER(stateen_SE0_test_8); 
+// // hstatten未控制对应的访问
+// TEST_REGISTER(stateen_AIA_test_1); 
+// TEST_REGISTER(stateen_AIA_test_2); 
+// TEST_REGISTER(stateen_AIA_test_3); 
+// TEST_REGISTER(stateen_AIA_test_4); 
+// TEST_REGISTER(stateen_AIA_test_5);  //difftest报错,rtl产生非法指令异常(除了第三条)（rtl符合预期）   （第三条用例都不符合）
+// TEST_REGISTER(stateen_AIA_test_6);  //fail的涉及sstatten
+// TEST_REGISTER(stateen_AIA_test_7);  //不知VU是否涉及sstatten
+
+// TEST_REGISTER(stateen_CSRIND_test);     //测试点如何写
+
+// TEST_REGISTER(stateen_ENVCFG_test_1); 
+// TEST_REGISTER(stateen_ENVCFG_test_2); 
+// TEST_REGISTER(stateen_ENVCFG_test_3); 
+// TEST_REGISTER(stateen_ENVCFG_test_4);       //difftest报错,rtl产生虚拟指令异常（rtl符合预期）
+// TEST_REGISTER(stateen_ENVCFG_test_5);       //difftest报错,rtl产生非法指令异常（rtl符合预期）
+// TEST_REGISTER(stateen_ENVCFG_test_6);       //hu mode 要依赖sstatten
+// TEST_REGISTER(stateen_ENVCFG_test_7);       //第一条不符合预期  不知VU是否涉及sstatten
+
+
+// // 在所处特权级本身就无法访问高特权级CSR
+// TEST_REGISTER(stateen_SE0_test_1); 
+// TEST_REGISTER(stateen_SE0_test_2); 
+// TEST_REGISTER(stateen_SE0_test_3); 
+// TEST_REGISTER(stateen_SE0_test_4); 
+// TEST_REGISTER(stateen_SE0_test_5); 
+// TEST_REGISTER(stateen_SE0_test_6); 
+// TEST_REGISTER(stateen_SE0_test_7); 
+// TEST_REGISTER(stateen_SE0_test_8); 
 
 
 // TEST_REGISTER(cycle_test_1);

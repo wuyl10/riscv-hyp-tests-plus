@@ -337,45 +337,6 @@ LOAD_INSTRUCTION(lwu, "lwu", uint32_t);
 LOAD_INSTRUCTION(ld, "ld", uint64_t);
 
 
-#define FLOAD_INSTRUCTION(name, instruction, type) \
-    static inline type name(uintptr_t addr){ \
-        type value; \
-        asm volatile( \
-            ".option push\n\t" \
-            ".option norvc\n\t" \
-            instruction " %0, 0(%1)\n\t" \
-            ".option pop\n\t" \
-            : "=r"(value) : "r"(addr) : "memory"); \
-        return value; \
-    }
-
-FLOAD_INSTRUCTION(flw, "flw", uint32_t);
-
-
-
-
-// #define LOAD_VECTOR_INSTRUCTION(name, instruction, type) \
-//     static inline void name(type *dest, uintptr_t addr) { \
-//         asm volatile( \
-//             ".option push\n\t" \
-//             ".option norvc\n\t" \
-//             instruction " v0, (%1)\n\t" \
-//             "vs1r v0, (%0)\n\t" \
-//             ".option pop\n\t" \
-//             : "+r" (dest) /* Output operand: dest register */ \
-//             : "r" (addr)  /* Input operand: address register */ \
-//             : "v0", "memory"); /* Clobbered registers */ \
-//     }
-
-// // 定义向量加载指令
-// LOAD_VECTOR_INSTRUCTION(vle8_v, "vle8.v", uint8_t);
-// LOAD_VECTOR_INSTRUCTION(vle16_v, "vle16.v", uint16_t);
-// LOAD_VECTOR_INSTRUCTION(vle32_v, "vle32.v", uint32_t);
-// LOAD_VECTOR_INSTRUCTION(vle64_v, "vle64.v", uint64_t);
-
-
-
-
 
 
 #define STORE_INSTRUCTION(name, instruction, type) \
@@ -503,6 +464,258 @@ static inline int* add_address(uintptr_t addr, int offset) {
     );
     return result;
 }
+
+
+
+// --------------------- 分割线: 向量指令相关begin ---------------------
+
+
+// -----------vector load and store(begin)------------
+
+#define VTYPE(SEW, LMUL) ((SEW << 3) | LMUL)
+
+// 定义向量加载宏，将内存中的向量数据加载到寄存器 v6
+// 参数说明：src代表要从src加载到v6寄存器，vl指定加载的向量长度为多少
+#define LOAD_VECTOR_TO_REGISTER(name, instruction, type, sew_data) \
+    static inline void name(const type *src, int vl) { \
+        int sew = sew_data; \
+        int vtype = VTYPE(sew, 1); \
+        asm volatile( \
+            ".option push\n\t" \
+            ".option norvc\n\t" \
+            "vsetvl t0, %1, %2\n\t" \
+            instruction " v6, (%0)\n\t" \
+            ".option pop\n\t" \
+            : /* No output operands */ \
+            : "r"(src), "r"(vl), "r"(vtype) /* Input operands */ \
+            : "t0", "memory" /* Clobbered registers */ \
+        ); \
+    }
+
+// 定义向量存储宏，将寄存器 v6 中的数据存储到内存
+// 参数说明：src代表要从v6寄存器加载到dest向量中（数组保存），vl指定向量长度为多少
+#define STORE_VECTOR_FROM_REGISTER(name, instruction, type ,sew_data) \
+    static inline void name(type *dest, int vl) { \
+        int sew = sew_data; \
+        int vtype = VTYPE(sew, 1); \
+        asm volatile( \
+            ".option push\n\t" \
+            ".option norvc\n\t" \
+            "vsetvl t0, %1, %2\n\t" \
+            instruction " v6, (%0)\n\t" \
+            ".option pop\n\t" \
+            : "+r" (dest) /* Output operand: destination address */ \
+            : "r"(vl), "r"(vtype) /* Input operands */ \
+            : "t0", "memory" /* Clobbered registers */ \
+        ); \
+    }
+
+// 定义具体的加载和存储指令函数（固定使用 v6 寄存器,其它v指令同固定）
+LOAD_VECTOR_TO_REGISTER(vle8_to_v6, "vle8.v", uint8_t, 8);
+LOAD_VECTOR_TO_REGISTER(vle16_to_v6, "vle16.v", uint16_t, 16);
+LOAD_VECTOR_TO_REGISTER(vle32_to_v6, "vle32.v", uint32_t, 32);
+LOAD_VECTOR_TO_REGISTER(vle64_to_v6, "vle64.v", uint64_t, 64);
+
+STORE_VECTOR_FROM_REGISTER(vse8_from_v6, "vse8.v", uint8_t, 8);
+STORE_VECTOR_FROM_REGISTER(vse16_from_v6, "vse16.v", uint16_t, 16);
+STORE_VECTOR_FROM_REGISTER(vse32_from_v6, "vse32.v", uint32_t, 32);
+STORE_VECTOR_FROM_REGISTER(vse64_from_v6, "vse64.v", uint64_t, 64);
+
+// -----------vector load and store(end)------------
+
+
+
+
+// -----------vector reduction instructions(begin)------------
+
+
+// -----------vredsum.vs instructions(begin)------------
+
+
+
+
+// 设置 vredsum.vs 执行条件，确保符合手册要求
+static inline void set_vredsum_vs_conditions(int sew, int lmull, int vs1_init, int vs2_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvli t0, zero, %0\n\t"              // 设置向量长度寄存器为最大可用长度，使用 vtype
+        "vmv.v.i v0, 1\n\t"                     // 初始化 v0 掩码寄存器为全 1（确保所有元素有效）
+        "vmv.v.i v1, %1\n\t"                    // 初始化 v1 向量寄存器（初始累加值）
+        "vmv.v.i v2, %2\n\t"                    // 初始化 v2 向量寄存器（源数据）
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                           // 无输出操作数
+        : "i"(vtype), "I"(vs1_init), "I"(vs2_init)  // 输入操作数
+        : "t0", "v0", "v1", "v2", "memory"      // 被修改的寄存器
+    );
+}
+
+
+
+// 执行 vredsum.vs 指令
+static inline int execute_vredsum_vs_v5() {
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vredsum.vs v5, v5, v6\n\t"             
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                         
+        :                                       // 无输入操作数
+        : "v5", "v6", "memory"                  // 被修改的寄存器
+    );
+}
+
+// -----------vredsum.vs instructions(end)------------
+
+
+
+
+// -----------vector reduction instructions(end)------------
+
+
+
+
+
+// -----------vcpop.m instructions(begin)------------
+
+static inline void set_vcpop_conditions(int vl, int sew, int lmull, int v0_init, int v2_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvl t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+        "vmv.v.i v2, %3\n\t"                    // 初始化 v2 向量寄存器
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                       // 无输出操作数
+        : "r"(vl), "r"(vtype), "I"(v0_init), "I"(v2_init)  // 输入操作数，%0 对应 vl, %1 对应 vtype, %2 对应 v0_init, %3 对应 v2_init
+        : "t0", "v0", "v2", "memory"            // 被修改的寄存器
+    );
+}
+
+#define EXECUTE_VCPOP_V2()                          \
+    ({                                              \
+        uint32_t _temp;                             \
+        asm volatile (                              \
+            ".option push\n\t"                      \
+            ".option norvc\n\t"                     \
+            "vcpop.m %0, v2, v0.t\n\t"              \
+            ".option pop\n\t"                       \
+            : "=r"(_temp)                           \
+            :                                       \
+            : "v2", "v0", "memory"                  \
+        );                                          \
+        _temp;                                      \
+    })
+
+
+
+// -----------vcpop.m instructions(end)------------
+
+
+
+// -----------vfirst_m_v3 instructions(begin)------------
+
+// 设置 vfirst.m 执行条件
+static inline void set_vfirst_conditions(int vl, int sew, int lmull, int v0_init, int v3_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvl t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+        "vmv.v.i v3, %3\n\t"                    // 初始化 v3 向量寄存器
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                       // 无输出操作数
+        : "r"(vl), "r"(vtype), "I"(v0_init), "I"(v3_init)  // 输入操作数，%0 对应 vl, %1 对应 vtype, %2 对应 v0_init, %3 对应 v3_init
+        : "t0", "v0", "v3", "memory"            // 被修改的寄存器
+    );
+}
+
+
+// vfirst.m 执行
+#define EXECUTE_VFIRST_M_V3()                          \
+    ({                                                 \
+        uint32_t _temp;                                \
+        asm volatile (                                 \
+            ".option push\n\t"                         \
+            ".option norvc\n\t"                        \
+            "vfirst.m %0, v3, v0.t\n\t"                \
+            ".option pop\n\t"                          \
+            : "=r"(_temp)                              \
+            :                                          \
+            : "v3", "v0", "memory"                     \
+        );                                             \
+        _temp;                                         \
+    })
+
+
+// -----------vfirst_m_v3 instructions(end)------------
+
+
+    
+
+// -----------vmsbf_m instructions(begin)------------
+
+// 设置执行 vmsbf.m 指令条件，包括向量长度、掩码寄存器和源寄存器
+static inline void set_vmsbfm_conditions(int vl, int sew, int lmull, int v0_init, int v4_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvl t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+        "vmv.v.i v4, %3\n\t"                    // 初始化 v4 源寄存器
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                       // 无输出操作数
+        : "r"(vl), "r"(vtype), "I"(v0_init), "I"(v4_init)  // 输入操作数，%0 对应 vl, %1 对应 vtype, %2 对应 v0_init, %3 对应 v4_init
+        : "t0", "v4", "v0", "memory"            // 被修改的寄存器
+    );
+}
+
+// 执行 vmsbf.m 指令
+static inline void execute_vmsbf_m() {
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vmsbf.m v3, v4, v0.t\n\t"              // 执行向量掩码生成指令，生成掩码存到 v3
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                       // 无输出操作数
+        :                                       // 无输入操作数
+        : "v3", "v4", "v0", "memory"            // 被修改的寄存器
+    );
+}
+
+// -----------vmsbf_m instructions(end)------------
+
+
+
+
+// --------------------- 分割线: 向量指令相关end ---------------------
+
+
+
 
 
 
