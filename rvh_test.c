@@ -449,6 +449,11 @@ void reset_state(){
 
     CSRW(CSR_VSTVEC, vshandler_entry);
 
+    CSRS(CSR_MSTATUS, 1ULL << 9);      //设置mstatus.vs!=0
+    CSRC(CSR_MSTATUS, 1ULL << 10); 
+    CSRS(CSR_VSSTATUS, 1ULL << 9);      //设置vsstatus.vs!=0
+    CSRC(CSR_VSSTATUS, 1ULL << 10); 
+
     sfence();
     hfence();
 }

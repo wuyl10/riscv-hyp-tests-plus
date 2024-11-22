@@ -12,7 +12,7 @@
 // TEST_REGISTER(priv_change_15);    //测试点第13行
 // TEST_REGISTER(priv_change_14);    //测试点第27行
 // TEST_REGISTER(priv_change_13);    //测试点第11行
-// TEST_REGISTER(priv_change_12);    //测试点第14行S
+// TEST_REGISTER(priv_change_12);    //测试点第14行
 // TEST_REGISTER(priv_change_11);    //测试点第18行
 // TEST_REGISTER(priv_change_10);    //测试点第22行
 // TEST_REGISTER(priv_change_9); 
@@ -28,12 +28,24 @@
 // TEST_REGISTER(vec_test_4); 
 // TEST_REGISTER(vec_test_5); 
 // TEST_REGISTER(vec_test_6); 
-TEST_REGISTER(vec_test_7); 
+// TEST_REGISTER(vec_test_7); 
 // TEST_REGISTER(vec_test_8); 
-// TEST_REGISTER(vec_test_9); 
+TEST_REGISTER(vec_test_9);       
 // TEST_REGISTER(vec_test_10); 
 // TEST_REGISTER(vec_test_11); 
-// TEST_REGISTER(vec_test_88); 
+// TEST_REGISTER(vec_test_12); 
+// TEST_REGISTER(vec_test_13); 
+// TEST_REGISTER(vec_test_14); 
+// TEST_REGISTER(vec_test_15); 
+// TEST_REGISTER(vec_test_16); 
+// TEST_REGISTER(vec_test_17); 
+// TEST_REGISTER(vec_test_18); 
+// TEST_REGISTER(vec_test_19); 
+// TEST_REGISTER(vec_test_20); 
+// TEST_REGISTER(vec_test_21); 
+// TEST_REGISTER(vec_test_22); 
+// TEST_REGISTER(vec_test_23); 
+// TEST_REGISTER(vec_test_24);  //未完成
 
 
 // TEST_REGISTER(priv_instruction); 

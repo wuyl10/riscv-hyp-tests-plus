@@ -534,8 +534,8 @@ STORE_VECTOR_FROM_REGISTER(vse64_from_v6, "vse64.v", uint64_t, 64);
 
 
 
-// 设置 vredsum.vs 执行条件，确保符合手册要求
-static inline void set_vredsum_vs_conditions(int sew, int lmull, int vs1_init, int vs2_init) {
+// 设置 vredsum.vs 执行条件
+static inline void set_vredsum_vs_conditions(int sew, int lmull, int vl, int vs1_init, int vs2_init) {
     // 计算 vtype
     int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
 
@@ -543,32 +543,31 @@ static inline void set_vredsum_vs_conditions(int sew, int lmull, int vs1_init, i
         ".option push\n\t"
         ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
 
-        "vsetvli t0, zero, %0\n\t"              // 设置向量长度寄存器为最大可用长度，使用 vtype
+        "vsetvli t0, %0, %1\n\t"              // 设置向量长度寄存器为指定长度，使用 vtype
         "vmv.v.i v0, 1\n\t"                     // 初始化 v0 掩码寄存器为全 1（确保所有元素有效）
-        "vmv.v.i v1, %1\n\t"                    // 初始化 v1 向量寄存器（初始累加值）
-        "vmv.v.i v2, %2\n\t"                    // 初始化 v2 向量寄存器（源数据）
+        "vmv.v.i v4, %2\n\t"                    // 初始化 v4 向量寄存器（初始累加值）
+        "vmv.v.i v6, %3\n\t"                    // 初始化 v6 向量寄存器（源数据）
 
         ".option pop\n\t"                       // 恢复之前的汇编器选项
         :                                           // 无输出操作数
-        : "i"(vtype), "I"(vs1_init), "I"(vs2_init)  // 输入操作数
-        : "t0", "v0", "v1", "v2", "memory"      // 被修改的寄存器
+        : "r"(vl), "i"(vtype), "I"(vs1_init), "I"(vs2_init)  // 输入操作数
+        : "t0", "v0", "v4", "v6", "memory"      // 被修改的寄存器
     );
 }
 
 
-
-// 执行 vredsum.vs 指令
-static inline int execute_vredsum_vs_v5() {
+// 设置 vredsum.vs 执行条件的函数
+static inline void execute_vredsum_vs() {
     asm volatile (
         ".option push\n\t"
         ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
 
-        "vredsum.vs v5, v5, v6\n\t"             
+        "vredsum.vs v2, v2, v4, v0.t\n\t"      // 执行 vredsum.vs 指令，将 v4 中所有元素相加，并累加到 v2[0] 中
 
         ".option pop\n\t"                       // 恢复之前的汇编器选项
-        :                         
+        :                                       // 无输出操作数
         :                                       // 无输入操作数
-        : "v5", "v6", "memory"                  // 被修改的寄存器
+        : "v2", "v4", "v0", "memory"            // 被修改的寄存器
     );
 }
 
@@ -604,7 +603,7 @@ static inline void set_vcpop_conditions(int vl, int sew, int lmull, int v0_init,
     );
 }
 
-#define EXECUTE_VCPOP_V2()                          \
+#define execute_vcpop_v2()                          \
     ({                                              \
         uint32_t _temp;                             \
         asm volatile (                              \
@@ -628,9 +627,9 @@ static inline void set_vcpop_conditions(int vl, int sew, int lmull, int v0_init,
 // -----------vfirst_m_v3 instructions(begin)------------
 
 // 设置 vfirst.m 执行条件
-static inline void set_vfirst_conditions(int vl, int sew, int lmull, int v0_init, int v3_init) {
+static inline void set_vfirst_m_conditions(int sew, int lmull, int vl, int v0_init, int v4_init) {
     // 计算 vtype
-    int vtype = (sew << 3) | lmull;
+    int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
 
     asm volatile (
         ".option push\n\t"
@@ -638,12 +637,12 @@ static inline void set_vfirst_conditions(int vl, int sew, int lmull, int v0_init
 
         "vsetvl t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
         "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
-        "vmv.v.i v3, %3\n\t"                    // 初始化 v3 向量寄存器
+        "vmv.v.i v4, %3\n\t"                    // 初始化 v4 源寄存器
 
         ".option pop\n\t"                       // 恢复之前的汇编器选项
         :                                       // 无输出操作数
-        : "r"(vl), "r"(vtype), "I"(v0_init), "I"(v3_init)  // 输入操作数，%0 对应 vl, %1 对应 vtype, %2 对应 v0_init, %3 对应 v3_init
-        : "t0", "v0", "v3", "memory"            // 被修改的寄存器
+        : "r"(vl), "r"(vtype), "I"(v0_init), "I"(v4_init)  // 输入操作数
+        : "t0", "v4", "v0", "memory"            // 被修改的寄存器
     );
 }
 
@@ -708,6 +707,302 @@ static inline void execute_vmsbf_m() {
 }
 
 // -----------vmsbf_m instructions(end)------------
+
+
+
+// -----------vmsif_m instructions(begin)------------
+
+
+// 设置 vmsif.m 执行条件
+static inline void set_vmsifm_conditions(int vl, int sew, int lmull, int v0_init, int v4_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvl t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+        "vmv.v.i v4, %3\n\t"                    // 初始化 v4 源寄存器
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                           // 无输出操作数
+        : "r"(vl), "r"(vtype), "I"(v0_init), "I"(v4_init)  // 输入操作数
+        : "t0", "v4", "v0", "memory"         // 被修改的寄存器
+    );
+}
+
+// 执行 vmsif.m 指令
+static inline void execute_vmsif_m() {
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vmsif.m v5, v4, v0.t\n\t"              // 执行 vmsif.m 指令，基于掩码生成 v4 的内容
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                         // 无输出操作数
+        :                                         // 无输入操作数
+        : "v5", "v4", "v0", "memory"              // 被修改的寄存器
+    );
+}
+
+// -----------vmsif_m instructions(end)------------
+
+
+// -----------vmsif_m instructions(begin)------------
+
+
+// 设置 vmsof.m 执行条件
+static inline void set_vmsofm_conditions(int vl, int sew, int lmull, int v0_init, int v4_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvl t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+        "vmv.v.i v4, %3\n\t"                    // 初始化 v4 源寄存器
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                           // 无输出操作数
+        : "r"(vl), "r"(vtype), "I"(v0_init), "I"(v4_init)  // 输入操作数
+        : "t0", "v4", "v0", "memory"         // 被修改的寄存器
+    );
+}
+
+// 执行 vmsif.m 指令
+static inline void execute_vmsof_m() {
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vmsof.m v5, v4, v0.t\n\t"              // 执行 vmsof.m 指令，基于掩码生成 v4 的内容
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                         // 无输出操作数
+        :                                         // 无输入操作数
+        : "v5", "v4", "v0", "memory"              // 被修改的寄存器
+    );
+}
+
+// -----------vmsof_m instructions(end)------------
+
+
+
+
+
+// -----------vadd_vv instructions(begin)------------
+
+
+
+// 设置 vadd 执行条件
+static inline void set_vadd_conditions(int sew, int lmull, int vl, int v0_init, int v4_init, int v6_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvli t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+        "vmv.v.i v4, %3\n\t"                    // 初始化 v4 源寄存器 1
+        "vmv.v.i v6, %4\n\t"                    // 初始化 v6 源寄存器 2
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                           // 无输出操作数
+        : "r"(vl), "rI"(vtype), "I"(v0_init), "I"(v4_init), "I"(v6_init)  // 输入操作数，vtype 改为立即数或寄存器
+        : "t0", "v0", "v4", "v6", "memory"             // 被修改的寄存器
+    );
+}
+
+
+
+
+// 执行 vadd.vv 指令
+static inline void execute_vadd_vv() {
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vadd.vv v8, v4, v6\n\t"               // 执行向量加法指令，将 v4 和 v6 的对应元素相加，结果存入 v8
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                         // 无输出操作数
+        :                                         // 无输入操作数
+        : "v8", "v4", "v6", "memory"        // 被修改的寄存器
+    );
+}
+
+
+
+
+
+// -----------vadd_vv instructions(end)------------
+
+
+
+// -----------vfadd instructions(begin)------------
+
+
+// 设置向量浮点加法指令的执行条件
+static inline void set_vfadd_conditions(int sew, int lmull, int vl, float v0_init, float v4_init, float v6_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvli t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vfmv.v.f v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+        "vfmv.v.f v4, %3\n\t"                    // 初始化 v4 源寄存器 1
+        "vfmv.v.f v6, %4\n\t"                    // 初始化 v6 源寄存器 2
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                           // 无输出操作数
+        : "r"(vl), "rI"(vtype), "f"(v0_init), "f"(v4_init), "f"(v6_init)  // 输入操作数，vtype 改为立即数或寄存器
+        : "t0", "v0", "v4", "v6", "memory"             // 被修改的寄存器
+    );
+}
+
+// 执行向量浮点加法指令
+static inline void execute_vfadd() {
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vfadd.vv v8, v4, v6\n\t"               // 执行浮点加法，结果存储到 v8 中
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                           // 无输出操作数
+        :                                           // 无输入操作数
+        : "v8", "v4", "v6", "memory"          // 被修改的寄存器
+    );
+}
+
+
+
+
+// -----------vfadd instructions(end)------------
+
+
+
+
+
+
+
+
+
+
+
+// -----------viota.m instructions(begin)------------
+
+
+// 设置 viota.m 执行条件
+static inline void set_viota_m_conditions(int vl, int sew, int lmull, int v0_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvl t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                           // 无输出操作数
+        : "r"(vl), "r"(vtype), "I"(v0_init)  // 输入操作数
+        : "t0", "v0", "memory"                // 被修改的寄存器
+    );
+}
+
+// 执行 viota.m 指令
+static inline void execute_viota_m() {
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "viota.m v6, v0\n\t"                  // 执行 viota.m 指令，将掩码向量 v0 的索引结果存入 v6 中
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                         // 无输出操作数
+        :                                         // 无输入操作数
+        : "v6", "v0", "memory"                // 被修改的寄存器
+    );
+}
+
+
+// -----------viota.m instructions(end)------------
+
+
+
+
+
+// -----------vcompress instructions(begin)------------
+
+
+// 设置 vcompress 执行条件
+static inline void set_vcompress_conditions(int vl, int sew, int lmull, int v0_init, int v4_init, int v8_init) {
+    // 计算 vtype
+    int vtype = (sew << 3) | lmull;  // 根据传入的 LMUL 设置 vtype
+
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vsetvl t0, %0, %1\n\t"                 // 设置向量长度寄存器 vl 和 vtype
+        "vmv.v.i v0, %2\n\t"                    // 初始化 v0 掩码寄存器
+        "vmv.v.i v4, %3\n\t"                    // 初始化 v4 源寄存器
+        "vmv.v.i v8, %4\n\t"                    // 初始化 v8 目标寄存器
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                           // 无输出操作数
+        : "r"(vl), "r"(vtype), "I"(v0_init), "I"(v4_init), "I"(v8_init)  // 输入操作数
+        : "t0", "v0", "v4", "v8", "memory"  // 被修改的寄存器
+    );
+}
+
+// 执行 vcompress 指令
+static inline void execute_vcompress() {
+    asm volatile (
+        ".option push\n\t"
+        ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+        "vcompress.vm v8, v4, v0\n\t"        // 执行 vcompress 指令，将 v4 压缩后存储到 v8 中
+
+        ".option pop\n\t"                       // 恢复之前的汇编器选项
+        :                                         // 无输出操作数
+        :                                         // 无输入操作数
+        : "v8", "v4", "v0", "memory"         // 被修改的寄存器
+    );
+}
+
+// -----------vcompress instructions(ends)------------
+
+
+
+// // 使用不支持的 SEW 和 LMUL 配置来设置 vtype
+// static inline void set_vtype_with_invalid_eew() {
+//     asm volatile (
+//         ".option push\n\t"
+//         ".option norvc\n\t"                    // 关闭 RISC-V 压缩指令模式，确保向量指令正常
+
+//         "vsetvli t0, zero, e128, m1, ta, mu\n\t"  // 设置不支持的 SEW = e128 (128位) 和 LMUL = 1
+
+//         ".option pop\n\t"                       // 恢复之前的汇编器选项
+//         :                                       // 无输出操作数
+//         :                                       // 无输入操作数
+//         : "t0", "memory"                        // 被修改的寄存器
+//     );
+// }
+
+
 
 
 

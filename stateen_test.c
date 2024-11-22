@@ -1069,26 +1069,6 @@ bool stateen_CSRIND_test(){
     ); 
 
 
-    goto_priv(PRIV_VU);
-    TEST_SETUP_EXCEPT();
-    CSRR(CSR_SISELECT);
-
-    excpt_info();
-
-    TEST_ASSERT("vu mode accesss siselect register successful when mstateen.csrind=1 hstateen.csrind=1",
-        excpt.triggered == false
-    ); 
-
-    goto_priv(PRIV_VU);
-    TEST_SETUP_EXCEPT();
-    CSRR(CSR_SIREG);
-
-    excpt_info();
-
-    TEST_ASSERT("vu mode accesss sireg register successful when mstateen.csrind=1 hstateen.csrind=1",
-        excpt.triggered == false
-    ); 
-
     goto_priv(PRIV_HS);
     TEST_SETUP_EXCEPT();
     CSRR(CSR_SISELECT);

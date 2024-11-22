@@ -611,7 +611,7 @@ bool check_misa_h(){
     80000666:	00f83023          	sd	a5,0(a6)
     8000066a:	1ff00693          	li	a3,511
     8000066e:	00038597          	auipc	a1,0x38
-    80000672:	25a58593          	addi	a1,a1,602 # 800388c8 <test_page_perm_table>
+    80000672:	26258593          	addi	a1,a1,610 # 800388d0 <test_page_perm_table>
     80000676:	0d86f7d7          	vsetvli	a5,a3,e64,m1,ta,ma
 
 
@@ -643,7 +643,7 @@ bool check_misa_h(){
     800006b8:	fedd                	bnez	a3,80000676 <hspt_init+0x96>
         hspt[2][i] = (addr >> 2) | PTE_AD |
     800006ba:	0003a717          	auipc	a4,0x3a
-    800006be:	1fe73703          	ld	a4,510(a4) # 8003a8b8 <test_page_perm_table+0x1ff0>
+    800006be:	20673703          	ld	a4,518(a4) # 8003a8c0 <test_page_perm_table+0x1ff0>
     //     hspt[2][i] = 
     //         PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
     //     addr +=  PAGE_SIZE;
@@ -651,7 +651,7 @@ bool check_misa_h(){
 
     if(curr_priv == PRIV_HS || curr_priv == PRIV_M){
     800006c2:	0003a797          	auipc	a5,0x3a
-    800006c6:	20a7a783          	lw	a5,522(a5) # 8003a8cc <curr_priv>
+    800006c6:	2127a783          	lw	a5,530(a5) # 8003a8d4 <curr_priv>
         hspt[2][i] = (addr >> 2) | PTE_AD |
     800006ca:	220806b7          	lui	a3,0x22080
     800006ce:	cc068693          	addi	a3,a3,-832 # 2207fcc0 <STACK_SIZE+0x21f7fcc0>
@@ -804,7 +804,7 @@ void vspt_init(){
     vspt[2][0] = 
     800007fe:	1ff00693          	li	a3,511
     80000802:	00038597          	auipc	a1,0x38
-    80000806:	0c658593          	addi	a1,a1,198 # 800388c8 <test_page_perm_table>
+    80000806:	0ce58593          	addi	a1,a1,206 # 800388d0 <test_page_perm_table>
     8000080a:	0d86f7d7          	vsetvli	a5,a3,e64,m1,ta,ma
 
     addr = TEST_VPAGE_BASE;
@@ -841,7 +841,7 @@ void vspt_init(){
     80000852:	5208a157          	vid.v	v2
         vspt[3][i] = (addr >> 2) | PTE_AD |
     80000856:	0003a697          	auipc	a3,0x3a
-    8000085a:	0626b683          	ld	a3,98(a3) # 8003a8b8 <test_page_perm_table+0x1ff0>
+    8000085a:	06a6b683          	ld	a3,106(a3) # 8003a8c0 <test_page_perm_table+0x1ff0>
     vspt[2][1] = 
     8000085e:	96263157          	vsll.vi	v2,v2,12
     80000862:	008015b7          	lui	a1,0x801
@@ -937,7 +937,7 @@ void vspt_init(){
     uintptr_t satp = (((uintptr_t)vspt) >> 12) | (0x8ULL << 60);
     if(curr_priv == PRIV_VS){
     8000091c:	0003a717          	auipc	a4,0x3a
-    80000920:	fb072703          	lw	a4,-80(a4) # 8003a8cc <curr_priv>
+    80000920:	fb872703          	lw	a4,-72(a4) # 8003a8d4 <curr_priv>
     uintptr_t satp = (((uintptr_t)vspt) >> 12) | (0x8ULL << 60);
     80000924:	57fd                	li	a5,-1
     80000926:	8031                	srli	s0,s0,0xc
@@ -1112,7 +1112,7 @@ void hpt_init(){
     80000a6a:	fef73c23          	sd	a5,-8(a4)
     80000a6e:	1ff00693          	li	a3,511
     80000a72:	00038597          	auipc	a1,0x38
-    80000a76:	e5e58593          	addi	a1,a1,-418 # 800388d0 <test_page_perm_table+0x8>
+    80000a76:	e6658593          	addi	a1,a1,-410 # 800388d8 <test_page_perm_table+0x8>
     80000a7a:	0d86f7d7          	vsetvli	a5,a3,e64,m1,ta,ma
         PTE_V | (((uintptr_t)&hpt[2][0]) >> 2);
 
@@ -1150,7 +1150,7 @@ void hpt_init(){
     80000ac2:	5208a157          	vid.v	v2
         hpt[2][i] = (addr >> 2) | PTE_AD |
     80000ac6:	0003a697          	auipc	a3,0x3a
-    80000aca:	dfa6b683          	ld	a3,-518(a3) # 8003a8c0 <test_page_perm_table+0x1ff8>
+    80000aca:	e026b683          	ld	a3,-510(a3) # 8003a8c8 <test_page_perm_table+0x1ff8>
     hpt[1][1] = 
     80000ace:	96263157          	vsll.vi	v2,v2,12
     80000ad2:	45c5                	li	a1,17
@@ -1243,7 +1243,7 @@ void hpt_init(){
 
     if(curr_priv == PRIV_HS || curr_priv == PRIV_M){
     80000b8a:	0003a797          	auipc	a5,0x3a
-    80000b8e:	d427a783          	lw	a5,-702(a5) # 8003a8cc <curr_priv>
+    80000b8e:	d4a7a783          	lw	a5,-694(a5) # 8003a8d4 <curr_priv>
     80000b92:	4705                	li	a4,1
     80000b94:	37f5                	addiw	a5,a5,-3
     80000b96:	00f76d63          	bltu	a4,a5,80000bb0 <hpt_init+0x234>
@@ -1287,7 +1287,7 @@ void page_table_add_vs_AD(int i){
     80000be2:	880007b7          	lui	a5,0x88000
     hspt[2][i] = (addr >> 2) | PTE_AD | test_page_perm_table[i].vs;
     80000be6:	00038617          	auipc	a2,0x38
-    80000bea:	ce260613          	addi	a2,a2,-798 # 800388c8 <test_page_perm_table>
+    80000bea:	cea60613          	addi	a2,a2,-790 # 800388d0 <test_page_perm_table>
     addr = 0x88000000 + i*0x1000;
     80000bee:	9fb9                	addw	a5,a5,a4
     hspt[2][i] = (addr >> 2) | PTE_AD | test_page_perm_table[i].vs;
@@ -1352,7 +1352,7 @@ void page_table_del_vs_AD(int i){
     80000c3c:	880007b7          	lui	a5,0x88000
     hspt[2][i] = (addr >> 2) | test_page_perm_table[i].vs;
     80000c40:	00038617          	auipc	a2,0x38
-    80000c44:	c8860613          	addi	a2,a2,-888 # 800388c8 <test_page_perm_table>
+    80000c44:	c9060613          	addi	a2,a2,-880 # 800388d0 <test_page_perm_table>
     80000c48:	962e                	add	a2,a2,a1
     addr = 0x88000000 + i*0x1000;
     80000c4a:	9fb9                	addw	a5,a5,a4
@@ -1416,7 +1416,7 @@ void page_table_add_h_AD(int i){
     80000c98:	9fb9                	addw	a5,a5,a4
     hspt[2][i] = (addr >> 2) | test_page_perm_table[i].h;
     80000c9a:	00038717          	auipc	a4,0x38
-    80000c9e:	c2e70713          	addi	a4,a4,-978 # 800388c8 <test_page_perm_table>
+    80000c9e:	c3670713          	addi	a4,a4,-970 # 800388d0 <test_page_perm_table>
     80000ca2:	9736                	add	a4,a4,a3
     80000ca4:	6714                	ld	a3,8(a4)
     addr = 0x88000000 + i*0x1000;
@@ -1442,7 +1442,7 @@ void page_table_del_h_AD(int i){
     80000cca:	00451693          	slli	a3,a0,0x4
     80000cce:	9fb9                	addw	a5,a5,a4
     80000cd0:	00038717          	auipc	a4,0x38
-    80000cd4:	bf870713          	addi	a4,a4,-1032 # 800388c8 <test_page_perm_table>
+    80000cd4:	c0070713          	addi	a4,a4,-1024 # 800388d0 <test_page_perm_table>
     80000cd8:	9736                	add	a4,a4,a3
     80000cda:	6714                	ld	a3,8(a4)
     80000cdc:	1782                	slli	a5,a5,0x20
@@ -1569,7 +1569,7 @@ void set_prev_priv(int priv){
 
     switch(curr_priv){
     80000d8e:	0003a797          	auipc	a5,0x3a
-    80000d92:	b3e7a783          	lw	a5,-1218(a5) # 8003a8cc <curr_priv>
+    80000d92:	b467a783          	lw	a5,-1210(a5) # 8003a8d4 <curr_priv>
     80000d96:	470d                	li	a4,3
     80000d98:	06e78963          	beq	a5,a4,80000e0a <set_prev_priv+0x7c>
     80000d9c:	4711                	li	a4,4
@@ -1669,7 +1669,7 @@ void set_prev_priv(int priv){
     80000e5c:	b7f9                	j	80000e2a <set_prev_priv+0x9c>
             if(priv == PRIV_VS || priv == PRIV_HS) temp |= (1ULL << 11);    //mpp   
     80000e5e:	6705                	lui	a4,0x1
-    80000e60:	80070713          	addi	a4,a4,-2048 # 800 <_test_table+0x800>
+    80000e60:	80070713          	addi	a4,a4,-2048 # 800 <_test_table_size+0x7ff>
             if(priv == PRIV_VU || priv == PRIV_VS) temp |= (1ULL << 39);     //mpv
     80000e64:	4689                	li	a3,2
             if(priv == PRIV_VS || priv == PRIV_HS) temp |= (1ULL << 11);    //mpp   
@@ -1705,13 +1705,13 @@ void goto_priv(int target_priv){
 
     if(real_priv == target_priv || target_priv >= PRIV_MAX){
     80000e7e:	0003a797          	auipc	a5,0x3a
-    80000e82:	a4a7a783          	lw	a5,-1462(a5) # 8003a8c8 <real_priv>
+    80000e82:	a527a783          	lw	a5,-1454(a5) # 8003a8d0 <real_priv>
     80000e86:	0003a497          	auipc	s1,0x3a
-    80000e8a:	a4648493          	addi	s1,s1,-1466 # 8003a8cc <curr_priv>
+    80000e8a:	a4e48493          	addi	s1,s1,-1458 # 8003a8d4 <curr_priv>
     80000e8e:	00a78963          	beq	a5,a0,80000ea0 <goto_priv+0x32>
     80000e92:	4791                	li	a5,4
     80000e94:	0003a497          	auipc	s1,0x3a
-    80000e98:	a3848493          	addi	s1,s1,-1480 # 8003a8cc <curr_priv>
+    80000e98:	a4048493          	addi	s1,s1,-1472 # 8003a8d4 <curr_priv>
     80000e9c:	06a7d363          	bge	a5,a0,80000f02 <goto_priv+0x94>
         if(on_going)
             VERBOSE("...entered %s mode", priv_strs[target_priv]);
@@ -1731,13 +1731,13 @@ void goto_priv(int target_priv){
     80000eaa:	8082                	ret
     if(is_user(target_priv) && is_user(curr_priv)) {
     80000eac:	0003a717          	auipc	a4,0x3a
-    80000eb0:	a2072703          	lw	a4,-1504(a4) # 8003a8cc <curr_priv>
+    80000eb0:	a2872703          	lw	a4,-1496(a4) # 8003a8d4 <curr_priv>
     80000eb4:	0003a497          	auipc	s1,0x3a
-    80000eb8:	a1848493          	addi	s1,s1,-1512 # 8003a8cc <curr_priv>
+    80000eb8:	a2048493          	addi	s1,s1,-1504 # 8003a8d4 <curr_priv>
     80000ebc:	0ae7f863          	bgeu	a5,a4,80000f6c <goto_priv+0xfe>
     if(real_priv == target_priv || target_priv >= PRIV_MAX){
     80000ec0:	0003a797          	auipc	a5,0x3a
-    80000ec4:	a087a783          	lw	a5,-1528(a5) # 8003a8c8 <real_priv>
+    80000ec4:	a107a783          	lw	a5,-1520(a5) # 8003a8d0 <real_priv>
     80000ec8:	fca78ce3          	beq	a5,a0,80000ea0 <goto_priv+0x32>
     if(curr_priv == PRIV_VS && priv == PRIV_HU){
     80000ecc:	4789                	li	a5,2
@@ -1759,7 +1759,7 @@ void goto_priv(int target_priv){
     80000efe:	273290ef          	jal	8002a970 <exit>
     if(target_priv > curr_priv){
     80000f02:	0003a797          	auipc	a5,0x3a
-    80000f06:	9ca7a783          	lw	a5,-1590(a5) # 8003a8cc <curr_priv>
+    80000f06:	9d27a783          	lw	a5,-1582(a5) # 8003a8d4 <curr_priv>
     80000f0a:	02a7f063          	bgeu	a5,a0,80000f2a <goto_priv+0xbc>
     ecall_args[0] = a0;
     80000f0e:	00050797          	auipc	a5,0x50
@@ -1784,10 +1784,10 @@ void goto_priv(int target_priv){
     80000f30:	e5fff0ef          	jal	80000d8e <set_prev_priv>
     if(curr_priv == PRIV_M) {
     80000f34:	0003a797          	auipc	a5,0x3a
-    80000f38:	9987a783          	lw	a5,-1640(a5) # 8003a8cc <curr_priv>
+    80000f38:	9a07a783          	lw	a5,-1632(a5) # 8003a8d4 <curr_priv>
     real_priv = priv;
     80000f3c:	0003a717          	auipc	a4,0x3a
-    80000f40:	98872623          	sw	s0,-1652(a4) # 8003a8c8 <real_priv>
+    80000f40:	98872a23          	sw	s0,-1644(a4) # 8003a8d0 <real_priv>
     if(curr_priv == PRIV_M) {
     80000f44:	4711                	li	a4,4
     80000f46:	04e78e63          	beq	a5,a4,80000fa2 <goto_priv+0x134>
@@ -1802,18 +1802,18 @@ void goto_priv(int target_priv){
     80000f5e:	10200073          	sret
     curr_priv = priv;
     80000f62:	0003a797          	auipc	a5,0x3a
-    80000f66:	9687a523          	sw	s0,-1686(a5) # 8003a8cc <curr_priv>
+    80000f66:	9687a923          	sw	s0,-1678(a5) # 8003a8d4 <curr_priv>
     80000f6a:	bf25                	j	80000ea2 <goto_priv+0x34>
         goto_priv(PRIV_M);
     80000f6c:	4511                	li	a0,4
     80000f6e:	f01ff0ef          	jal	80000e6e <goto_priv>
     if(real_priv == target_priv || target_priv >= PRIV_MAX){
     80000f72:	0003a797          	auipc	a5,0x3a
-    80000f76:	9567a783          	lw	a5,-1706(a5) # 8003a8c8 <real_priv>
+    80000f76:	95e7a783          	lw	a5,-1698(a5) # 8003a8d0 <real_priv>
     80000f7a:	f28783e3          	beq	a5,s0,80000ea0 <goto_priv+0x32>
     if(target_priv > curr_priv){
     80000f7e:	0003a717          	auipc	a4,0x3a
-    80000f82:	94e72703          	lw	a4,-1714(a4) # 8003a8cc <curr_priv>
+    80000f82:	95672703          	lw	a4,-1706(a4) # 8003a8d4 <curr_priv>
     80000f86:	f88764e3          	bltu	a4,s0,80000f0e <goto_priv+0xa0>
     if(priv == curr_priv) 
     80000f8a:	f0870ce3          	beq	a4,s0,80000ea2 <goto_priv+0x34>
@@ -1886,7 +1886,7 @@ uint64_t mhandler(){
 
     real_priv = PRIV_M;
     8000100a:	0003a997          	auipc	s3,0x3a
-    8000100e:	8be98993          	addi	s3,s3,-1858 # 8003a8c8 <real_priv>
+    8000100e:	8c698993          	addi	s3,s3,-1850 # 8003a8d0 <real_priv>
     80001012:	4791                	li	a5,4
     80001014:	00f9a023          	sw	a5,0(s3)
 
@@ -1975,10 +1975,10 @@ uint64_t mhandler(){
     unsigned temp_priv = real_priv;
     real_priv = curr_priv;
     800010aa:	0003a797          	auipc	a5,0x3a
-    800010ae:	8227a783          	lw	a5,-2014(a5) # 8003a8cc <curr_priv>
+    800010ae:	82a7a783          	lw	a5,-2006(a5) # 8003a8d4 <curr_priv>
     unsigned temp_priv = real_priv;
     800010b2:	0003a517          	auipc	a0,0x3a
-    800010b6:	81652503          	lw	a0,-2026(a0) # 8003a8c8 <real_priv>
+    800010b6:	81e52503          	lw	a0,-2018(a0) # 8003a8d0 <real_priv>
     excpt.fault_inst = 0;
     800010ba:	00050717          	auipc	a4,0x50
     800010be:	f8073723          	sd	zero,-114(a4) # 80051048 <excpt+0x38>
@@ -2021,7 +2021,7 @@ uint64_t mhandler(){
     return_from_exception(temp_priv, curr_priv, cause, epc);
     8000111c:	600026f3          	csrr	a3,hstatus
     80001120:	00039797          	auipc	a5,0x39
-    80001124:	7ac7a783          	lw	a5,1964(a5) # 8003a8cc <curr_priv>
+    80001124:	7b47a783          	lw	a5,1972(a5) # 8003a8d4 <curr_priv>
     80001128:	0806e713          	ori	a4,a3,128
     8000112c:	9bf5                	andi	a5,a5,-3
     8000112e:	c399                	beqz	a5,80001134 <mhandler+0x13e>
@@ -2029,7 +2029,7 @@ uint64_t mhandler(){
     80001134:	60071073          	csrw	hstatus,a4
     80001138:	100027f3          	csrr	a5,sstatus
     8000113c:	00039717          	auipc	a4,0x39
-    80001140:	79072703          	lw	a4,1936(a4) # 8003a8cc <curr_priv>
+    80001140:	79872703          	lw	a4,1944(a4) # 8003a8d4 <curr_priv>
     80001144:	4685                	li	a3,1
     80001146:	edf7f793          	andi	a5,a5,-289
     8000114a:	3779                	addiw	a4,a4,-2
@@ -2076,7 +2076,7 @@ uint64_t mhandler(){
     800011b8:	fc0007b7          	lui	a5,0xfc000
     800011bc:	17fd                	addi	a5,a5,-1 # fffffffffbffffff <__stack_top+0xffffffff7bd00fff>
     800011be:	00039697          	auipc	a3,0x39
-    800011c2:	70e6a683          	lw	a3,1806(a3) # 8003a8cc <curr_priv>
+    800011c2:	7166a683          	lw	a3,1814(a3) # 8003a8d4 <curr_priv>
     800011c6:	07b6                	slli	a5,a5,0xd
     800011c8:	77f78793          	addi	a5,a5,1919
     800011cc:	8ff9                	and	a5,a5,a4
@@ -2085,7 +2085,7 @@ uint64_t mhandler(){
     800011d6:	4605                	li	a2,1
     800011d8:	04e66663          	bltu	a2,a4,80001224 <mhandler+0x22e>
     800011dc:	6705                	lui	a4,0x1
-    800011de:	80070713          	addi	a4,a4,-2048 # 800 <_test_table+0x800>
+    800011de:	80070713          	addi	a4,a4,-2048 # 800 <_test_table_size+0x7ff>
     800011e2:	4609                	li	a2,2
     800011e4:	8fd9                	or	a5,a5,a4
     800011e6:	00c69563          	bne	a3,a2,800011f0 <mhandler+0x1fa>
@@ -2113,7 +2113,7 @@ uint64_t mhandler(){
     80001218:	bd2d                	j	80001052 <mhandler+0x5c>
     return_from_exception(temp_priv, curr_priv, cause, epc);
     8000121a:	6709                	lui	a4,0x2
-    8000121c:	80070713          	addi	a4,a4,-2048 # 1800 <_test_table+0x1800>
+    8000121c:	80070713          	addi	a4,a4,-2048 # 1800 <_test_table_size+0x17ff>
     80001220:	8fd9                	or	a5,a5,a4
     80001222:	b7f9                	j	800011f0 <mhandler+0x1fa>
     80001224:	d2f9                	beqz	a3,800011ea <mhandler+0x1f4>
@@ -2134,7 +2134,7 @@ uint64_t hshandler(){
 
     real_priv = PRIV_HS;
     8000123c:	00039997          	auipc	s3,0x39
-    80001240:	68c98993          	addi	s3,s3,1676 # 8003a8c8 <real_priv>
+    80001240:	69498993          	addi	s3,s3,1684 # 8003a8d0 <real_priv>
     80001244:	478d                	li	a5,3
     80001246:	00f9a023          	sw	a5,0(s3)
 
@@ -2247,10 +2247,10 @@ uint64_t hshandler(){
     unsigned temp_priv = real_priv;
     real_priv = curr_priv;
     8000131e:	00039797          	auipc	a5,0x39
-    80001322:	5ae7a783          	lw	a5,1454(a5) # 8003a8cc <curr_priv>
+    80001322:	5b67a783          	lw	a5,1462(a5) # 8003a8d4 <curr_priv>
     unsigned temp_priv = real_priv;
     80001326:	00039517          	auipc	a0,0x39
-    8000132a:	5a252503          	lw	a0,1442(a0) # 8003a8c8 <real_priv>
+    8000132a:	5aa52503          	lw	a0,1450(a0) # 8003a8d0 <real_priv>
     excpt.fault_inst = 0;
     8000132e:	00050717          	auipc	a4,0x50
     80001332:	d0073d23          	sd	zero,-742(a4) # 80051048 <excpt+0x38>
@@ -2265,7 +2265,7 @@ uint64_t hshandler(){
     80001348:	04f51063          	bne	a0,a5,80001388 <hshandler+0x160>
     8000134c:	100027f3          	csrr	a5,sstatus
     80001350:	00039717          	auipc	a4,0x39
-    80001354:	57c72703          	lw	a4,1404(a4) # 8003a8cc <curr_priv>
+    80001354:	58472703          	lw	a4,1412(a4) # 8003a8d4 <curr_priv>
     80001358:	4685                	li	a3,1
     8000135a:	edf7f793          	andi	a5,a5,-289
     8000135e:	3779                	addiw	a4,a4,-2
@@ -2320,7 +2320,7 @@ uint64_t hshandler(){
     800013d2:	fc0007b7          	lui	a5,0xfc000
     800013d6:	17fd                	addi	a5,a5,-1 # fffffffffbffffff <__stack_top+0xffffffff7bd00fff>
     800013d8:	00039697          	auipc	a3,0x39
-    800013dc:	4f46a683          	lw	a3,1268(a3) # 8003a8cc <curr_priv>
+    800013dc:	4fc6a683          	lw	a3,1276(a3) # 8003a8d4 <curr_priv>
     800013e0:	07b6                	slli	a5,a5,0xd
     800013e2:	77f78793          	addi	a5,a5,1919
     800013e6:	8ff9                	and	a5,a5,a4
@@ -2329,7 +2329,7 @@ uint64_t hshandler(){
     800013f0:	4605                	li	a2,1
     800013f2:	06e66263          	bltu	a2,a4,80001456 <hshandler+0x22e>
     800013f6:	6705                	lui	a4,0x1
-    800013f8:	80070713          	addi	a4,a4,-2048 # 800 <_test_table+0x800>
+    800013f8:	80070713          	addi	a4,a4,-2048 # 800 <_test_table_size+0x7ff>
     800013fc:	4609                	li	a2,2
     800013fe:	8fd9                	or	a5,a5,a4
     80001400:	00c69563          	bne	a3,a2,8000140a <hshandler+0x1e2>
@@ -2352,7 +2352,7 @@ uint64_t hshandler(){
     8000142a:	bfb9                	j	80001388 <hshandler+0x160>
     8000142c:	600026f3          	csrr	a3,hstatus
     80001430:	00039797          	auipc	a5,0x39
-    80001434:	49c7a783          	lw	a5,1180(a5) # 8003a8cc <curr_priv>
+    80001434:	4a47a783          	lw	a5,1188(a5) # 8003a8d4 <curr_priv>
     80001438:	0806e713          	ori	a4,a3,128
     8000143c:	9bf5                	andi	a5,a5,-3
     8000143e:	e781                	bnez	a5,80001446 <hshandler+0x21e>
@@ -2361,7 +2361,7 @@ uint64_t hshandler(){
     80001446:	f7f6f713          	andi	a4,a3,-129
     8000144a:	bfdd                	j	80001440 <hshandler+0x218>
     8000144c:	6709                	lui	a4,0x2
-    8000144e:	80070713          	addi	a4,a4,-2048 # 1800 <_test_table+0x1800>
+    8000144e:	80070713          	addi	a4,a4,-2048 # 1800 <_test_table_size+0x17ff>
     80001452:	8fd9                	or	a5,a5,a4
     80001454:	bf5d                	j	8000140a <hshandler+0x1e2>
     80001456:	d6dd                	beqz	a3,80001404 <hshandler+0x1dc>
@@ -2381,7 +2381,7 @@ uint64_t vshandler(){
 
     real_priv = PRIV_VS;
     8000146a:	00039917          	auipc	s2,0x39
-    8000146e:	45e90913          	addi	s2,s2,1118 # 8003a8c8 <real_priv>
+    8000146e:	46690913          	addi	s2,s2,1126 # 8003a8d0 <real_priv>
     80001472:	4709                	li	a4,2
     80001474:	00e92023          	sw	a4,0(s2)
 
@@ -2462,10 +2462,10 @@ uint64_t vshandler(){
     unsigned temp_priv = real_priv;
     real_priv = curr_priv;
     80001518:	00039797          	auipc	a5,0x39
-    8000151c:	3b47a783          	lw	a5,948(a5) # 8003a8cc <curr_priv>
+    8000151c:	3bc7a783          	lw	a5,956(a5) # 8003a8d4 <curr_priv>
     unsigned temp_priv = real_priv;
     80001520:	00039517          	auipc	a0,0x39
-    80001524:	3a852503          	lw	a0,936(a0) # 8003a8c8 <real_priv>
+    80001524:	3b052503          	lw	a0,944(a0) # 8003a8d0 <real_priv>
     excpt.fault_inst = 0;
     80001528:	00050717          	auipc	a4,0x50
     8000152c:	b2073023          	sd	zero,-1248(a4) # 80051048 <excpt+0x38>
@@ -2497,7 +2497,7 @@ uint64_t vshandler(){
     return_from_exception(temp_priv, curr_priv, cause, epc);
     8000155c:	600026f3          	csrr	a3,hstatus
     80001560:	00039797          	auipc	a5,0x39
-    80001564:	36c7a783          	lw	a5,876(a5) # 8003a8cc <curr_priv>
+    80001564:	3747a783          	lw	a5,884(a5) # 8003a8d4 <curr_priv>
     80001568:	0806e713          	ori	a4,a3,128
     8000156c:	9bf5                	andi	a5,a5,-3
     8000156e:	c399                	beqz	a5,80001574 <vshandler+0x11a>
@@ -2505,7 +2505,7 @@ uint64_t vshandler(){
     80001574:	60071073          	csrw	hstatus,a4
     80001578:	100027f3          	csrr	a5,sstatus
     8000157c:	00039717          	auipc	a4,0x39
-    80001580:	35072703          	lw	a4,848(a4) # 8003a8cc <curr_priv>
+    80001580:	35872703          	lw	a4,856(a4) # 8003a8d4 <curr_priv>
     80001584:	4685                	li	a3,1
     80001586:	edf7f793          	andi	a5,a5,-289
     8000158a:	3779                	addiw	a4,a4,-2
@@ -2564,7 +2564,7 @@ uint64_t vshandler(){
     8000160e:	fc0007b7          	lui	a5,0xfc000
     80001612:	17fd                	addi	a5,a5,-1 # fffffffffbffffff <__stack_top+0xffffffff7bd00fff>
     80001614:	00039697          	auipc	a3,0x39
-    80001618:	2b86a683          	lw	a3,696(a3) # 8003a8cc <curr_priv>
+    80001618:	2c06a683          	lw	a3,704(a3) # 8003a8d4 <curr_priv>
     8000161c:	07b6                	slli	a5,a5,0xd
     8000161e:	77f78793          	addi	a5,a5,1919
     80001622:	8ff9                	and	a5,a5,a4
@@ -2573,7 +2573,7 @@ uint64_t vshandler(){
     8000162c:	4605                	li	a2,1
     8000162e:	06e66a63          	bltu	a2,a4,800016a2 <vshandler+0x248>
     80001632:	6705                	lui	a4,0x1
-    80001634:	80070713          	addi	a4,a4,-2048 # 800 <_test_table+0x800>
+    80001634:	80070713          	addi	a4,a4,-2048 # 800 <_test_table_size+0x7ff>
     80001638:	4609                	li	a2,2
     8000163a:	8fd9                	or	a5,a5,a4
     8000163c:	00c69563          	bne	a3,a2,80001646 <vshandler+0x1ec>
@@ -2618,7 +2618,7 @@ uint64_t vshandler(){
     80001696:	b549                	j	80001518 <vshandler+0xbe>
     return_from_exception(temp_priv, curr_priv, cause, epc);
     80001698:	6709                	lui	a4,0x2
-    8000169a:	80070713          	addi	a4,a4,-2048 # 1800 <_test_table+0x1800>
+    8000169a:	80070713          	addi	a4,a4,-2048 # 1800 <_test_table_size+0x17ff>
     8000169e:	8fd9                	or	a5,a5,a4
     800016a0:	b75d                	j	80001646 <vshandler+0x1ec>
     800016a2:	ded9                	beqz	a3,80001640 <vshandler+0x1e6>
@@ -2675,7 +2675,7 @@ uint32_t expand_compressed_instruction(uint16_t ins) {
     8000170e:	bfd9                	j	800016e4 <expand_compressed_instruction+0x3e>
             (is_load ? MATCH_LD : MATCH_SD):
     80001710:	668d                	lui	a3,0x3
-    80001712:	068d                	addi	a3,a3,3 # 3003 <_test_table+0x3003>
+    80001712:	068d                	addi	a3,a3,3 # 3003 <_test_table_size+0x3002>
         bool is_load = INS_MATCH_C_LW(ins) || INS_MATCH_C_LD(ins); 
     80001714:	4505                	li	a0,1
         uint32_t rd_rs2 =  ((ins & INS_C_RDRS2_MASK) >> INS_C_RDRS2_OFF) + 8;
@@ -2689,7 +2689,7 @@ uint32_t expand_compressed_instruction(uint16_t ins) {
         uint32_t rd_rs2 =  ((ins & INS_C_RDRS2_MASK) >> INS_C_RDRS2_OFF) + 8;
     80001722:	27a1                	addiw	a5,a5,8
         uint32_t rs1 = ((ins & INS_C_RS1_MASK) >> INS_C_RS1_OFF) + 8;
-    80001724:	2721                	addiw	a4,a4,8 # e008 <_test_table+0xe008>
+    80001724:	2721                	addiw	a4,a4,8 # e008 <_test_table_size+0xe007>
             ((ins & INS_C_IMM0_MASK)  >> INS_C_IMM0_OFF) << 6 :
     80001726:	0055d613          	srli	a2,a1,0x5
             rs1 << 15 | (imm & 0x1f) << 7 | (imm >> 5) << 25;
@@ -2718,7 +2718,7 @@ uint32_t expand_compressed_instruction(uint16_t ins) {
     8000174e:	8082                	ret
             (is_load ? MATCH_LD : MATCH_SD):
     80001750:	6689                	lui	a3,0x2
-    80001752:	068d                	addi	a3,a3,3 # 2003 <_test_table+0x2003>
+    80001752:	068d                	addi	a3,a3,3 # 2003 <_test_table_size+0x2002>
     80001754:	4505                	li	a0,1
         uint32_t rd_rs2 =  ((ins & INS_C_RDRS2_MASK) >> INS_C_RDRS2_OFF) + 8;
     80001756:	0025d793          	srli	a5,a1,0x2
@@ -2742,11 +2742,11 @@ uint32_t expand_compressed_instruction(uint16_t ins) {
     80001774:	bf4d                	j	80001726 <expand_compressed_instruction+0x80>
             (is_load ? MATCH_LD : MATCH_SD):
     80001776:	668d                	lui	a3,0x3
-    80001778:	02368693          	addi	a3,a3,35 # 3023 <_test_table+0x3023>
+    80001778:	02368693          	addi	a3,a3,35 # 3023 <_test_table_size+0x3022>
     8000177c:	4501                	li	a0,0
     8000177e:	bf61                	j	80001716 <expand_compressed_instruction+0x70>
     80001780:	6689                	lui	a3,0x2
-    80001782:	02368693          	addi	a3,a3,35 # 2023 <_test_table+0x2023>
+    80001782:	02368693          	addi	a3,a3,35 # 2023 <_test_table_size+0x2022>
     80001786:	4501                	li	a0,0
     80001788:	b7f9                	j	80001756 <expand_compressed_instruction+0xb0>
 
@@ -3062,7 +3062,7 @@ bool check_xip_regs_1(){
     800019f0:	08200593          	li	a1,130
     800019f4:	0002c517          	auipc	a0,0x2c
     800019f8:	92450513          	addi	a0,a0,-1756 # 8002d318 <__func__.0+0x2f8>
-    800019fc:	22240413          	addi	s0,s0,546 # 2222 <_test_table+0x2222>
+    800019fc:	22240413          	addi	s0,s0,546 # 2222 <_test_table_size+0x2221>
     80001a00:	3ba290ef          	jal	8002adba <printf>
     80001a04:	06890d63          	beq	s2,s0,80001a7e <check_xip_regs_1+0x14c>
     80001a08:	0002c597          	auipc	a1,0x2c
@@ -4209,7 +4209,7 @@ static inline void write64(uintptr_t addr, uint64_t val){
     8000273c:	000887b7          	lui	a5,0x88
     80002740:	070a                	slli	a4,a4,0x2
     80002742:	44c5                	li	s1,17
-    80002744:	06d78793          	addi	a5,a5,109 # 8806d <_test_table+0x8806d>
+    80002744:	06d78793          	addi	a5,a5,109 # 8806d <_test_table_size+0x8806c>
     80002748:	e304                	sd	s1,0(a4)
     8000274a:	07b2                	slli	a5,a5,0xc
     8000274c:	02200913          	li	s2,34
@@ -4798,7 +4798,7 @@ bool two_stage_translation_2(){
     80002dce:	000887b7          	lui	a5,0x88
     80002dd2:	070a                	slli	a4,a4,0x2
     80002dd4:	44c5                	li	s1,17
-    80002dd6:	06d78793          	addi	a5,a5,109 # 8806d <_test_table+0x8806d>
+    80002dd6:	06d78793          	addi	a5,a5,109 # 8806d <_test_table_size+0x8806c>
     80002dda:	e304                	sd	s1,0(a4)
     80002ddc:	07b2                	slli	a5,a5,0xc
     80002dde:	02200913          	li	s2,34
@@ -4984,7 +4984,7 @@ bool two_stage_translation_3(){
     80002fb4:	000887b7          	lui	a5,0x88
     80002fb8:	070a                	slli	a4,a4,0x2
     80002fba:	44c5                	li	s1,17
-    80002fbc:	06d78793          	addi	a5,a5,109 # 8806d <_test_table+0x8806d>
+    80002fbc:	06d78793          	addi	a5,a5,109 # 8806d <_test_table_size+0x8806c>
     80002fc0:	e304                	sd	s1,0(a4)
     80002fc2:	07b2                	slli	a5,a5,0xc
     80002fc4:	02200913          	li	s2,34
@@ -5170,7 +5170,7 @@ bool second_stage_only_translation(){
     80003196:	000887b7          	lui	a5,0x88
     8000319a:	070a                	slli	a4,a4,0x2
     8000319c:	4445                	li	s0,17
-    8000319e:	06d78793          	addi	a5,a5,109 # 8806d <_test_table+0x8806d>
+    8000319e:	06d78793          	addi	a5,a5,109 # 8806d <_test_table_size+0x8806c>
     800031a2:	e300                	sd	s0,0(a4)
     800031a4:	07b2                	slli	a5,a5,0xc
     800031a6:	02200913          	li	s2,34
@@ -5574,7 +5574,7 @@ bool m_and_hs_using_vs_access_1(){
     800035f4:	f7efd0ef          	jal	80000d72 <test_setup_except_function>
     if(curr_priv != PRIV_M){
     800035f8:	00037497          	auipc	s1,0x37
-    800035fc:	2d44a483          	lw	s1,724(s1) # 8003a8cc <curr_priv>
+    800035fc:	2dc4a483          	lw	s1,732(s1) # 8003a8d4 <curr_priv>
     80003600:	4791                	li	a5,4
     80003602:	02f48763          	beq	s1,a5,80003630 <m_and_hs_using_vs_access_1+0x70>
         ERROR("trying to write as mprv from low privilege");
@@ -5609,7 +5609,7 @@ bool m_and_hs_using_vs_access_1(){
     80003658:	3009b073          	csrc	mstatus,s3
     if(curr_priv != PRIV_M){
     8000365c:	00037797          	auipc	a5,0x37
-    80003660:	2707a783          	lw	a5,624(a5) # 8003a8cc <curr_priv>
+    80003660:	2787a783          	lw	a5,632(a5) # 8003a8d4 <curr_priv>
     80003664:	02978763          	beq	a5,s1,80003692 <m_and_hs_using_vs_access_1+0xd2>
         ERROR("trying to read as mprv from low privilege");
     80003668:	0002a517          	auipc	a0,0x2a
@@ -5778,7 +5778,7 @@ static inline uint64_t hsvd(uintptr_t addr, uint64_t value){
     8000382e:	06b78793          	addi	a5,a5,107 # 10006b <STACK_SIZE+0x6b>
     80003832:	6941                	lui	s2,0x10
     80003834:	07b2                	slli	a5,a5,0xc
-    80003836:	197d                	addi	s2,s2,-1 # ffff <_test_table+0xffff>
+    80003836:	197d                	addi	s2,s2,-1 # ffff <_test_table_size+0xfffe>
     80003838:	6727c073          	.insn	4, 0x6727c073
     asm volatile(
     8000383c:	6407c9f3          	.insn	4, 0x6407c9f3
@@ -6419,7 +6419,7 @@ bool m_and_hs_using_vs_access_3(){
     80003f42:	e398                	sd	a4,0(a5)
     if(curr_priv != PRIV_M){
     80003f44:	00037717          	auipc	a4,0x37
-    80003f48:	98872703          	lw	a4,-1656(a4) # 8003a8cc <curr_priv>
+    80003f48:	99072703          	lw	a4,-1648(a4) # 8003a8d4 <curr_priv>
     80003f4c:	4791                	li	a5,4
     80003f4e:	02f70763          	beq	a4,a5,80003f7c <m_and_hs_using_vs_access_3+0x84>
         ERROR("trying to read as mprv from low privilege");
@@ -6439,7 +6439,7 @@ bool m_and_hs_using_vs_access_3(){
     80003f7e:	e11fc0ef          	jal	80000d8e <set_prev_priv>
     asm volatile(
     80003f82:	000807b7          	lui	a5,0x80
-    80003f86:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80003f86:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80003f88:	07b6                	slli	a5,a5,0xd
     80003f8a:	00020737          	lui	a4,0x20
     80003f8e:	30072073          	csrs	mstatus,a4
@@ -6503,7 +6503,7 @@ bool m_and_hs_using_vs_access_3(){
     80004040:	e398                	sd	a4,0(a5)
     if(curr_priv != PRIV_M){
     80004042:	00037717          	auipc	a4,0x37
-    80004046:	88a72703          	lw	a4,-1910(a4) # 8003a8cc <curr_priv>
+    80004046:	89272703          	lw	a4,-1902(a4) # 8003a8d4 <curr_priv>
     8000404a:	4791                	li	a5,4
     8000404c:	f0f713e3          	bne	a4,a5,80003f52 <m_and_hs_using_vs_access_3+0x5a>
     set_prev_priv(priv);
@@ -6511,7 +6511,7 @@ bool m_and_hs_using_vs_access_3(){
     80004052:	d3dfc0ef          	jal	80000d8e <set_prev_priv>
     asm volatile(
     80004056:	000807b7          	lui	a5,0x80
-    8000405a:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    8000405a:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     8000405c:	07b6                	slli	a5,a5,0xd
     8000405e:	00020737          	lui	a4,0x20
     80004062:	30072073          	csrs	mstatus,a4
@@ -6630,7 +6630,7 @@ bool m_and_hs_using_vs_access_4(){
     asm volatile(
     80004164:	000807b7          	lui	a5,0x80
     80004168:	0706                	slli	a4,a4,0x1
-    8000416a:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    8000416a:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     8000416c:	e314                	sd	a3,0(a4)
     8000416e:	07b6                	slli	a5,a5,0xd
     80004170:	6c07c7f3          	.insn	4, 0x6c07c7f3
@@ -6674,7 +6674,7 @@ bool m_and_hs_using_vs_access_4(){
     800041d8:	44019737          	lui	a4,0x44019
     800041dc:	000807b7          	lui	a5,0x80
     800041e0:	0706                	slli	a4,a4,0x1
-    800041e2:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    800041e2:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     TEST_ASSERT("hs hlvd to vu page successful when spvp = 0",
     800041e4:	0004d497          	auipc	s1,0x4d
     800041e8:	e2c48493          	addi	s1,s1,-468 # 80051010 <excpt>
@@ -6811,7 +6811,7 @@ bool m_and_hs_using_vs_access_5(){
     80004320:	440197b7          	lui	a5,0x44019
     if(curr_priv != PRIV_M){
     80004324:	00036717          	auipc	a4,0x36
-    80004328:	5a872703          	lw	a4,1448(a4) # 8003a8cc <curr_priv>
+    80004328:	5b072703          	lw	a4,1456(a4) # 8003a8d4 <curr_priv>
     8000432c:	0786                	slli	a5,a5,0x1
     8000432e:	e380                	sd	s0,0(a5)
     80004330:	4791                	li	a5,4
@@ -6833,7 +6833,7 @@ bool m_and_hs_using_vs_access_5(){
     80004362:	a2dfc0ef          	jal	80000d8e <set_prev_priv>
     asm volatile(
     80004366:	000807b7          	lui	a5,0x80
-    8000436a:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    8000436a:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     8000436c:	07b6                	slli	a5,a5,0xd
     8000436e:	00020737          	lui	a4,0x20
     80004372:	30072073          	csrs	mstatus,a4
@@ -6972,7 +6972,7 @@ bool m_and_hs_using_vs_access_6(){
     800044c2:	440197b7          	lui	a5,0x44019
     800044c6:	00080437          	lui	s0,0x80
     800044ca:	0786                	slli	a5,a5,0x1
-    800044cc:	0465                	addi	s0,s0,25 # 80019 <_test_table+0x80019>
+    800044cc:	0465                	addi	s0,s0,25 # 80019 <_test_table_size+0x80018>
     800044ce:	e384                	sd	s1,0(a5)
     800044d0:	0436                	slli	s0,s0,0xd
     800044d2:	6c044473          	.insn	4, 0x6c044473
@@ -7641,10 +7641,10 @@ bool m_and_hs_using_vs_access_10(){
     80004b6a:	a08fc0ef          	jal	80000d72 <test_setup_except_function>
     CSRW(sscratch, 0x911);
     80004b6e:	6785                	lui	a5,0x1
-    80004b70:	9117879b          	addiw	a5,a5,-1775 # 911 <_test_table+0x911>
+    80004b70:	9117879b          	addiw	a5,a5,-1775 # 911 <_test_table_size+0x910>
     80004b74:	14079073          	csrw	sscratch,a5
     80004b78:	000807b7          	lui	a5,0x80
-    80004b7c:	07a5                	addi	a5,a5,9 # 80009 <_test_table+0x80009>
+    80004b7c:	07a5                	addi	a5,a5,9 # 80009 <_test_table_size+0x80008>
     80004b7e:	07b6                	slli	a5,a5,0xd
     80004b80:	6007c7f3          	.insn	4, 0x6007c7f3
     hlvb(vaddr);
@@ -7686,13 +7686,13 @@ bool m_and_hs_using_vs_access_10(){
     80004be6:	0004c497          	auipc	s1,0x4c
     80004bea:	42a48493          	addi	s1,s1,1066 # 80051010 <excpt>
     CSRW(sscratch, 0x911);      
-    80004bee:	9117879b          	addiw	a5,a5,-1775 # 911 <_test_table+0x911>
+    80004bee:	9117879b          	addiw	a5,a5,-1775 # 911 <_test_table_size+0x910>
     80004bf2:	14079073          	csrw	sscratch,a5
     asm volatile(
     80004bf6:	37ab77b7          	lui	a5,0x37ab7
     80004bfa:	00080737          	lui	a4,0x80
     80004bfe:	078a                	slli	a5,a5,0x2
-    80004c00:	0725                	addi	a4,a4,9 # 80009 <_test_table+0x80009>
+    80004c00:	0725                	addi	a4,a4,9 # 80009 <_test_table_size+0x80008>
     80004c02:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80004c06:	0736                	slli	a4,a4,0xd
     80004c08:	62f74073          	.insn	4, 0x62f74073
@@ -7823,7 +7823,7 @@ bool m_and_hs_using_vs_access_11(){
     80004d32:	37ab77b7          	lui	a5,0x37ab7
     80004d36:	00080737          	lui	a4,0x80
     80004d3a:	078a                	slli	a5,a5,0x2
-    80004d3c:	03370713          	addi	a4,a4,51 # 80033 <_test_table+0x80033>
+    80004d3c:	03370713          	addi	a4,a4,51 # 80033 <_test_table_size+0x80032>
     80004d40:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80004d44:	0736                	slli	a4,a4,0xd
     80004d46:	62f74073          	.insn	4, 0x62f74073
@@ -10236,7 +10236,7 @@ bool hfence_test() {
     800065e6:	2201b737          	lui	a4,0x2201b
     800065ea:	000887b7          	lui	a5,0x88
     800065ee:	070a                	slli	a4,a4,0x2
-    800065f0:	06d78793          	addi	a5,a5,109 # 8806d <_test_table+0x8806d>
+    800065f0:	06d78793          	addi	a5,a5,109 # 8806d <_test_table_size+0x8806c>
     800065f4:	e310                	sd	a2,0(a4)
     800065f6:	07b2                	slli	a5,a5,0xc
     800065f8:	e394                	sd	a3,0(a5)
@@ -15661,7 +15661,7 @@ static inline uint32_t read_instruction(uintptr_t addr) {
     80009c66:	0007d503          	lhu	a0,0(a5)
     80009c6a:	a3df70ef          	jal	800016a6 <expand_compressed_instruction>
     80009c6e:	67a1                	lui	a5,0x8
-    80009c70:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    80009c70:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     80009c72:	00f57933          	and	s2,a0,a5
     80009c76:	40990933          	sub	s2,s2,s1
     80009c7a:	00193913          	seqz	s2,s2
@@ -15682,7 +15682,7 @@ static inline uint32_t read_instruction(uintptr_t addr) {
     80009ca4:	0007d503          	lhu	a0,0(a5)
     80009ca8:	9fff70ef          	jal	800016a6 <expand_compressed_instruction>
     80009cac:	67a1                	lui	a5,0x8
-    80009cae:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    80009cae:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     80009cb0:	00f57933          	and	s2,a0,a5
     80009cb4:	41390933          	sub	s2,s2,s3
     80009cb8:	00193913          	seqz	s2,s2
@@ -16427,7 +16427,7 @@ static inline uint32_t read_instruction(uintptr_t addr) {
     8000a402:	0007d503          	lhu	a0,0(a5)
     8000a406:	aa0f70ef          	jal	800016a6 <expand_compressed_instruction>
     8000a40a:	67a1                	lui	a5,0x8
-    8000a40c:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000a40c:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000a40e:	8d7d                	and	a0,a0,a5
     8000a410:	00a48463          	beq	s1,a0,8000a418 <tinst_tests_pf+0x25f6>
     8000a414:	960fe06f          	j	80008574 <tinst_tests_pf+0x752>
@@ -16478,7 +16478,7 @@ static inline uint32_t read_instruction(uintptr_t addr) {
     8000a48c:	0007d503          	lhu	a0,0(a5)
     8000a490:	a16f70ef          	jal	800016a6 <expand_compressed_instruction>
     8000a494:	67a1                	lui	a5,0x8
-    8000a496:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000a496:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000a498:	8d7d                	and	a0,a0,a5
     8000a49a:	00a98463          	beq	s3,a0,8000a4a2 <tinst_tests_pf+0x2680>
     8000a49e:	96afe06f          	j	80008608 <tinst_tests_pf+0x7e6>
@@ -17331,7 +17331,7 @@ static inline uint32_t read_instruction(uintptr_t addr) {
     8000acd8:	0007d503          	lhu	a0,0(a5)
     8000acdc:	9cbf60ef          	jal	800016a6 <expand_compressed_instruction>
     8000ace0:	67a1                	lui	a5,0x8
-    8000ace2:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000ace2:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000ace4:	8d7d                	and	a0,a0,a5
     8000ace6:	00a48463          	beq	s1,a0,8000acee <tinst_tests_pf+0x2ecc>
     8000acea:	861fd06f          	j	8000854a <tinst_tests_pf+0x728>
@@ -17347,7 +17347,7 @@ static inline uint32_t read_instruction(uintptr_t addr) {
     8000ad04:	0007d503          	lhu	a0,0(a5)
     8000ad08:	99ff60ef          	jal	800016a6 <expand_compressed_instruction>
     8000ad0c:	67a1                	lui	a5,0x8
-    8000ad0e:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000ad0e:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000ad10:	8d7d                	and	a0,a0,a5
     8000ad12:	00a98463          	beq	s3,a0,8000ad1a <tinst_tests_pf+0x2ef8>
     8000ad16:	8c9fd06f          	j	800085de <tinst_tests_pf+0x7bc>
@@ -20754,7 +20754,7 @@ AMO_INSTRUCTION(amomaxu_d, "amomaxu.d", uint64_t);
     8000d10e:	0007d503          	lhu	a0,0(a5)
     8000d112:	d94f40ef          	jal	800016a6 <expand_compressed_instruction>
     8000d116:	67a1                	lui	a5,0x8
-    8000d118:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000d118:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000d11a:	00f574b3          	and	s1,a0,a5
     8000d11e:	412484b3          	sub	s1,s1,s2
     8000d122:	0014b493          	seqz	s1,s1
@@ -20775,7 +20775,7 @@ AMO_INSTRUCTION(amomaxu_d, "amomaxu.d", uint64_t);
     8000d14c:	0007d503          	lhu	a0,0(a5)
     8000d150:	d56f40ef          	jal	800016a6 <expand_compressed_instruction>
     8000d154:	67a1                	lui	a5,0x8
-    8000d156:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000d156:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000d158:	00f574b3          	and	s1,a0,a5
     8000d15c:	413484b3          	sub	s1,s1,s3
     8000d160:	0014b493          	seqz	s1,s1
@@ -21473,7 +21473,7 @@ AMO_INSTRUCTION(amomaxu_d, "amomaxu.d", uint64_t);
     8000d838:	0007d503          	lhu	a0,0(a5)
     8000d83c:	e6bf30ef          	jal	800016a6 <expand_compressed_instruction>
     8000d840:	67a1                	lui	a5,0x8
-    8000d842:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000d842:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000d844:	8d7d                	and	a0,a0,a5
     8000d846:	00a90463          	beq	s2,a0,8000d84e <tinst_tests_gpf+0x264c>
     8000d84a:	99afe06f          	j	8000b9e4 <tinst_tests_gpf+0x7e2>
@@ -21524,7 +21524,7 @@ AMO_INSTRUCTION(amomaxu_d, "amomaxu.d", uint64_t);
     8000d8c2:	0007d503          	lhu	a0,0(a5)
     8000d8c6:	de1f30ef          	jal	800016a6 <expand_compressed_instruction>
     8000d8ca:	67a1                	lui	a5,0x8
-    8000d8cc:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000d8cc:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000d8ce:	8d7d                	and	a0,a0,a5
     8000d8d0:	00a98463          	beq	s3,a0,8000d8d8 <tinst_tests_gpf+0x26d6>
     8000d8d4:	9a6fe06f          	j	8000ba7a <tinst_tests_gpf+0x878>
@@ -22300,7 +22300,7 @@ AMO_INSTRUCTION(amomaxu_d, "amomaxu.d", uint64_t);
     8000e050:	0007d503          	lhu	a0,0(a5)
     8000e054:	e52f30ef          	jal	800016a6 <expand_compressed_instruction>
     8000e058:	67a1                	lui	a5,0x8
-    8000e05a:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000e05a:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000e05c:	8d7d                	and	a0,a0,a5
     8000e05e:	00a90463          	beq	s2,a0,8000e066 <tinst_tests_gpf+0x2e64>
     8000e062:	959fd06f          	j	8000b9ba <tinst_tests_gpf+0x7b8>
@@ -22344,7 +22344,7 @@ AMO_INSTRUCTION(amomaxu_d, "amomaxu.d", uint64_t);
     8000e0be:	0007d503          	lhu	a0,0(a5)
     8000e0c2:	de4f30ef          	jal	800016a6 <expand_compressed_instruction>
     8000e0c6:	67a1                	lui	a5,0x8
-    8000e0c8:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table+0x7ffd>
+    8000e0c8:	17f5                	addi	a5,a5,-3 # 7ffd <_test_table_size+0x7ffc>
     8000e0ca:	8d7d                	and	a0,a0,a5
     8000e0cc:	00a98463          	beq	s3,a0,8000e0d4 <tinst_tests_gpf+0x2ed2>
     8000e0d0:	981fd06f          	j	8000ba50 <tinst_tests_gpf+0x84e>
@@ -22993,7 +22993,7 @@ LOAD_INSTRUCTION(lb, "lb", uint8_t);
     8000e6c6:	4791                	li	a5,4
     8000e6c8:	f8f71fe3          	bne	a4,a5,8000e666 <priv_change_1+0xb6>
     8000e6cc:	0002c717          	auipc	a4,0x2c
-    8000e6d0:	20072703          	lw	a4,512(a4) # 8003a8cc <curr_priv>
+    8000e6d0:	20872703          	lw	a4,520(a4) # 8003a8d4 <curr_priv>
     8000e6d4:	4789                	li	a5,2
     8000e6d6:	f8f718e3          	bne	a4,a5,8000e666 <priv_change_1+0xb6>
     8000e6da:	b745                	j	8000e67a <priv_change_1+0xca>
@@ -23002,7 +23002,7 @@ LOAD_INSTRUCTION(lb, "lb", uint8_t);
     8000e6e4:	4791                	li	a5,4
     8000e6e6:	faf71ae3          	bne	a4,a5,8000e69a <priv_change_1+0xea>
     8000e6ea:	0002c717          	auipc	a4,0x2c
-    8000e6ee:	1e272703          	lw	a4,482(a4) # 8003a8cc <curr_priv>
+    8000e6ee:	1ea72703          	lw	a4,490(a4) # 8003a8d4 <curr_priv>
     8000e6f2:	4789                	li	a5,2
     TEST_END();
     8000e6f4:	0001f597          	auipc	a1,0x1f
@@ -23020,7 +23020,7 @@ LOAD_INSTRUCTION(lb, "lb", uint8_t);
     8000e714:	4791                	li	a5,4
     8000e716:	f2f719e3          	bne	a4,a5,8000e648 <priv_change_1+0x98>
     8000e71a:	0002c717          	auipc	a4,0x2c
-    8000e71e:	1b272703          	lw	a4,434(a4) # 8003a8cc <curr_priv>
+    8000e71e:	1ba72703          	lw	a4,442(a4) # 8003a8d4 <curr_priv>
     8000e722:	4789                	li	a5,2
     8000e724:	0001f597          	auipc	a1,0x1f
     8000e728:	bbc58593          	addi	a1,a1,-1092 # 8002d2e0 <__func__.0+0x2c0>
@@ -23150,7 +23150,7 @@ bool priv_change_2(){
     8000e846:	4791                	li	a5,4
     8000e848:	f8f71fe3          	bne	a4,a5,8000e7e6 <priv_change_2+0xac>
     8000e84c:	0002c717          	auipc	a4,0x2c
-    8000e850:	08072703          	lw	a4,128(a4) # 8003a8cc <curr_priv>
+    8000e850:	08872703          	lw	a4,136(a4) # 8003a8d4 <curr_priv>
     8000e854:	4789                	li	a5,2
     8000e856:	f8f718e3          	bne	a4,a5,8000e7e6 <priv_change_2+0xac>
     8000e85a:	b745                	j	8000e7fa <priv_change_2+0xc0>
@@ -23159,7 +23159,7 @@ bool priv_change_2(){
     8000e864:	4791                	li	a5,4
     8000e866:	faf71ae3          	bne	a4,a5,8000e81a <priv_change_2+0xe0>
     8000e86a:	0002c717          	auipc	a4,0x2c
-    8000e86e:	06272703          	lw	a4,98(a4) # 8003a8cc <curr_priv>
+    8000e86e:	06a72703          	lw	a4,106(a4) # 8003a8d4 <curr_priv>
     8000e872:	4789                	li	a5,2
     TEST_END();
     8000e874:	0001f597          	auipc	a1,0x1f
@@ -23177,7 +23177,7 @@ bool priv_change_2(){
     8000e894:	4791                	li	a5,4
     8000e896:	f2f719e3          	bne	a4,a5,8000e7c8 <priv_change_2+0x8e>
     8000e89a:	0002c717          	auipc	a4,0x2c
-    8000e89e:	03272703          	lw	a4,50(a4) # 8003a8cc <curr_priv>
+    8000e89e:	03a72703          	lw	a4,58(a4) # 8003a8d4 <curr_priv>
     8000e8a2:	4789                	li	a5,2
     8000e8a4:	0001f597          	auipc	a1,0x1f
     8000e8a8:	a3c58593          	addi	a1,a1,-1476 # 8002d2e0 <__func__.0+0x2c0>
@@ -23255,7 +23255,7 @@ bool priv_change_3(){
     8000e936:	9be58593          	addi	a1,a1,-1602 # 8002d2f0 <__func__.0+0x2d0>
     8000e93a:	cb81                	beqz	a5,8000e94a <priv_change_3+0x90>
     8000e93c:	0002c717          	auipc	a4,0x2c
-    8000e940:	f9072703          	lw	a4,-112(a4) # 8003a8cc <curr_priv>
+    8000e940:	f9872703          	lw	a4,-104(a4) # 8003a8d4 <curr_priv>
     8000e944:	478d                	li	a5,3
     8000e946:	0af70b63          	beq	a4,a5,8000e9fc <priv_change_3+0x142>
     8000e94a:	0001f517          	auipc	a0,0x1f
@@ -23265,7 +23265,7 @@ bool priv_change_3(){
     8000e95a:	6bb7c783          	lbu	a5,1723(a5) # 80051011 <excpt+0x1>
     8000e95e:	cb81                	beqz	a5,8000e96e <priv_change_3+0xb4>
     8000e960:	0002c717          	auipc	a4,0x2c
-    8000e964:	f6c72703          	lw	a4,-148(a4) # 8003a8cc <curr_priv>
+    8000e964:	f7472703          	lw	a4,-140(a4) # 8003a8d4 <curr_priv>
     8000e968:	478d                	li	a5,3
     8000e96a:	06f70063          	beq	a4,a5,8000e9ca <priv_change_3+0x110>
     8000e96e:	0001f517          	auipc	a0,0x1f
@@ -23288,7 +23288,7 @@ bool priv_change_3(){
     TEST_ASSERT("hs trigger except that priv change to m mod and mret to hs mode when medeleg/mideleg==0 and hedeleg/hideleg==0",         
     8000e998:	c809                	beqz	s0,8000e9aa <priv_change_3+0xf0>
     8000e99a:	0002c717          	auipc	a4,0x2c
-    8000e99e:	f3272703          	lw	a4,-206(a4) # 8003a8cc <curr_priv>
+    8000e99e:	f3a72703          	lw	a4,-198(a4) # 8003a8d4 <curr_priv>
     8000e9a2:	478d                	li	a5,3
     8000e9a4:	02f70b63          	beq	a4,a5,8000e9da <priv_change_3+0x120>
     8000e9a8:	4401                	li	s0,0
@@ -23928,11 +23928,11 @@ bool priv_change_8(){
     8000efb6:	8082                	ret
     TEST_ASSERT("vu trigger except that priv change to m mod and sret to vu mod when medeleg/mideleg==0 and hedeleg/hideleg==0",         
     8000efb8:	0002c797          	auipc	a5,0x2c
-    8000efbc:	9147a783          	lw	a5,-1772(a5) # 8003a8cc <curr_priv>
+    8000efbc:	91c7a783          	lw	a5,-1764(a5) # 8003a8d4 <curr_priv>
     8000efc0:	d7dd                	beqz	a5,8000ef6e <priv_change_8+0xc2>
     8000efc2:	bf61                	j	8000ef5a <priv_change_8+0xae>
     8000efc4:	0002c797          	auipc	a5,0x2c
-    8000efc8:	9087a783          	lw	a5,-1784(a5) # 8003a8cc <curr_priv>
+    8000efc8:	9107a783          	lw	a5,-1776(a5) # 8003a8d4 <curr_priv>
     8000efcc:	0001e597          	auipc	a1,0x1e
     8000efd0:	31458593          	addi	a1,a1,788 # 8002d2e0 <__func__.0+0x2c0>
     8000efd4:	d3ad                	beqz	a5,8000ef36 <priv_change_8+0x8a>
@@ -23940,7 +23940,7 @@ bool priv_change_8(){
     8000efda:	31a58593          	addi	a1,a1,794 # 8002d2f0 <__func__.0+0x2d0>
     8000efde:	bfa1                	j	8000ef36 <priv_change_8+0x8a>
     8000efe0:	0002c797          	auipc	a5,0x2c
-    8000efe4:	8ec7a783          	lw	a5,-1812(a5) # 8003a8cc <curr_priv>
+    8000efe4:	8f47a783          	lw	a5,-1804(a5) # 8003a8d4 <curr_priv>
     8000efe8:	fbc5                	bnez	a5,8000ef98 <priv_change_8+0xec>
     8000efea:	4405                	li	s0,1
     TEST_END();
@@ -24059,11 +24059,11 @@ bool priv_change_9(){
     8000f0f0:	8082                	ret
     TEST_ASSERT("vu trigger except that priv change to vs mod and sret to vu mod when medeleg/mideleg==1 and hedeleg/hideleg==1",         
     8000f0f2:	0002b797          	auipc	a5,0x2b
-    8000f0f6:	7da7a783          	lw	a5,2010(a5) # 8003a8cc <curr_priv>
+    8000f0f6:	7e27a783          	lw	a5,2018(a5) # 8003a8d4 <curr_priv>
     8000f0fa:	dfd5                	beqz	a5,8000f0b6 <priv_change_9+0xc0>
     8000f0fc:	b75d                	j	8000f0a2 <priv_change_9+0xac>
     8000f0fe:	0002b797          	auipc	a5,0x2b
-    8000f102:	7ce7a783          	lw	a5,1998(a5) # 8003a8cc <curr_priv>
+    8000f102:	7d67a783          	lw	a5,2006(a5) # 8003a8d4 <curr_priv>
     8000f106:	0001e597          	auipc	a1,0x1e
     8000f10a:	1da58593          	addi	a1,a1,474 # 8002d2e0 <__func__.0+0x2c0>
     8000f10e:	dba5                	beqz	a5,8000f07e <priv_change_9+0x88>
@@ -24071,7 +24071,7 @@ bool priv_change_9(){
     8000f114:	1e058593          	addi	a1,a1,480 # 8002d2f0 <__func__.0+0x2d0>
     8000f118:	b79d                	j	8000f07e <priv_change_9+0x88>
     8000f11a:	0002b797          	auipc	a5,0x2b
-    8000f11e:	7b27a783          	lw	a5,1970(a5) # 8003a8cc <curr_priv>
+    8000f11e:	7ba7a783          	lw	a5,1978(a5) # 8003a8d4 <curr_priv>
          printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
     8000f122:	0001e597          	auipc	a1,0x1e
     8000f126:	1be58593          	addi	a1,a1,446 # 8002d2e0 <__func__.0+0x2c0>
@@ -24200,12 +24200,12 @@ bool priv_change_10(){
     8000f246:	8082                	ret
     TEST_ASSERT("hu trigger except that priv change to m mod and mret to hu mode when medeleg/mideleg==1 and hedeleg/hideleg==0",         
     8000f248:	0002b717          	auipc	a4,0x2b
-    8000f24c:	68472703          	lw	a4,1668(a4) # 8003a8cc <curr_priv>
+    8000f24c:	68c72703          	lw	a4,1676(a4) # 8003a8d4 <curr_priv>
     8000f250:	4785                	li	a5,1
     8000f252:	faf713e3          	bne	a4,a5,8000f1f8 <priv_change_10+0xb0>
     8000f256:	bf5d                	j	8000f20c <priv_change_10+0xc4>
     8000f258:	0002b717          	auipc	a4,0x2b
-    8000f25c:	67472703          	lw	a4,1652(a4) # 8003a8cc <curr_priv>
+    8000f25c:	67c72703          	lw	a4,1660(a4) # 8003a8d4 <curr_priv>
     8000f260:	4785                	li	a5,1
     8000f262:	0001e597          	auipc	a1,0x1e
     8000f266:	07e58593          	addi	a1,a1,126 # 8002d2e0 <__func__.0+0x2c0>
@@ -24214,7 +24214,7 @@ bool priv_change_10(){
     8000f272:	08258593          	addi	a1,a1,130 # 8002d2f0 <__func__.0+0x2d0>
     8000f276:	bfb9                	j	8000f1d4 <priv_change_10+0x8c>
     8000f278:	0002b717          	auipc	a4,0x2b
-    8000f27c:	65472703          	lw	a4,1620(a4) # 8003a8cc <curr_priv>
+    8000f27c:	65c72703          	lw	a4,1628(a4) # 8003a8d4 <curr_priv>
     8000f280:	4785                	li	a5,1
          printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
     8000f282:	0001e597          	auipc	a1,0x1e
@@ -24568,11 +24568,11 @@ bool priv_change_13(){
     8000f5c4:	8082                	ret
     TEST_ASSERT("vu trigger except that priv change to hs mod and sret to vu mod when medeleg/mideleg==1 and hedeleg/hideleg==0",         
     8000f5c6:	0002b797          	auipc	a5,0x2b
-    8000f5ca:	3067a783          	lw	a5,774(a5) # 8003a8cc <curr_priv>
+    8000f5ca:	30e7a783          	lw	a5,782(a5) # 8003a8d4 <curr_priv>
     8000f5ce:	dfd5                	beqz	a5,8000f58a <priv_change_13+0xc4>
     8000f5d0:	b75d                	j	8000f576 <priv_change_13+0xb0>
     8000f5d2:	0002b797          	auipc	a5,0x2b
-    8000f5d6:	2fa7a783          	lw	a5,762(a5) # 8003a8cc <curr_priv>
+    8000f5d6:	3027a783          	lw	a5,770(a5) # 8003a8d4 <curr_priv>
     8000f5da:	0001e597          	auipc	a1,0x1e
     8000f5de:	d0658593          	addi	a1,a1,-762 # 8002d2e0 <__func__.0+0x2c0>
     8000f5e2:	dba5                	beqz	a5,8000f552 <priv_change_13+0x8c>
@@ -24580,7 +24580,7 @@ bool priv_change_13(){
     8000f5e8:	d0c58593          	addi	a1,a1,-756 # 8002d2f0 <__func__.0+0x2d0>
     8000f5ec:	b79d                	j	8000f552 <priv_change_13+0x8c>
     8000f5ee:	0002b797          	auipc	a5,0x2b
-    8000f5f2:	2de7a783          	lw	a5,734(a5) # 8003a8cc <curr_priv>
+    8000f5f2:	2e67a783          	lw	a5,742(a5) # 8003a8d4 <curr_priv>
          printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
     8000f5f6:	0001e597          	auipc	a1,0x1e
     8000f5fa:	cea58593          	addi	a1,a1,-790 # 8002d2e0 <__func__.0+0x2c0>
@@ -24708,11 +24708,11 @@ bool priv_change_14(){
     8000f71a:	8082                	ret
     TEST_ASSERT("vu trigger except that priv change to HS mod and sret to vu mode when medeleg/mideleg==1 and hedeleg/hideleg==0",         
     8000f71c:	0002b797          	auipc	a5,0x2b
-    8000f720:	1b07a783          	lw	a5,432(a5) # 8003a8cc <curr_priv>
+    8000f720:	1b87a783          	lw	a5,440(a5) # 8003a8d4 <curr_priv>
     8000f724:	dfd5                	beqz	a5,8000f6e0 <priv_change_14+0xc4>
     8000f726:	b75d                	j	8000f6cc <priv_change_14+0xb0>
     8000f728:	0002b797          	auipc	a5,0x2b
-    8000f72c:	1a47a783          	lw	a5,420(a5) # 8003a8cc <curr_priv>
+    8000f72c:	1ac7a783          	lw	a5,428(a5) # 8003a8d4 <curr_priv>
     8000f730:	0001e597          	auipc	a1,0x1e
     8000f734:	bb058593          	addi	a1,a1,-1104 # 8002d2e0 <__func__.0+0x2c0>
     8000f738:	dba5                	beqz	a5,8000f6a8 <priv_change_14+0x8c>
@@ -24720,7 +24720,7 @@ bool priv_change_14(){
     8000f73e:	bb658593          	addi	a1,a1,-1098 # 8002d2f0 <__func__.0+0x2d0>
     8000f742:	b79d                	j	8000f6a8 <priv_change_14+0x8c>
     8000f744:	0002b797          	auipc	a5,0x2b
-    8000f748:	1887a783          	lw	a5,392(a5) # 8003a8cc <curr_priv>
+    8000f748:	1907a783          	lw	a5,400(a5) # 8003a8d4 <curr_priv>
          printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
     8000f74c:	0001e597          	auipc	a1,0x1e
     8000f750:	b9458593          	addi	a1,a1,-1132 # 8002d2e0 <__func__.0+0x2c0>
@@ -24847,12 +24847,12 @@ bool priv_change_15(){
     8000f870:	8082                	ret
     TEST_ASSERT("vs trigger except that priv change to hs mode and sret to vs mod when medeleg/mideleg==1 and hedeleg/hideleg==0",         
     8000f872:	0002b717          	auipc	a4,0x2b
-    8000f876:	05a72703          	lw	a4,90(a4) # 8003a8cc <curr_priv>
+    8000f876:	06272703          	lw	a4,98(a4) # 8003a8d4 <curr_priv>
     8000f87a:	4789                	li	a5,2
     8000f87c:	faf713e3          	bne	a4,a5,8000f822 <priv_change_15+0xb0>
     8000f880:	bf5d                	j	8000f836 <priv_change_15+0xc4>
     8000f882:	0002b717          	auipc	a4,0x2b
-    8000f886:	04a72703          	lw	a4,74(a4) # 8003a8cc <curr_priv>
+    8000f886:	05272703          	lw	a4,82(a4) # 8003a8d4 <curr_priv>
     8000f88a:	4789                	li	a5,2
     8000f88c:	0001e597          	auipc	a1,0x1e
     8000f890:	a5458593          	addi	a1,a1,-1452 # 8002d2e0 <__func__.0+0x2c0>
@@ -24861,7 +24861,7 @@ bool priv_change_15(){
     8000f89c:	a5858593          	addi	a1,a1,-1448 # 8002d2f0 <__func__.0+0x2d0>
     8000f8a0:	bfb9                	j	8000f7fe <priv_change_15+0x8c>
     8000f8a2:	0002b717          	auipc	a4,0x2b
-    8000f8a6:	02a72703          	lw	a4,42(a4) # 8003a8cc <curr_priv>
+    8000f8a6:	03272703          	lw	a4,50(a4) # 8003a8d4 <curr_priv>
     8000f8aa:	4789                	li	a5,2
          printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
     8000f8ac:	0001e597          	auipc	a1,0x1e
@@ -24989,11 +24989,11 @@ bool priv_change_16(){
     8000f9d2:	8082                	ret
     TEST_ASSERT("vs trigger except that priv change to vs mode and sret to vs mod when medeleg/mideleg==1 and hedeleg/hideleg==0",         
     8000f9d4:	0002b717          	auipc	a4,0x2b
-    8000f9d8:	ef872703          	lw	a4,-264(a4) # 8003a8cc <curr_priv>
+    8000f9d8:	f0072703          	lw	a4,-256(a4) # 8003a8d4 <curr_priv>
     8000f9dc:	faf714e3          	bne	a4,a5,8000f984 <priv_change_16+0xb0>
     8000f9e0:	bf65                	j	8000f998 <priv_change_16+0xc4>
     8000f9e2:	0002b717          	auipc	a4,0x2b
-    8000f9e6:	eea72703          	lw	a4,-278(a4) # 8003a8cc <curr_priv>
+    8000f9e6:	ef272703          	lw	a4,-270(a4) # 8003a8d4 <curr_priv>
     8000f9ea:	4789                	li	a5,2
     8000f9ec:	0001e597          	auipc	a1,0x1e
     8000f9f0:	8f458593          	addi	a1,a1,-1804 # 8002d2e0 <__func__.0+0x2c0>
@@ -25002,7 +25002,7 @@ bool priv_change_16(){
     8000f9fc:	8f858593          	addi	a1,a1,-1800 # 8002d2f0 <__func__.0+0x2d0>
     8000fa00:	b785                	j	8000f960 <priv_change_16+0x8c>
     8000fa02:	0002b717          	auipc	a4,0x2b
-    8000fa06:	eca72703          	lw	a4,-310(a4) # 8003a8cc <curr_priv>
+    8000fa06:	ed272703          	lw	a4,-302(a4) # 8003a8d4 <curr_priv>
     8000fa0a:	4789                	li	a5,2
          printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
     8000fa0c:	0001e597          	auipc	a1,0x1e
@@ -25561,7 +25561,7 @@ bool illegal_except_1() {
     8000ffec:	e83f00ef          	jal	80000e6e <goto_priv>
     CSRW(CSR_MCONFIGPTR,0xfff);
     8000fff0:	6785                	lui	a5,0x1
-    8000fff2:	37fd                	addiw	a5,a5,-1 # fff <_test_table+0xfff>
+    8000fff2:	37fd                	addiw	a5,a5,-1 # fff <_test_table_size+0xffe>
     8000fff4:	f1579073          	csrw	0xf15,a5
     TEST_ASSERT("write csr which is read-only leads to illegal instruction interrupt",
     8000fff8:	08200593          	li	a1,130
@@ -27686,7 +27686,7 @@ bool external_interrupt_MEI() {
     80011536:	30046073          	csrsi	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);         
     8001153a:	6785                	lui	a5,0x1
-    8001153c:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001153c:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011540:	3047a073          	csrs	mie,a5
     CSRS(CSR_MIP,MIP_MEIP);     //p33 read-only  is set and cleared by a platform-specific interrupt controller
     80011544:	3447a073          	csrs	mip,a5
@@ -27758,7 +27758,7 @@ bool external_interrupt_MEI() {
     800115fa:	30046073          	csrsi	mstatus,8
     CSRC(CSR_MIE,MIE_MEIE);
     800115fe:	6785                	lui	a5,0x1
-    80011600:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011600:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011604:	3047b073          	csrc	mie,a5
     CSRS(CSR_MIP,MIP_MEIP);
     80011608:	3447a073          	csrs	mip,a5
@@ -27805,7 +27805,7 @@ bool external_interrupt_MEI() {
     8001167a:	30046073          	csrsi	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     8001167e:	6785                	lui	a5,0x1
-    80011680:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011680:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011684:	3047a073          	csrs	mie,a5
     CSRC(CSR_MIP,MIP_MEIP);
     80011688:	3447b073          	csrc	mip,a5
@@ -27871,7 +27871,7 @@ bool external_interrupt_MEI() {
     8001172e:	30047073          	csrci	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     80011732:	6785                	lui	a5,0x1
-    80011734:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011734:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011738:	3047a073          	csrs	mie,a5
     CSRS(CSR_MIP,MIP_MEIP);
     8001173c:	3447a073          	csrs	mip,a5
@@ -27918,7 +27918,7 @@ bool external_interrupt_MEI() {
     800117ae:	30047073          	csrci	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     800117b2:	6785                	lui	a5,0x1
-    800117b4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    800117b4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     800117b8:	3047a073          	csrs	mie,a5
     CSRC(CSR_MIP,MIP_MEIP);
     800117bc:	3447b073          	csrc	mip,a5
@@ -27965,7 +27965,7 @@ bool external_interrupt_MEI() {
     8001182e:	30047073          	csrci	mstatus,8
     CSRC(CSR_MIE,MIE_MEIE);
     80011832:	6785                	lui	a5,0x1
-    80011834:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011834:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011838:	3047b073          	csrc	mie,a5
     CSRC(CSR_MIP,MIP_MEIP);
     8001183c:	3447b073          	csrc	mip,a5
@@ -28013,7 +28013,7 @@ bool external_interrupt_MEI() {
     800118ae:	30046073          	csrsi	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     800118b2:	6785                	lui	a5,0x1
-    800118b4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    800118b4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     800118b8:	3047a073          	csrs	mie,a5
     CSRS(CSR_MIP,MIP_MEIP);
     800118bc:	3447a073          	csrs	mip,a5
@@ -28085,7 +28085,7 @@ bool external_interrupt_MEI() {
     8001196e:	30046073          	csrsi	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     80011972:	6785                	lui	a5,0x1
-    80011974:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011974:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011978:	3047a073          	csrs	mie,a5
     CSRW(CSR_HIDELEG,(uint64_t)-1);
     8001197c:	577d                	li	a4,-1
@@ -28158,7 +28158,7 @@ bool external_interrupt_MEI() {
     80011a34:	30046073          	csrsi	mstatus,8
     CSRC(CSR_MIE,MIE_MEIE);
     80011a38:	6785                	lui	a5,0x1
-    80011a3a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011a3a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011a3e:	3047b073          	csrc	mie,a5
     CSRW(CSR_MIDELEG,0);
     80011a42:	30305073          	csrwi	mideleg,0
@@ -28210,7 +28210,7 @@ bool external_interrupt_MEI() {
     80011abc:	30046073          	csrsi	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     80011ac0:	6785                	lui	a5,0x1
-    80011ac2:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011ac2:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011ac6:	3047a073          	csrs	mie,a5
     CSRC(CSR_MIP,MIP_MEIP);
     80011aca:	3447b073          	csrc	mip,a5
@@ -28272,7 +28272,7 @@ bool external_interrupt_MEI() {
     80011b60:	30047073          	csrci	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     80011b64:	6785                	lui	a5,0x1
-    80011b66:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011b66:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011b6a:	3047a073          	csrs	mie,a5
     CSRC(CSR_MIDELEG,(uint64_t)-1);
     80011b6e:	577d                	li	a4,-1
@@ -28326,7 +28326,7 @@ bool external_interrupt_MEI() {
     80011bea:	30046073          	csrsi	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     80011bee:	6785                	lui	a5,0x1
-    80011bf0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011bf0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011bf4:	3047a073          	csrs	mie,a5
     CSRS(CSR_MIP,MIP_MEIP);
     80011bf8:	3447a073          	csrs	mip,a5
@@ -28398,7 +28398,7 @@ bool external_interrupt_MEI() {
     80011caa:	30046073          	csrsi	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     80011cae:	6785                	lui	a5,0x1
-    80011cb0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011cb0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011cb4:	3047a073          	csrs	mie,a5
     CSRW(CSR_HIDELEG,(uint64_t)-1);
     80011cb8:	577d                	li	a4,-1
@@ -28471,7 +28471,7 @@ bool external_interrupt_MEI() {
     80011d70:	30046073          	csrsi	mstatus,8
     CSRC(CSR_MIE,MIE_MEIE);
     80011d74:	6785                	lui	a5,0x1
-    80011d76:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011d76:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011d7a:	3047b073          	csrc	mie,a5
     CSRW(CSR_MIDELEG,0);
     80011d7e:	30305073          	csrwi	mideleg,0
@@ -28523,7 +28523,7 @@ bool external_interrupt_MEI() {
     80011df8:	30046073          	csrsi	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     80011dfc:	6785                	lui	a5,0x1
-    80011dfe:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011dfe:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011e02:	3047a073          	csrs	mie,a5
     CSRC(CSR_MIP,MIP_MEIP);
     80011e06:	3447b073          	csrc	mip,a5
@@ -28585,7 +28585,7 @@ bool external_interrupt_MEI() {
     80011e9a:	30047073          	csrci	mstatus,8
     CSRS(CSR_MIE,MIE_MEIE);
     80011e9e:	6785                	lui	a5,0x1
-    80011ea0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80011ea0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80011ea4:	3047a073          	csrs	mie,a5
     CSRC(CSR_MIDELEG,(uint64_t)-1);
     80011ea8:	577d                	li	a4,-1
@@ -32940,7 +32940,7 @@ bool instruction_page_fault_2(){
     
     TEST_EXEC_EXCEPT(vaddr); 
     80014bbc:	000807b7          	lui	a5,0x80
-    80014bc0:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80014bc0:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80014bc2:	07b6                	slli	a5,a5,0xd
     80014bc4:	0003c417          	auipc	s0,0x3c
     80014bc8:	44c40413          	addi	s0,s0,1100 # 80051010 <excpt>
@@ -33245,7 +33245,7 @@ bool instruction_page_fault_4(){
     
     TEST_EXEC_EXCEPT(vaddr); 
     80014eae:	000807b7          	lui	a5,0x80
-    80014eb2:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80014eb2:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80014eb4:	07b6                	slli	a5,a5,0xd
     80014eb6:	0003c417          	auipc	s0,0x3c
     80014eba:	15a40413          	addi	s0,s0,346 # 80051010 <excpt>
@@ -33626,7 +33626,7 @@ bool load_page_fault_2(){
     TEST_SETUP_EXCEPT();
     80015266:	b0deb0ef          	jal	80000d72 <test_setup_except_function>
     8001526a:	000807b7          	lui	a5,0x80
-    8001526e:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    8001526e:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80015270:	07b6                	slli	a5,a5,0xd
     80015272:	6c07c7f3          	.insn	4, 0x6c07c7f3
     uintptr_t addr = hs_page_base(VSURWX_GURWX);
@@ -33755,7 +33755,7 @@ bool load_page_fault_3(){
     80015392:	9e1eb0ef          	jal	80000d72 <test_setup_except_function>
     asm volatile(
     80015396:	000807b7          	lui	a5,0x80
-    8001539a:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    8001539a:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     8001539c:	07b6                	slli	a5,a5,0xd
     8001539e:	6007c7f3          	.insn	4, 0x6007c7f3
     hlvb(addr);
@@ -34119,7 +34119,7 @@ bool load_page_fault_5(){
     8001570c:	e66eb0ef          	jal	80000d72 <test_setup_except_function>
 LOAD_INSTRUCTION(lbu, "lbu", uint8_t);
     80015710:	000807b7          	lui	a5,0x80
-    80015714:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80015714:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80015716:	07b6                	slli	a5,a5,0xd
     80015718:	0007c783          	lbu	a5,0(a5)
     uintptr_t addr = hs_page_base(VSURWX_GURWX);
@@ -34244,7 +34244,7 @@ bool load_page_fault_6(){
     TEST_SETUP_EXCEPT();
     80015832:	d40eb0ef          	jal	80000d72 <test_setup_except_function>
     80015836:	000807b7          	lui	a5,0x80
-    8001583a:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    8001583a:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     8001583c:	07b6                	slli	a5,a5,0xd
     8001583e:	0007c783          	lbu	a5,0(a5)
     lbu(addr);
@@ -34355,7 +34355,7 @@ bool load_page_fault_7(){
     8001592e:	c44eb0ef          	jal	80000d72 <test_setup_except_function>
 LOAD_INSTRUCTION(ld, "ld", uint64_t);
     80015932:	000807b7          	lui	a5,0x80
-    80015936:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80015936:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80015938:	07b6                	slli	a5,a5,0xd
     8001593a:	0007b783          	ld	a5,0(a5)
     uintptr_t addr = hs_page_base(VSURWX_GURWX);
@@ -34480,7 +34480,7 @@ bool load_page_fault_8(){
     TEST_SETUP_EXCEPT();
     80015a54:	b1eeb0ef          	jal	80000d72 <test_setup_except_function>
     80015a58:	000807b7          	lui	a5,0x80
-    80015a5c:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80015a5c:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80015a5e:	07b6                	slli	a5,a5,0xd
     80015a60:	0007b783          	ld	a5,0(a5)
     ld(addr);
@@ -34715,7 +34715,7 @@ bool store_page_fault_1(){
     80015c9e:	37ab77b7          	lui	a5,0x37ab7
     80015ca2:	00080737          	lui	a4,0x80
     80015ca6:	078a                	slli	a5,a5,0x2
-    80015ca8:	070d                	addi	a4,a4,3 # 80003 <_test_table+0x80003>
+    80015ca8:	070d                	addi	a4,a4,3 # 80003 <_test_table_size+0x80002>
     80015caa:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80015cae:	0736                	slli	a4,a4,0xd
     80015cb0:	66f74073          	.insn	4, 0x66f74073
@@ -34836,7 +34836,7 @@ bool store_page_fault_2(){
     80015db8:	37ab77b7          	lui	a5,0x37ab7
     80015dbc:	00080737          	lui	a4,0x80
     80015dc0:	078a                	slli	a5,a5,0x2
-    80015dc2:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    80015dc2:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     80015dc4:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80015dc8:	0736                	slli	a4,a4,0xd
     80015dca:	6ef74073          	.insn	4, 0x6ef74073
@@ -34969,7 +34969,7 @@ bool store_page_fault_3(){
     80015eee:	37ab77b7          	lui	a5,0x37ab7
     80015ef2:	00080737          	lui	a4,0x80
     80015ef6:	078a                	slli	a5,a5,0x2
-    80015ef8:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    80015ef8:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     80015efa:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80015efe:	0736                	slli	a4,a4,0xd
     80015f00:	62f74073          	.insn	4, 0x62f74073
@@ -35199,7 +35199,7 @@ STORE_INSTRUCTION(sd, "sd", uint64_t);
     80016140:	37ab77b7          	lui	a5,0x37ab7
     80016144:	00080737          	lui	a4,0x80
     80016148:	078a                	slli	a5,a5,0x2
-    8001614a:	070d                	addi	a4,a4,3 # 80003 <_test_table+0x80003>
+    8001614a:	070d                	addi	a4,a4,3 # 80003 <_test_table_size+0x80002>
     8001614c:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80016150:	0736                	slli	a4,a4,0xd
     80016152:	00f73023          	sd	a5,0(a4)
@@ -35316,7 +35316,7 @@ bool store_page_fault_5(){
     80016254:	37ab77b7          	lui	a5,0x37ab7
     80016258:	00080737          	lui	a4,0x80
     8001625c:	078a                	slli	a5,a5,0x2
-    8001625e:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    8001625e:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     80016260:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80016264:	0736                	slli	a4,a4,0xd
     80016266:	00f73023          	sd	a5,0(a4)
@@ -35445,7 +35445,7 @@ bool store_page_fault_6(){
     80016384:	37ab77b7          	lui	a5,0x37ab7
     80016388:	00080737          	lui	a4,0x80
     8001638c:	078a                	slli	a5,a5,0x2
-    8001638e:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    8001638e:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     80016390:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80016394:	0736                	slli	a4,a4,0xd
     80016396:	00f73023          	sd	a5,0(a4)
@@ -35555,7 +35555,7 @@ bool store_page_fault_7(){
     8001648a:	37ab77b7          	lui	a5,0x37ab7
     8001648e:	00080737          	lui	a4,0x80
     80016492:	078a                	slli	a5,a5,0x2
-    80016494:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    80016494:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     80016496:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     8001649a:	0736                	slli	a4,a4,0xd
     8001649c:	00f73023          	sd	a5,0(a4)
@@ -35684,7 +35684,7 @@ bool store_page_fault_8(){
     800165ba:	37ab77b7          	lui	a5,0x37ab7
     800165be:	00080737          	lui	a4,0x80
     800165c2:	078a                	slli	a5,a5,0x2
-    800165c4:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    800165c4:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     800165c6:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     800165ca:	0736                	slli	a4,a4,0xd
     800165cc:	00f73023          	sd	a5,0(a4)
@@ -36038,7 +36038,7 @@ bool amo_page_fault_2(){
     8001691c:	c56ea0ef          	jal	80000d72 <test_setup_except_function>
 AMO_INSTRUCTION(amomin_d, "amomin.d", uint64_t);
     80016920:	000807b7          	lui	a5,0x80
-    80016924:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80016924:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80016926:	4701                	li	a4,0
     80016928:	07b6                	slli	a5,a5,0xd
     8001692a:	80e7b72f          	amomin.d	a4,a4,(a5)
@@ -36170,7 +36170,7 @@ bool amo_page_fault_3(){
     80016a4a:	b28ea0ef          	jal	80000d72 <test_setup_except_function>
 AMO_INSTRUCTION(amoadd_w, "amoadd.w", uint32_t);
     80016a4e:	000807b7          	lui	a5,0x80
-    80016a52:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80016a52:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80016a54:	4701                	li	a4,0
     80016a56:	07b6                	slli	a5,a5,0xd
     80016a58:	00e7a72f          	amoadd.w	a4,a4,(a5)
@@ -36343,7 +36343,7 @@ bool amo_page_fault_4(){
     80016bf4:	97eea0ef          	jal	80000d72 <test_setup_except_function>
 AMO_INSTRUCTION(amoand_d, "amoand.d", uint64_t);
     80016bf8:	000807b7          	lui	a5,0x80
-    80016bfc:	0795                	addi	a5,a5,5 # 80005 <_test_table+0x80005>
+    80016bfc:	0795                	addi	a5,a5,5 # 80005 <_test_table_size+0x80004>
     80016bfe:	07b6                	slli	a5,a5,0xd
     80016c00:	6087b42f          	amoand.d	s0,s0,(a5)
     addr = hs_page_base(VSRX_GURWX);
@@ -36515,7 +36515,7 @@ bool amo_page_fault_5(){
     80016d9a:	fd9e90ef          	jal	80000d72 <test_setup_except_function>
 AMO_INSTRUCTION(amomin_d, "amomin.d", uint64_t);
     80016d9e:	000807b7          	lui	a5,0x80
-    80016da2:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80016da2:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80016da4:	4701                	li	a4,0
     80016da6:	07b6                	slli	a5,a5,0xd
     80016da8:	80e7b72f          	amomin.d	a4,a4,(a5)
@@ -36644,7 +36644,7 @@ bool amo_page_fault_6(){
     80016ec2:	eb1e90ef          	jal	80000d72 <test_setup_except_function>
 AMO_INSTRUCTION(amoadd_w, "amoadd.w", uint32_t);
     80016ec6:	000807b7          	lui	a5,0x80
-    80016eca:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80016eca:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80016ecc:	4701                	li	a4,0
     80016ece:	07b6                	slli	a5,a5,0xd
     80016ed0:	00e7a72f          	amoadd.w	a4,a4,(a5)
@@ -37196,7 +37196,7 @@ bool load_guest_page_fault_4(){
     800173de:	995e90ef          	jal	80000d72 <test_setup_except_function>
     asm volatile(
     800173e2:	000807b7          	lui	a5,0x80
-    800173e6:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    800173e6:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     800173e8:	07b6                	slli	a5,a5,0xd
     800173ea:	6007c7f3          	.insn	4, 0x6007c7f3
     vaddr = hs_page_base(VSURWX_GURWX);
@@ -37329,7 +37329,7 @@ bool load_guest_page_fault_5(){
     TEST_SETUP_EXCEPT();
     8001750a:	869e90ef          	jal	80000d72 <test_setup_except_function>
     8001750e:	000807b7          	lui	a5,0x80
-    80017512:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80017512:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80017514:	07b6                	slli	a5,a5,0xd
     80017516:	6007c7f3          	.insn	4, 0x6007c7f3
     hlvb(vaddr);
@@ -37867,7 +37867,7 @@ bool load_guest_page_fault_9(){
     80017a0c:	b66e90ef          	jal	80000d72 <test_setup_except_function>
 LOAD_INSTRUCTION(lb, "lb", uint8_t);
     80017a10:	000807b7          	lui	a5,0x80
-    80017a14:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80017a14:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80017a16:	07b6                	slli	a5,a5,0xd
     80017a18:	00078783          	lb	a5,0(a5)
     vaddr = hs_page_base(VSURWX_GURWX);
@@ -37997,7 +37997,7 @@ bool load_guest_page_fault_10(){
     TEST_SETUP_EXCEPT();
     80017b32:	a40e90ef          	jal	80000d72 <test_setup_except_function>
     80017b36:	000807b7          	lui	a5,0x80
-    80017b3a:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80017b3a:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80017b3c:	07b6                	slli	a5,a5,0xd
     80017b3e:	00078783          	lb	a5,0(a5)
     lb(vaddr);
@@ -38668,7 +38668,7 @@ bool load_guest_page_fault_15(){
     TEST_SETUP_EXCEPT();
     8001813e:	c35e80ef          	jal	80000d72 <test_setup_except_function>
     80018142:	000807b7          	lui	a5,0x80
-    80018146:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80018146:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80018148:	07b6                	slli	a5,a5,0xd
     8001814a:	6007c7f3          	.insn	4, 0x6007c7f3
     hlvb(vaddr);
@@ -38844,7 +38844,7 @@ bool store_guest_page_fault_1(){
     800182ec:	06578793          	addi	a5,a5,101 # 100065 <STACK_SIZE+0x65>
     800182f0:	6731                	lui	a4,0xc
     800182f2:	07b2                	slli	a5,a5,0xc
-    800182f4:	eef70713          	addi	a4,a4,-273 # beef <_test_table+0xbeef>
+    800182f4:	eef70713          	addi	a4,a4,-273 # beef <_test_table_size+0xbeee>
     800182f8:	66e7c073          	.insn	4, 0x66e7c073
     addr = hs_page_base(VSRWX_GI);
 
@@ -39238,7 +39238,7 @@ bool store_guest_page_fault_4(){
     8001868a:	37ab77b7          	lui	a5,0x37ab7
     8001868e:	00080737          	lui	a4,0x80
     80018692:	078a                	slli	a5,a5,0x2
-    80018694:	076d                	addi	a4,a4,27 # 8001b <_test_table+0x8001b>
+    80018694:	076d                	addi	a4,a4,27 # 8001b <_test_table_size+0x8001a>
     80018696:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     8001869a:	0736                	slli	a4,a4,0xd
     8001869c:	6ef74073          	.insn	4, 0x6ef74073
@@ -39373,7 +39373,7 @@ bool store_guest_page_fault_5(){
     800187c0:	37ab77b7          	lui	a5,0x37ab7
     800187c4:	00080737          	lui	a4,0x80
     800187c8:	078a                	slli	a5,a5,0x2
-    800187ca:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    800187ca:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     800187cc:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     800187d0:	0736                	slli	a4,a4,0xd
     800187d2:	62f74073          	.insn	4, 0x62f74073
@@ -39931,7 +39931,7 @@ STORE_INSTRUCTION(sd, "sd", uint64_t);
     80018cf6:	37ab77b7          	lui	a5,0x37ab7
     80018cfa:	00080737          	lui	a4,0x80
     80018cfe:	078a                	slli	a5,a5,0x2
-    80018d00:	076d                	addi	a4,a4,27 # 8001b <_test_table+0x8001b>
+    80018d00:	076d                	addi	a4,a4,27 # 8001b <_test_table_size+0x8001a>
     80018d02:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80018d06:	0736                	slli	a4,a4,0xd
     80018d08:	00f73023          	sd	a5,0(a4)
@@ -40062,7 +40062,7 @@ bool store_guest_page_fault_10(){
     80018e26:	37ab77b7          	lui	a5,0x37ab7
     80018e2a:	00080737          	lui	a4,0x80
     80018e2e:	078a                	slli	a5,a5,0x2
-    80018e30:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    80018e30:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     80018e32:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80018e36:	0736                	slli	a4,a4,0xd
     80018e38:	00f73023          	sd	a5,0(a4)
@@ -40629,7 +40629,7 @@ AMO_INSTRUCTION(amomin_d, "amomin.d", uint64_t);
     8001936a:	37ab77b7          	lui	a5,0x37ab7
     8001936e:	00080737          	lui	a4,0x80
     80019372:	078a                	slli	a5,a5,0x2
-    80019374:	076d                	addi	a4,a4,27 # 8001b <_test_table+0x8001b>
+    80019374:	076d                	addi	a4,a4,27 # 8001b <_test_table_size+0x8001a>
     80019376:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     8001937a:	0736                	slli	a4,a4,0xd
     8001937c:	80f737af          	amomin.d	a5,a5,(a4)
@@ -40762,7 +40762,7 @@ AMO_INSTRUCTION(amominu_d, "amominu.d", uint64_t);
     8001949a:	37ab77b7          	lui	a5,0x37ab7
     8001949e:	00080737          	lui	a4,0x80
     800194a2:	078a                	slli	a5,a5,0x2
-    800194a4:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    800194a4:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     800194a6:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     800194aa:	0736                	slli	a4,a4,0xd
     800194ac:	c0f737af          	amominu.d	a5,a5,(a4)
@@ -41127,7 +41127,7 @@ bool instruction_guest_page_fault_3(){
 
     TEST_EXEC_EXCEPT(vaddr); 
     800197e2:	000807b7          	lui	a5,0x80
-    800197e6:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    800197e6:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     800197e8:	07b6                	slli	a5,a5,0xd
     800197ea:	00038417          	auipc	s0,0x38
     800197ee:	82640413          	addi	s0,s0,-2010 # 80051010 <excpt>
@@ -41256,7 +41256,7 @@ bool instruction_guest_page_fault_4(){
     8001990c:	c66e70ef          	jal	80000d72 <test_setup_except_function>
     TEST_EXEC_EXCEPT(addr); 
     80019910:	000807b7          	lui	a5,0x80
-    80019914:	07b5                	addi	a5,a5,13 # 8000d <_test_table+0x8000d>
+    80019914:	07b5                	addi	a5,a5,13 # 8000d <_test_table_size+0x8000c>
     80019916:	07b6                	slli	a5,a5,0xd
     80019918:	00037417          	auipc	s0,0x37
     8001991c:	6f840413          	addi	s0,s0,1784 # 80051010 <excpt>
@@ -41814,7 +41814,7 @@ bool load_access_fault_1(){
     80019e48:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     80019e4c:	6785                	lui	a5,0x1
-    80019e4e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80019e4e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80019e52:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -41836,7 +41836,7 @@ bool load_access_fault_1(){
 LOAD_INSTRUCTION(lb, "lb", uint8_t);
     80019e72:	4785                	li	a5,1
     80019e74:	1786                	slli	a5,a5,0x21
-    80019e76:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    80019e76:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     80019e7a:	00078783          	lb	a5,0(a5)
 
     lb(0x80000100UL << 2);    //访问区域内地址
@@ -41964,7 +41964,7 @@ bool load_access_fault_2(){
     80019f9e:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     80019fa2:	6785                	lui	a5,0x1
-    80019fa4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    80019fa4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     80019fa8:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, 0x88000000UL);
@@ -42118,7 +42118,7 @@ bool load_access_fault_3(){
     8001a100:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001a104:	6785                	lui	a5,0x1
-    8001a106:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001a106:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001a10a:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -42144,7 +42144,7 @@ bool load_access_fault_3(){
     8001a134:	c3fe60ef          	jal	80000d72 <test_setup_except_function>
     8001a138:	4785                	li	a5,1
     8001a13a:	1786                	slli	a5,a5,0x21
-    8001a13c:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001a13c:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001a140:	00078783          	lb	a5,0(a5)
     
     lb(0x80000100UL << 2);
@@ -42272,7 +42272,7 @@ bool load_access_fault_4(){
     8001a264:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001a268:	6785                	lui	a5,0x1
-    8001a26a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001a26a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001a26e:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -42298,7 +42298,7 @@ bool load_access_fault_4(){
     8001a298:	adbe60ef          	jal	80000d72 <test_setup_except_function>
     8001a29c:	4785                	li	a5,1
     8001a29e:	1786                	slli	a5,a5,0x21
-    8001a2a0:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001a2a0:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001a2a4:	00078783          	lb	a5,0(a5)
     
     lb(0x80000100UL << 2);
@@ -42420,7 +42420,7 @@ bool load_access_fault_5(){
     8001a3c6:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001a3ca:	6785                	lui	a5,0x1
-    8001a3cc:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001a3cc:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001a3d0:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -42440,7 +42440,7 @@ bool load_access_fault_5(){
     8001a3ec:	987e60ef          	jal	80000d72 <test_setup_except_function>
     8001a3f0:	4785                	li	a5,1
     8001a3f2:	1786                	slli	a5,a5,0x21
-    8001a3f4:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001a3f4:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001a3f8:	00078783          	lb	a5,0(a5)
     
     lb(0x80000100UL << 2);
@@ -42568,7 +42568,7 @@ bool load_access_fault_6(){
     8001a518:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001a51c:	6785                	lui	a5,0x1
-    8001a51e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001a51e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001a522:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -42604,7 +42604,7 @@ bool load_access_fault_6(){
     8001a56c:	807e60ef          	jal	80000d72 <test_setup_except_function>
     8001a570:	4785                	li	a5,1
     8001a572:	1786                	slli	a5,a5,0x21
-    8001a574:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001a574:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001a578:	00078783          	lb	a5,0(a5)
     
     lb(0x80000100UL << 2);
@@ -42733,7 +42733,7 @@ bool load_access_fault_7(){
     8001a69c:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001a6a0:	6785                	lui	a5,0x1
-    8001a6a2:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001a6a2:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001a6a6:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -42759,7 +42759,7 @@ bool load_access_fault_7(){
     8001a6d0:	ea2e60ef          	jal	80000d72 <test_setup_except_function>
     8001a6d4:	4785                	li	a5,1
     8001a6d6:	1786                	slli	a5,a5,0x21
-    8001a6d8:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001a6d8:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001a6dc:	00078783          	lb	a5,0(a5)
     
     lb(0x80000100UL << 2);
@@ -42887,7 +42887,7 @@ bool load_access_fault_8(){
     8001a800:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001a804:	6785                	lui	a5,0x1
-    8001a806:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001a806:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001a80a:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -42913,7 +42913,7 @@ bool load_access_fault_8(){
     8001a834:	d3ee60ef          	jal	80000d72 <test_setup_except_function>
     8001a838:	4785                	li	a5,1
     8001a83a:	1786                	slli	a5,a5,0x21
-    8001a83c:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001a83c:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001a840:	00078783          	lb	a5,0(a5)
     
     lb(0x80000100UL << 2);
@@ -43041,7 +43041,7 @@ bool load_access_fault_9(){
     8001a964:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001a968:	6785                	lui	a5,0x1
-    8001a96a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001a96a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001a96e:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -43068,7 +43068,7 @@ bool load_access_fault_9(){
 LOAD_INSTRUCTION(ld, "ld", uint64_t);
     8001a99c:	4785                	li	a5,1
     8001a99e:	178e                	slli	a5,a5,0x23
-    8001a9a0:	17e1                	addi	a5,a5,-8 # 7ff8 <_test_table+0x7ff8>
+    8001a9a0:	17e1                	addi	a5,a5,-8 # 7ff8 <_test_table_size+0x7ff7>
     8001a9a2:	0007b783          	ld	a5,0(a5)
     
     ld(0x1fffffffeUL << 2);
@@ -43342,7 +43342,7 @@ bool store_access_fault_1(){
     8001ac28:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001ac2c:	6785                	lui	a5,0x1
-    8001ac2e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001ac2e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001ac32:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -43371,7 +43371,7 @@ bool store_access_fault_1(){
 STORE_INSTRUCTION(sb, "sb", uint8_t);
     8001ac5e:	4785                	li	a5,1
     8001ac60:	1786                	slli	a5,a5,0x21
-    8001ac62:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001ac62:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001ac66:	4701                	li	a4,0
     8001ac68:	00e78023          	sb	a4,0(a5)
     
@@ -43512,7 +43512,7 @@ bool store_access_fault_2(){
     8001adae:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001adb2:	6785                	lui	a5,0x1
-    8001adb4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001adb4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001adb8:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -43538,7 +43538,7 @@ bool store_access_fault_2(){
     8001ade2:	f91e50ef          	jal	80000d72 <test_setup_except_function>
     8001ade6:	4785                	li	a5,1
     8001ade8:	1786                	slli	a5,a5,0x21
-    8001adea:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001adea:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001adee:	4701                	li	a4,0
     8001adf0:	00e78023          	sb	a4,0(a5)
     
@@ -43668,7 +43668,7 @@ bool store_access_fault_3(){
     8001af14:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001af18:	6785                	lui	a5,0x1
-    8001af1a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001af1a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001af1e:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -43694,7 +43694,7 @@ bool store_access_fault_3(){
     8001af48:	e2be50ef          	jal	80000d72 <test_setup_except_function>
     8001af4c:	4785                	li	a5,1
     8001af4e:	1786                	slli	a5,a5,0x21
-    8001af50:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001af50:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001af54:	4701                	li	a4,0
     8001af56:	00e78023          	sb	a4,0(a5)
     
@@ -43823,7 +43823,7 @@ bool store_access_fault_4(){
     8001b07a:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001b07e:	6785                	lui	a5,0x1
-    8001b080:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001b080:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001b084:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -43849,7 +43849,7 @@ bool store_access_fault_4(){
     8001b0ae:	cc5e50ef          	jal	80000d72 <test_setup_except_function>
     8001b0b2:	4785                	li	a5,1
     8001b0b4:	1786                	slli	a5,a5,0x21
-    8001b0b6:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001b0b6:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001b0ba:	4701                	li	a4,0
     8001b0bc:	00e78023          	sb	a4,0(a5)
     
@@ -43967,7 +43967,7 @@ bool store_access_fault_5(){
     8001b1ce:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001b1d2:	6785                	lui	a5,0x1
-    8001b1d4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001b1d4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001b1d8:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -43987,7 +43987,7 @@ bool store_access_fault_5(){
     8001b1f4:	b7fe50ef          	jal	80000d72 <test_setup_except_function>
     8001b1f8:	4785                	li	a5,1
     8001b1fa:	1786                	slli	a5,a5,0x21
-    8001b1fc:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001b1fc:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001b200:	4701                	li	a4,0
     8001b202:	00e78023          	sb	a4,0(a5)
     
@@ -44115,7 +44115,7 @@ bool store_access_fault_6(){
     8001b322:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001b326:	6785                	lui	a5,0x1
-    8001b328:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001b328:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001b32c:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -44141,7 +44141,7 @@ bool store_access_fault_6(){
     8001b356:	a1de50ef          	jal	80000d72 <test_setup_except_function>
     8001b35a:	4785                	li	a5,1
     8001b35c:	1786                	slli	a5,a5,0x21
-    8001b35e:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001b35e:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001b362:	4701                	li	a4,0
     8001b364:	00e78023          	sb	a4,0(a5)
     
@@ -44271,7 +44271,7 @@ bool store_access_fault_7(){
     8001b488:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001b48c:	6785                	lui	a5,0x1
-    8001b48e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001b48e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001b492:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -44297,7 +44297,7 @@ bool store_access_fault_7(){
     8001b4bc:	8b7e50ef          	jal	80000d72 <test_setup_except_function>
     8001b4c0:	4785                	li	a5,1
     8001b4c2:	1786                	slli	a5,a5,0x21
-    8001b4c4:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001b4c4:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001b4c8:	4701                	li	a4,0
     8001b4ca:	00e78023          	sb	a4,0(a5)
     
@@ -44426,7 +44426,7 @@ bool store_access_fault_8(){
     8001b5ee:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001b5f2:	6785                	lui	a5,0x1
-    8001b5f4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001b5f4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001b5f8:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -44452,7 +44452,7 @@ bool store_access_fault_8(){
     8001b622:	f50e50ef          	jal	80000d72 <test_setup_except_function>
     8001b626:	4785                	li	a5,1
     8001b628:	1786                	slli	a5,a5,0x21
-    8001b62a:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001b62a:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001b62e:	4701                	li	a4,0
     8001b630:	00e78023          	sb	a4,0(a5)
     
@@ -44581,7 +44581,7 @@ bool store_access_fault_9(){
     8001b754:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001b758:	6785                	lui	a5,0x1
-    8001b75a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001b75a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001b75e:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -44867,7 +44867,7 @@ bool amo_access_fault_1(){
     8001b9ea:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001b9ee:	6785                	lui	a5,0x1
-    8001b9f0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001b9f0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001b9f4:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -45031,7 +45031,7 @@ bool amo_access_fault_2(){
     8001bb6c:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001bb70:	6785                	lui	a5,0x1
-    8001bb72:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001bb72:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001bb76:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -45190,7 +45190,7 @@ bool amo_access_fault_3(){
     8001bcda:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001bcde:	6785                	lui	a5,0x1
-    8001bce0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001bce0:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001bce4:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -45347,7 +45347,7 @@ bool amo_access_fault_4(){
     8001be48:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001be4c:	6785                	lui	a5,0x1
-    8001be4e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001be4e:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001be52:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -45493,7 +45493,7 @@ bool amo_access_fault_5(){
     8001bfa4:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001bfa8:	6785                	lui	a5,0x1
-    8001bfaa:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001bfaa:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001bfae:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -45643,7 +45643,7 @@ bool amo_access_fault_6(){
     8001c100:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001c104:	6785                	lui	a5,0x1
-    8001c106:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001c106:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001c10a:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -45801,7 +45801,7 @@ bool amo_access_fault_7(){
     8001c26e:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001c272:	6785                	lui	a5,0x1
-    8001c274:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001c274:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001c278:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -45958,7 +45958,7 @@ bool amo_access_fault_8(){
     8001c3dc:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001c3e0:	6785                	lui	a5,0x1
-    8001c3e2:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001c3e2:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001c3e6:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -46116,7 +46116,7 @@ bool amo_access_fault_9(){
     8001c54a:	3a07a073          	csrs	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001c54e:	6785                	lui	a5,0x1
-    8001c550:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001c550:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001c554:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -46400,7 +46400,7 @@ bool instruction_access_fault_1(){
     8001c7de:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001c7e2:	6785                	lui	a5,0x1
-    8001c7e4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001c7e4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001c7e8:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -46422,7 +46422,7 @@ bool instruction_access_fault_1(){
     
     TEST_EXEC_EXCEPT(0x80000100UL << 2);
     8001c80a:	02149793          	slli	a5,s1,0x21
-    8001c80e:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001c80e:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001c812:	00034417          	auipc	s0,0x34
     8001c816:	7fe40413          	addi	s0,s0,2046 # 80051010 <excpt>
     8001c81a:	00000297          	auipc	t0,0x0
@@ -46562,7 +46562,7 @@ bool instruction_access_fault_2(){
     8001c960:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001c964:	6785                	lui	a5,0x1
-    8001c966:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001c966:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001c96a:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -46590,7 +46590,7 @@ bool instruction_access_fault_2(){
     
     TEST_EXEC_EXCEPT(0x80000100UL << 2);
     8001c99a:	02149793          	slli	a5,s1,0x21
-    8001c99e:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001c99e:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001c9a2:	00034417          	auipc	s0,0x34
     8001c9a6:	66e40413          	addi	s0,s0,1646 # 80051010 <excpt>
     8001c9aa:	00000297          	auipc	t0,0x0
@@ -46719,7 +46719,7 @@ bool instruction_access_fault_3(){
     8001cace:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001cad2:	6785                	lui	a5,0x1
-    8001cad4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001cad4:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001cad8:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -46747,7 +46747,7 @@ bool instruction_access_fault_3(){
     TEST_EXEC_EXCEPT(0x80000100UL << 2);
     8001cb06:	4785                	li	a5,1
     8001cb08:	1786                	slli	a5,a5,0x21
-    8001cb0a:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001cb0a:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001cb0e:	00034417          	auipc	s0,0x34
     8001cb12:	50240413          	addi	s0,s0,1282 # 80051010 <excpt>
     8001cb16:	00000297          	auipc	t0,0x0
@@ -46876,7 +46876,7 @@ bool instruction_access_fault_4(){
     8001cc3c:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001cc40:	6785                	lui	a5,0x1
-    8001cc42:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001cc42:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001cc46:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -46904,7 +46904,7 @@ bool instruction_access_fault_4(){
     
     TEST_EXEC_EXCEPT(0x80000100UL << 2);
     8001cc76:	02149793          	slli	a5,s1,0x21
-    8001cc7a:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001cc7a:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001cc7e:	00034417          	auipc	s0,0x34
     8001cc82:	39240413          	addi	s0,s0,914 # 80051010 <excpt>
     8001cc86:	00000297          	auipc	t0,0x0
@@ -47030,7 +47030,7 @@ bool instruction_access_fault_5(){
     8001cda8:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001cdac:	6785                	lui	a5,0x1
-    8001cdae:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001cdae:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001cdb2:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000UL);
@@ -47052,7 +47052,7 @@ bool instruction_access_fault_5(){
     TEST_EXEC_EXCEPT(0x80000100UL << 2);
     8001cdd2:	4785                	li	a5,1
     8001cdd4:	1786                	slli	a5,a5,0x21
-    8001cdd6:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001cdd6:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001cdda:	00034417          	auipc	s0,0x34
     8001cdde:	23640413          	addi	s0,s0,566 # 80051010 <excpt>
     8001cde2:	00000297          	auipc	t0,0x0
@@ -47180,7 +47180,7 @@ bool instruction_access_fault_6(){
     8001cf06:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001cf0a:	6785                	lui	a5,0x1
-    8001cf0c:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001cf0c:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001cf10:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -47208,7 +47208,7 @@ bool instruction_access_fault_6(){
     
     TEST_EXEC_EXCEPT(0x80000100UL << 2);
     8001cf40:	02149793          	slli	a5,s1,0x21
-    8001cf44:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001cf44:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001cf48:	00034417          	auipc	s0,0x34
     8001cf4c:	0c840413          	addi	s0,s0,200 # 80051010 <excpt>
     8001cf50:	00000297          	auipc	t0,0x0
@@ -47337,7 +47337,7 @@ bool instruction_access_fault_7(){
     8001d074:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001d078:	6785                	lui	a5,0x1
-    8001d07a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001d07a:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001d07e:	3a07a073          	csrs	pmpcfg0,a5
     
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -47366,7 +47366,7 @@ bool instruction_access_fault_7(){
     TEST_EXEC_EXCEPT(0x80000100UL << 2);
     8001d0ac:	4785                	li	a5,1
     8001d0ae:	1786                	slli	a5,a5,0x21
-    8001d0b0:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001d0b0:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001d0b4:	00034417          	auipc	s0,0x34
     8001d0b8:	f5c40413          	addi	s0,s0,-164 # 80051010 <excpt>
     8001d0bc:	00000297          	auipc	t0,0x0
@@ -47494,7 +47494,7 @@ bool instruction_access_fault_8(){
     8001d1e2:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001d1e6:	6785                	lui	a5,0x1
-    8001d1e8:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001d1e8:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001d1ec:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -47522,7 +47522,7 @@ bool instruction_access_fault_8(){
     
     TEST_EXEC_EXCEPT(0x80000100UL << 2);
     8001d21c:	02149793          	slli	a5,s1,0x21
-    8001d220:	40078793          	addi	a5,a5,1024 # 8400 <_test_table+0x8400>
+    8001d220:	40078793          	addi	a5,a5,1024 # 8400 <_test_table_size+0x83ff>
     8001d224:	00034417          	auipc	s0,0x34
     8001d228:	dec40413          	addi	s0,s0,-532 # 80051010 <excpt>
     8001d22c:	00000297          	auipc	t0,0x0
@@ -47650,7 +47650,7 @@ bool instruction_access_fault_9(){
     8001d350:	3a07b073          	csrc	pmpcfg0,a5
     CSRS(CSR_PMPCFG0,1ULL << 11 );      //pmp1cfg的TOR模式
     8001d354:	6785                	lui	a5,0x1
-    8001d356:	80078793          	addi	a5,a5,-2048 # 800 <_test_table+0x800>
+    8001d356:	80078793          	addi	a5,a5,-2048 # 800 <_test_table_size+0x7ff>
     8001d35a:	3a07a073          	csrs	pmpcfg0,a5
 
     CSRW(CSR_PMPADDR0, (uintptr_t)0x80000000);
@@ -47678,7 +47678,7 @@ bool instruction_access_fault_9(){
     
     TEST_EXEC_EXCEPT(0x1fffffffeUL << 2);
     8001d38a:	02349793          	slli	a5,s1,0x23
-    8001d38e:	17e1                	addi	a5,a5,-8 # 7ff8 <_test_table+0x7ff8>
+    8001d38e:	17e1                	addi	a5,a5,-8 # 7ff8 <_test_table_size+0x7ff7>
     8001d390:	00034417          	auipc	s0,0x34
     8001d394:	c8040413          	addi	s0,s0,-896 # 80051010 <excpt>
     8001d398:	00000297          	auipc	t0,0x0
@@ -47950,7 +47950,7 @@ TEST_START();
     8001d60e:	861e30ef          	jal	80000e6e <goto_priv>
     asm volatile(
     8001d612:	000807b7          	lui	a5,0x80
-    8001d616:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    8001d616:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     8001d618:	07b6                	slli	a5,a5,0xd
     8001d61a:	6c07c7f3          	.insn	4, 0x6c07c7f3
     hlvd(addr);
@@ -48074,7 +48074,7 @@ bool mstatus_csr_tests_2(){
     8001d738:	4509                	li	a0,2
     8001d73a:	e54e30ef          	jal	80000d8e <set_prev_priv>
     8001d73e:	000807b7          	lui	a5,0x80
-    8001d742:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    8001d742:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     8001d744:	07b6                	slli	a5,a5,0xd
     8001d746:	6c07c7f3          	.insn	4, 0x6c07c7f3
     hlvd(addr);
@@ -48569,7 +48569,7 @@ bool hedeleg_csr_tests_1(){
     8001dc14:	1a60d0ef          	jal	8002adba <printf>
     8001dc18:	60202773          	csrr	a4,hedeleg
     8001dc1c:	67ad                	lui	a5,0xb
-    8001dc1e:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table+0xb1ff>
+    8001dc1e:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table_size+0xb1fe>
     8001dc22:	0000f597          	auipc	a1,0xf
     8001dc26:	6be58593          	addi	a1,a1,1726 # 8002d2e0 <__func__.0+0x2c0>
     8001dc2a:	00f70663          	beq	a4,a5,8001dc36 <hedeleg_csr_tests_1+0x76>
@@ -48580,7 +48580,7 @@ bool hedeleg_csr_tests_1(){
     8001dc3e:	17c0d0ef          	jal	8002adba <printf>
     8001dc42:	60202773          	csrr	a4,hedeleg
     8001dc46:	67ad                	lui	a5,0xb
-    8001dc48:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table+0xb1ff>
+    8001dc48:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table_size+0xb1fe>
     8001dc4c:	00f70c63          	beq	a4,a5,8001dc64 <hedeleg_csr_tests_1+0xa4>
     8001dc50:	0000f517          	auipc	a0,0xf
     8001dc54:	6e850513          	addi	a0,a0,1768 # 8002d338 <__func__.0+0x318>
@@ -48591,7 +48591,7 @@ bool hedeleg_csr_tests_1(){
     8001dc66:	6430b0ef          	jal	80029aa8 <putchar>
     8001dc6a:	60202773          	csrr	a4,hedeleg
     8001dc6e:	67ad                	lui	a5,0xb
-    8001dc70:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table+0xb1ff>
+    8001dc70:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table_size+0xb1fe>
     8001dc74:	02f70763          	beq	a4,a5,8001dca2 <hedeleg_csr_tests_1+0xe2>
     8001dc78:	4401                	li	s0,0
         CSRR(CSR_HEDELEG) == 0xb1ff
@@ -48706,7 +48706,7 @@ bool tselect_csr_tests_1(){
     8001dd66:	0540d0ef          	jal	8002adba <printf>
     8001dd6a:	60202773          	csrr	a4,hedeleg
     8001dd6e:	67ad                	lui	a5,0xb
-    8001dd70:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table+0xb1ff>
+    8001dd70:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table_size+0xb1fe>
     8001dd74:	0000f597          	auipc	a1,0xf
     8001dd78:	56c58593          	addi	a1,a1,1388 # 8002d2e0 <__func__.0+0x2c0>
     8001dd7c:	00f70663          	beq	a4,a5,8001dd88 <tselect_csr_tests_1+0x76>
@@ -48717,7 +48717,7 @@ bool tselect_csr_tests_1(){
     8001dd90:	02a0d0ef          	jal	8002adba <printf>
     8001dd94:	60202773          	csrr	a4,hedeleg
     8001dd98:	67ad                	lui	a5,0xb
-    8001dd9a:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table+0xb1ff>
+    8001dd9a:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table_size+0xb1fe>
     8001dd9e:	00f70c63          	beq	a4,a5,8001ddb6 <tselect_csr_tests_1+0xa4>
     8001dda2:	0000f517          	auipc	a0,0xf
     8001dda6:	59650513          	addi	a0,a0,1430 # 8002d338 <__func__.0+0x318>
@@ -48728,7 +48728,7 @@ bool tselect_csr_tests_1(){
     8001ddb8:	4f10b0ef          	jal	80029aa8 <putchar>
     8001ddbc:	60202773          	csrr	a4,hedeleg
     8001ddc0:	67ad                	lui	a5,0xb
-    8001ddc2:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table+0xb1ff>
+    8001ddc2:	1ff78793          	addi	a5,a5,511 # b1ff <_test_table_size+0xb1fe>
     8001ddc6:	02f70763          	beq	a4,a5,8001ddf4 <tselect_csr_tests_1+0xe2>
     8001ddca:	4401                	li	s0,0
         CSRR(CSR_HEDELEG) == 0xb1ff
@@ -55057,7 +55057,7 @@ bool mix_instruction_1(){
     asm volatile(
     80021c3e:	000807b7          	lui	a5,0x80
     80021c42:	0706                	slli	a4,a4,0x1
-    80021c44:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80021c44:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80021c46:	e314                	sd	a3,0(a4)
     80021c48:	07b6                	slli	a5,a5,0xd
     80021c4a:	6c07c7f3          	.insn	4, 0x6c07c7f3
@@ -55101,7 +55101,7 @@ bool mix_instruction_1(){
     80021cba:	44019737          	lui	a4,0x44019
     80021cbe:	000807b7          	lui	a5,0x80
     80021cc2:	0706                	slli	a4,a4,0x1
-    80021cc4:	07e5                	addi	a5,a5,25 # 80019 <_test_table+0x80019>
+    80021cc4:	07e5                	addi	a5,a5,25 # 80019 <_test_table_size+0x80018>
     80021cc6:	e314                	sd	a3,0(a4)
     80021cc8:	07b6                	slli	a5,a5,0xd
     80021cca:	6c07c7f3          	.insn	4, 0x6c07c7f3
@@ -55171,7 +55171,7 @@ STORE_INSTRUCTION(sd, "sd", uint64_t);
     80021d70:	37ab77b7          	lui	a5,0x37ab7
     80021d74:	00080737          	lui	a4,0x80
     80021d78:	078a                	slli	a5,a5,0x2
-    80021d7a:	0765                	addi	a4,a4,25 # 80019 <_test_table+0x80019>
+    80021d7a:	0765                	addi	a4,a4,25 # 80019 <_test_table_size+0x80018>
     80021d7c:	eef78793          	addi	a5,a5,-273 # 37ab6eef <STACK_SIZE+0x379b6eef>
     80021d80:	0736                	slli	a4,a4,0xd
     80021d82:	00f73023          	sd	a5,0(a4)
@@ -67869,7 +67869,7 @@ bool vec_test_24(){
   buf[buflen++] = ch;
     80029aba:	00f68733          	add	a4,a3,a5
     80029abe:	2785                	addiw	a5,a5,1
-    80029ac0:	00a70023          	sb	a0,0(a4) # 2000 <_test_table+0x2000>
+    80029ac0:	00a70023          	sb	a0,0(a4) # 2000 <_test_table_size+0x1fff>
     80029ac4:	00027717          	auipc	a4,0x27
     80029ac8:	60f72823          	sw	a5,1552(a4) # 800510d4 <buflen.2>
 {
@@ -69555,7 +69555,7 @@ static void vprintfmt(void (*putch)(int, void**), void **putdat, const char *fmt
 000000008002a960 <handle_trap>:
   tohost = (code << 1) | 1;
     8002a960:	6785                	lui	a5,0x1
-    8002a962:	a7378793          	addi	a5,a5,-1421 # a73 <_test_table+0xa73>
+    8002a962:	a7378793          	addi	a5,a5,-1421 # a73 <_test_table_size+0xa72>
     8002a966:	00010717          	auipc	a4,0x10
     8002a96a:	68f73d23          	sd	a5,1690(a4) # 8003b000 <tohost>
   while (1);
@@ -70569,11 +70569,11 @@ void main(){
     8002b178:	e12d60ef          	jal	8000178a <reset_state>
         for(int i = 0; i < test_table_size; i++){
     8002b17c:	0000f497          	auipc	s1,0xf
-    8002b180:	75448493          	addi	s1,s1,1876 # 8003a8d0 <test_table_size>
+    8002b180:	75c48493          	addi	s1,s1,1884 # 8003a8d8 <test_table_size>
     8002b184:	609c                	ld	a5,0(s1)
     8002b186:	4401                	li	s0,0
     8002b188:	0000f917          	auipc	s2,0xf
-    8002b18c:	75090913          	addi	s2,s2,1872 # 8003a8d8 <test_table>
+    8002b18c:	75890913          	addi	s2,s2,1880 # 8003a8e0 <test_table>
     8002b190:	cf91                	beqz	a5,8002b1ac <main+0x56>
             reset_state();
     8002b192:	df8d60ef          	jal	8000178a <reset_state>
