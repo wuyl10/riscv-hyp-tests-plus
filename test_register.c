@@ -1,25 +1,26 @@
 #include <rvh_test.h>
 #include <page_tables.h>
 
-
+#ifdef future
+// TEST_REGISTER(mstatus_csr_tests_1); 
+// TEST_REGISTER(mstatus_csr_tests_2); 
+// TEST_REGISTER(mstatus_csr_tests_3); 
+// TEST_REGISTER(mstatus_csr_tests_4); 
+// TEST_REGISTER(mstatus_csr_tests_5); 
+// TEST_REGISTER(hedeleg_csr_tests_1); 
+// TEST_REGISTER(mhpmevent_csr_tests_1); 
+// TEST_REGISTER(tselect_csr_tests_1); 
 // TEST_REGISTER(mhpmevent_csr_tests_1);
 // TEST_REGISTER(software_interrupt_msi);
 // TEST_REGISTER(external_interrupt_VSEI);
 // TEST_REGISTER(external_interrupt_SEI);
 // TEST_REGISTER(external_interrupt_MEI);
-
-// TEST_REGISTER(priv_change_16);    //测试点第13行
-// TEST_REGISTER(priv_change_15);    //测试点第13行
-// TEST_REGISTER(priv_change_14);    //测试点第27行
-// TEST_REGISTER(priv_change_13);    //测试点第11行
-// TEST_REGISTER(priv_change_12);    //测试点第14行
-// TEST_REGISTER(priv_change_11);    //测试点第18行
-// TEST_REGISTER(priv_change_10);    //测试点第22行
-// TEST_REGISTER(priv_change_9); 
 // TEST_REGISTER(virtual_instruction_13);
 // TEST_REGISTER(virtual_instruction_14);
 // TEST_REGISTER(virtual_instruction_15);
 // TEST_REGISTER(virtual_instruction_16);
+#endif
+
 
 // TEST_REGISTER(vec_vle_vse_func); 
 // TEST_REGISTER(vec_test_1); 
@@ -30,7 +31,7 @@
 // TEST_REGISTER(vec_test_6); 
 // TEST_REGISTER(vec_test_7); 
 // TEST_REGISTER(vec_test_8); 
-TEST_REGISTER(vec_test_9);       
+// TEST_REGISTER(vec_test_9);       
 // TEST_REGISTER(vec_test_10); 
 // TEST_REGISTER(vec_test_11); 
 // TEST_REGISTER(vec_test_12); 
@@ -45,7 +46,7 @@ TEST_REGISTER(vec_test_9);
 // TEST_REGISTER(vec_test_21); 
 // TEST_REGISTER(vec_test_22); 
 // TEST_REGISTER(vec_test_23); 
-// TEST_REGISTER(vec_test_24);  //未完成
+// TEST_REGISTER(vec_test_24);
 
 
 // TEST_REGISTER(priv_instruction); 
@@ -150,14 +151,16 @@ TEST_REGISTER(vec_test_9);
 // TEST_REGISTER(timecmp_test_19);
 // TEST_REGISTER(timecmp_test_20);
 // TEST_REGISTER(timecmp_test_21);
-// TEST_REGISTER(mstatus_csr_tests_1); 
-// TEST_REGISTER(mstatus_csr_tests_2); 
-// TEST_REGISTER(mstatus_csr_tests_3); 
-// TEST_REGISTER(mstatus_csr_tests_4); 
-// TEST_REGISTER(mstatus_csr_tests_5); 
-// TEST_REGISTER(hedeleg_csr_tests_1); 
-// TEST_REGISTER(mhpmevent_csr_tests_1); 
-// TEST_REGISTER(tselect_csr_tests_1); 
+
+// TEST_REGISTER(priv_change_16);    
+// TEST_REGISTER(priv_change_15);    
+// TEST_REGISTER(priv_change_14);    
+// TEST_REGISTER(priv_change_13);   
+// TEST_REGISTER(priv_change_12);    
+// TEST_REGISTER(priv_change_11);    
+// TEST_REGISTER(priv_change_10);    
+// TEST_REGISTER(priv_change_9); 
+
 // TEST_REGISTER(mix_instruction_1); 
 // TEST_REGISTER(instruction_access_fault_10);
 // TEST_REGISTER(instruction_access_fault_9);
@@ -199,6 +202,7 @@ TEST_REGISTER(vec_test_9);
 // TEST_REGISTER(load_access_fault_3);
 // TEST_REGISTER(load_access_fault_2);
 // TEST_REGISTER(load_access_fault_1);
+
 // TEST_REGISTER(priv_change_8);    
 // TEST_REGISTER(priv_change_7);   
 // TEST_REGISTER(priv_change_6);    

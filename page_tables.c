@@ -4,13 +4,22 @@
 #include <csrs.h>
 
 
-#if ((MEM_BASE & (SUPERPAGE_SIZE(0)-1)) != 0)
-#   error "MEM_BASE must be aligned to level 0 superpage size"
+#if defined(sv39) || defined(sv48)
+    #if defined(sv39)
+        #define SUPERPAGE_LEVEL 0
+    #elif defined(sv48)
+        #define SUPERPAGE_LEVEL 1
+    #endif
+
+    #if ((MEM_BASE & (SUPERPAGE_SIZE(SUPERPAGE_LEVEL)-1)) != 0)
+    #   error "MEM_BASE must be aligned to the current level superpage size"
+    #endif
+
+    #if (MEM_BASE >= (SUPERPAGE_SIZE(SUPERPAGE_LEVEL) * 4))
+    #   error "MEM_BASE must be less than four times the current level superpage size"
+    #endif
 #endif
 
-#if (MEM_BASE >= (SUPERPAGE_SIZE(0)*4))
-#   error "MEM_BASE less than four time level 0 superpage size"
-#endif
 
 #if (MEM_SIZE < (0x10000000))
 #   error "MEM_SIZE not enough (less than 256MB)"
@@ -135,6 +144,8 @@ struct {
     [SWITCH2]         =   {PTE_V | PTE_RWX,         PTE_V | PTE_U | PTE_RWX},      
     [TOP]             =   {PTE_V | PTE_RWX,         PTE_V | PTE_U | PTE_RWX},     
 };      
+
+#ifdef sv39
 
 pte_t hspt[3][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));         //这是GCC的一个编译器属性，用来指定变量的对齐方式。在这里，hspt 被指定要按照页大小（PAGE_SIZE，通常是4KB）对齐
 
@@ -334,6 +345,210 @@ void hpt_init(){
         ERROR("trying to set hs hgatp from lower privilege");
     }
 }
+
+#endif
+
+
+#ifdef sv48
+
+pte_t hspt[5][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));         //这是GCC的一个编译器属性，用来指定变量的对齐方式。在这里，hspt 被指定要按照页大小（PAGE_SIZE，通常是4KB）对齐
+
+void hspt_init(){
+
+    uintptr_t addr;
+
+    hspt[0][0] =
+        PTE_V | (((uintptr_t)&hspt[1][0]) >> 2);
+
+    addr = 0x00000000;
+    for(int i = 0; i < 4; i++){
+        hspt[1][i] = 
+            PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(1);
+    }
+
+    hspt[1][4] = 
+        PTE_V | (((uintptr_t)&hspt[2][0]) >> 2);
+    hspt[1][5] = 
+        PTE_V | (((uintptr_t)&hspt[3][0]) >> 2);
+    hspt[2][0] = 
+        PTE_V | (((uintptr_t)&hspt[4][0]) >> 2);
+
+    for(int i = 0; i < 4; i++){
+        hspt[3][i] = 
+            PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(2);
+    }
+
+    addr = TEST_PPAGE_BASE;
+    for(int i = 0; i < TEST_PAGE_MAX; i++){
+        hspt[4][i] = (addr >> 2) | PTE_AD |
+            test_page_perm_table[i].vs;
+        addr += PAGE_SIZE;
+    }
+
+
+    if(curr_priv == PRIV_HS || curr_priv == PRIV_M){
+        uintptr_t satp = (((uintptr_t)hspt) >> 12) | (0x9ULL << 60);
+        CSRW(satp, satp);
+    } else {
+        ERROR("trying to set hs level satp from lower privilege");
+    }
+}
+
+pte_t vspt[7][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));
+
+void vspt_init(){
+
+    uintptr_t addr;
+
+    vspt[0][0] = 
+        PTE_V | (((uintptr_t)&vspt[1][0]) >> 2);
+
+    addr = 0x00000000;
+    for(int i = 0; i < 4; i++){
+        vspt[1][i] = 
+            PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(1);
+    }
+
+    vspt[1][4] = 
+        PTE_V | (((uintptr_t)&vspt[2][0]) >> 2);
+    vspt[1][5] = 
+        PTE_V | (((uintptr_t)&vspt[3][0]) >> 2);
+    vspt[1][6] = 
+        PTE_V | (((uintptr_t)&vspt[4][0]) >> 2);
+    
+    addr = MEM_BASE;
+    for(int i = 0; i < 512; i++) vspt[4][i] = 0;
+    for(int i = 0; i <  MEM_SIZE/SUPERPAGE_SIZE(1)/2; i++){
+        vspt[4][i] = 
+           PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(2);
+    }
+
+    addr = 4 * SUPERPAGE_SIZE(1);                                        
+    for(int i = 0; i < 512; i++){
+        vspt[3][i] = (addr >> 2) |
+             PTE_V | PTE_AD | PTE_RWX;  
+        addr +=  SUPERPAGE_SIZE(2);
+    }  
+
+    vspt[2][0] = 
+        PTE_V | (((uintptr_t)&vspt[5][0]) >> 2);
+
+    addr = TEST_VPAGE_BASE;
+    for(int i = 0; i < TEST_PAGE_MAX; i++){
+        vspt[5][i] = (addr >> 2) | PTE_AD |
+            test_page_perm_table[i].vs;
+        addr +=  PAGE_SIZE;
+    }
+
+    vspt[2][1] = 
+        PTE_V | (((uintptr_t)&vspt[6][0]) >> 2);
+
+    addr = 4 * SUPERPAGE_SIZE(1) + SUPERPAGE_SIZE(2);
+    for(int i = 0; i < 512; i++){
+        vspt[6][i] = (addr >> 2) | 
+            PTE_V | PTE_AD | PTE_RWX; 
+        addr +=  PAGE_SIZE;
+    }  
+
+    uintptr_t satp = (((uintptr_t)vspt) >> 12) | (0x9ULL << 60);
+    if(curr_priv == PRIV_VS){
+        CSRW(satp, satp);
+    } else if(curr_priv == PRIV_HS || curr_priv == PRIV_M){
+        CSRW(CSR_VSATP, satp);
+    } else {
+        ERROR("");
+    }
+
+}
+
+pte_t hpt_root[PAGE_SIZE*4/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE*4)));
+pte_t hpt[7][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));
+
+void hpt_init(){
+
+    for(int i = 0; i < 2048; i++){
+        hpt_root[i] = 0;
+    }
+
+    uintptr_t addr;
+
+    hpt_root[MEM_BASE/SUPERPAGE_SIZE(1)] =
+        PTE_V | (((uintptr_t)&hpt[0][0]) >> 2);
+
+    hpt_root[0] =
+        PTE_V | (((uintptr_t)&hpt[1][0]) >> 2);
+
+    hpt_root[2047] =
+        PTE_V | (((uintptr_t)&hpt[1][0]) >> 2);
+
+    addr = 0x0;
+    for(int i = 0; i < 4; i++){
+        hpt[1][i] = 
+            PTE_V | PTE_U | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(1);
+    }
+
+    hpt[1][4] = 
+        PTE_V | (((uintptr_t)&hpt[2][0]) >> 2);
+
+    hpt[0][0] = 
+        PTE_V | (((uintptr_t)&hpt[3][0]) >> 2);
+
+    hpt[0][1] = 
+        PTE_V | (((uintptr_t)&hpt[4][0]) >> 2);
+
+    addr = MEM_BASE;
+    for(int i = 0; i < 512; i++) hpt[3][i] = 0;
+    for(int i = 0; i < MEM_SIZE/SUPERPAGE_SIZE(2)/2; i++){
+        hpt[3][i] = 
+            PTE_V | PTE_U | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(2);
+    }    
+
+    addr = TEST_PPAGE_BASE;
+    for(int i = 0; i < 512; i++){
+        hpt[4][i] = (addr >> 2) |
+             PTE_V | PTE_U | PTE_AD | PTE_RWX;  
+        addr +=  SUPERPAGE_SIZE(2);
+    }  
+
+    hpt[2][0] = 
+        PTE_V | (((uintptr_t)&hpt[5][0]) >> 2);
+
+    hpt[2][1] = 
+        PTE_V | (((uintptr_t)&hpt[5][0]) >> 2);
+
+    hpt[2][511] = 
+        PTE_V | (((uintptr_t)&hpt[6][0]) >> 2);
+
+    addr = TEST_PPAGE_BASE;
+    for(int i = 0; i < TEST_PAGE_MAX; i++){
+        hpt[5][i] = (addr >> 2) | PTE_AD |
+            test_page_perm_table[i].h; 
+        addr +=  PAGE_SIZE;
+    }
+
+    addr = TEST_PPAGE_BASE;
+    for(int i = 0; i < 512; i++){
+        hpt[6][i] = (addr >> 2) | 
+            PTE_V | PTE_U | PTE_AD | PTE_RWX; 
+        addr +=  PAGE_SIZE;
+    }  
+
+    if(curr_priv == PRIV_HS || curr_priv == PRIV_M){
+        uintptr_t hsatp = (((uintptr_t)hpt_root) >> 12) | (0x9ULL << 60);
+        CSRW(CSR_HGATP, hsatp);
+    } else {
+        ERROR("trying to set hs hgatp from lower privilege");
+    }
+
+}
+
+#endif
 
 void page_table_add_vs_AD(int i){
     uintptr_t addr;
