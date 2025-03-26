@@ -104,6 +104,21 @@ static inline void sfence(){
     asm volatile ("sfence.vma \n\t");
 }
 
+static inline void mnret()
+{
+    asm volatile(
+        // .insn r <opcode>, <funct3>, <funct7>, <rd>, <rs1>, <rs2>
+        // mnret 对应的关键字段是：
+        //   opcode = 0x73
+        //   funct7 = 0x38 (binary 0111000)
+        //   rs2    = 2    (binary 00010)
+        //   rs1    = 0
+        //   funct3 = 0
+        //   rd     = 0
+        ".insn r 0x73, 0, 0x38, x0, x0, x2\n\t"
+        ::: "memory");
+}
+
 static inline void sfence_vma(){
     asm volatile(
         ".insn r 0x73, 0x0, 0x09, x0, x0, x0\n\t"

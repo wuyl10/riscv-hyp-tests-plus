@@ -228,7 +228,6 @@ bool vec_test_7(){
     goto_priv(PRIV_VS);
     TEST_SETUP_EXCEPT();
 
-
     // 执行 vmsbf.m 指令
     execute_vmsbf_m();
     excpt_info();

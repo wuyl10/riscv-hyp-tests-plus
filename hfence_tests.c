@@ -21,13 +21,17 @@ bool hfence_test() {
     val = hlvd(vaddr);
     cond = true;
     vspt_switch();
-    cond &= hlvd(vaddr) == val;
+    cond &= (hlvd(vaddr) == val);
+
     hfence_vvma();
-    cond &= hlvd(vaddr) != val;
+    cond &= (hlvd(vaddr) != val);
+
     hpt_switch();
-    cond &= hlvd(vaddr) != val;
+    cond &= (hlvd(vaddr) != val);
+
     hfence_gvma();
-    cond &= hlvd(vaddr) == val;
+    cond &= (hlvd(vaddr) == val);
+
     TEST_ASSERT("hfences correctly invalidate guest tlb entries", cond);
 
     //////////////////////////////////////////////////////////////////////
@@ -38,7 +42,7 @@ bool hfence_test() {
     hpt_switch();
     sfence();
     cond &= hlvd(vaddr) == val;
-    TEST_ASSERT("hs sfence doest not affect guest level tlb entries", cond);
+    TEST_ASSERT("hs sfence does not affect guest level tlb entries", cond);
 
     //////////////////////////////////////////////////////////////////////  
 
@@ -53,7 +57,7 @@ bool hfence_test() {
     sfence();
     goto_priv(PRIV_HS);
     cond &= read64(vaddr) == val;
-    TEST_ASSERT("vs sfence doest not affect hypervisor level tlb entries", cond);
+    TEST_ASSERT("vs sfence does not affect hypervisor level tlb entries", cond);
 
     //////////////////////////////////////////////////////////////////////
 

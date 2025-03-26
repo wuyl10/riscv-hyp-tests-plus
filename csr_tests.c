@@ -239,14 +239,33 @@ bool tselect_csr_tests_1(){
 bool random_instruction_tests(){
 
     TEST_START();
-    TEST_SETUP_EXCEPT();
     goto_priv(PRIV_M);
+    CSRW(CSR_MCYCLE,0x0);
 
-    for (int i = 0; i < 5; i++)
+    excpt_info();
+
+    for (int i = 0; i < 10; i++)
     {
         random_m_instruction();
     }
     
+
+    TEST_END();
+
+}
+
+bool script_test(){     //草稿
+
+    TEST_START();
+    goto_priv(PRIV_M);
+    printf("mncause=%llx\n",CSRR(CSR_MNCAUSE));
+    printf("mnepc=%llx\n",CSRR(CSR_MNEPC));
+
+    TEST_SETUP_EXCEPT();
+    CSRW(CSR_MNEPC,0x8001dfde);
+    mnret();
+    excpt_info();
+    printf("mncause=%llx\n",CSRR(CSR_MNCAUSE));
 
     TEST_END();
 

@@ -10,7 +10,8 @@
 
 //二选一
     // #define sv39                                                            
-    #define sv48
+    // #define sv48
+    #define sv39sv48
 
 #ifdef sv39
 
@@ -23,6 +24,15 @@
 
 #ifdef sv48
 
+#define SUPERPAGE_SIZE(N) ((PAGE_SIZE) << (((3-N))*9))                              //这是一个用于计算超级页大小的宏
+#define PT_LVLS (4)                                                                 //定义页表的层级数为4，表示当前假设使用的是 RISC-V 中的 Sv48 虚拟内存机制                                 
+#define PTE_INDEX_SHIFT(LEVEL) ((9 * (PT_LVLS - 1 - (LEVEL))) + 12)                 
+#define PTE_ADDR_MSK BIT_MASK(12, 44)                                               //物理地址中12—55位
+
+#endif
+
+#ifdef sv39sv48
+//对应页表里要更改
 #define SUPERPAGE_SIZE(N) ((PAGE_SIZE) << (((3-N))*9))                              //这是一个用于计算超级页大小的宏
 #define PT_LVLS (4)                                                                 //定义页表的层级数为4，表示当前假设使用的是 RISC-V 中的 Sv48 虚拟内存机制                                 
 #define PTE_INDEX_SHIFT(LEVEL) ((9 * (PT_LVLS - 1 - (LEVEL))) + 12)                 
@@ -222,5 +232,5 @@ void hpt_init();
 void hspt_switch();
 void vspt_switch();
 void hpt_switch();
-
+void print_page_table_type();
 #endif /* PAGE_TABLES_H */

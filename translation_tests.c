@@ -218,7 +218,7 @@ bool second_stage_only_translation(){
     sfence(); //l1tlb
     TEST_SETUP_EXCEPT();
     check1 = read64(vaddr1) == 0x22;
-    check2 = read64(vaddr2) == 0x11;   
+    check2 = read64(vaddr2) == 0x11;
     TEST_ASSERT("vs gets right values after changing pt", excpt.triggered == false && check1 && check2);
 
     TEST_SETUP_EXCEPT();
@@ -237,16 +237,148 @@ bool second_stage_only_translation(){
         excpt.triggered == false
     );
     /*Xiangshan set vaddr to 41 when it enable H extention.*/
-    // TEST_SETUP_EXCEPT();
-    // read64(vs_page_base_limit(TOP) | (1ULL << 41));
-    // TEST_ASSERT(
-    //     "access top of guest pa space with high bits =/= 0", 
-    //     excpt.triggered == true &&
-    //     excpt.cause == CAUSE_LGPF
-    // ); 
+    TEST_SETUP_EXCEPT();
+    read64(vs_page_base_limit(TOP) | (1ULL << 41));
+    TEST_ASSERT(
+        "access top of guest pa space with high bits =/= 0", 
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_LGPF
+    ); 
 
     TEST_END();
 }
+
+
+bool mix_translation(){
+
+    /**
+     * Test mix translation.
+     */
+    TEST_START();
+
+    uintptr_t addr1 = phys_page_base(SWITCH1);
+    uintptr_t addr2 = phys_page_base(SWITCH2);
+    uintptr_t vaddr1 = vs_page_base(SWITCH1);
+    uintptr_t vaddr2 = vs_page_base(SWITCH2);
+    write64(addr1, 0x11);
+    write64(addr2, 0x22);   
+
+    CSRS(medeleg, (1 << CAUSE_LGPF) | (1 << CAUSE_SGPF));
+
+
+    /**
+     * Setup hyp page_tables.
+     */
+
+
+    //----------------------all stage 地址翻译----------------------------
+
+    goto_priv(PRIV_HS);
+    hspt_init();
+    hpt_init();
+    vspt_init();
+
+    TEST_SETUP_EXCEPT();
+    bool check1 = read64(addr1) == 0x11;
+    bool check2 = read64(addr2) == 0x22;
+    TEST_ASSERT("hs gets right values when all stage translation", excpt.triggered == false && check1 && check2);
+
+    goto_priv(PRIV_VS);
+    TEST_SETUP_EXCEPT();
+    bool check3 = read64(vaddr1) == 0x11;
+    bool check4 = read64(vaddr2) == 0x22;
+    TEST_ASSERT("vs gets right values when all stage translation", excpt.triggered == false && check3 && check4);
+
+    goto_priv(PRIV_HS);
+    hpt_switch();      
+    hfence(); //l2tlb
+    goto_priv(PRIV_VS);
+    sfence(); //l1tlb
+    TEST_SETUP_EXCEPT();
+    check1 = read64(vaddr1) == 0x22;
+    check2 = read64(vaddr2) == 0x11;
+    TEST_ASSERT("vs gets right values after changing second pt when all stage translation", excpt.triggered == false && check1 && check2);
+
+    goto_priv(PRIV_HS);
+    vspt_switch();      
+    hfence(); //l2tlb
+    goto_priv(PRIV_VS);
+    sfence(); //l1tlb
+    TEST_SETUP_EXCEPT();
+    check1 = read64(vaddr1) == 0x11;
+    check2 = read64(vaddr2) == 0x22;
+    TEST_ASSERT("vs gets right values after changing first pt when all stage translation", excpt.triggered == false && check1 && check2);
+
+
+
+    //----------------------只有第二阶段地址翻译----------------------------
+    goto_priv(PRIV_M); 
+    write64(addr1, 0x11);
+    write64(addr2, 0x22);   
+    hpt_init();
+    CSRW(CSR_VSATP , 0);            //只有第二阶段地址翻译
+
+    goto_priv(PRIV_HS);
+    vspt_switch();      
+    hfence(); //l2tlb
+    goto_priv(PRIV_VS);
+    sfence(); //l1tlb
+    TEST_SETUP_EXCEPT();
+    check1 = read64(vaddr1) != 0x22;
+    check2 = read64(vaddr2) != 0x11;
+    TEST_ASSERT("vs gets wrong values after changing first pt when only second stage translation", excpt.triggered == false && check1 && check2);
+
+
+    goto_priv(PRIV_HS);
+    hpt_switch();      
+    hfence(); //l2tlb
+    goto_priv(PRIV_VS);
+    sfence(); //l1tlb
+    TEST_SETUP_EXCEPT();
+    check1 = read64(vaddr1) == 0x22;
+    check2 = read64(vaddr2) == 0x11;
+    TEST_ASSERT("vs gets right values after changing second pt when only second stage translation", excpt.triggered == false && check1 && check2);
+
+
+    TEST_SETUP_EXCEPT();
+    (void) read64(vs_page_base(VSI_GI));  
+    TEST_ASSERT(
+        "vs access to unmapped -> load gpf when only second stage translation",
+        excpt.triggered == true && 
+        excpt.cause == CAUSE_LGPF &&
+        excpt.priv == PRIV_HS
+    );
+
+    //----------------------只有第一阶段地址翻译----------------------------
+    goto_priv(PRIV_M); 
+    write64(addr1, 0x11);
+    write64(addr2, 0x22);   
+    CSRW(CSR_HGATP , 0);   
+    vspt_init();
+
+
+    hpt_switch();      
+    hfence(); //l2tlb
+    goto_priv(PRIV_VS);
+    sfence(); //l1tlb
+    TEST_SETUP_EXCEPT();
+    check1 = read64(vaddr1) != 0x22;
+    check2 = read64(vaddr2) != 0x11;
+    TEST_ASSERT("vs gets wrong values after changing second stage pt when only fisrt stage translation", excpt.triggered == false && check1 && check2);
+
+
+    TEST_SETUP_EXCEPT();
+    (void) read64(vs_page_base(VSI_GI));  
+    TEST_ASSERT(
+        "vs access to unmapped -> load pf when only first stage translation",
+        excpt.triggered == true && 
+        excpt.cause == CAUSE_LPF &&
+        excpt.priv == PRIV_M
+    );
+
+    TEST_END();
+}
+
 
 static inline uint64_t read64_mprv(unsigned priv, uintptr_t addr){
 

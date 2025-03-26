@@ -183,33 +183,111 @@ void excpt_info(){
 }
 
 
-#define return_from_exception(from_priv, to_priv, cause, epc) {\
-    uint64_t _temp_status;\
-    switch(from_priv){\
-        case PRIV_M:\
-            _temp_status = CSRR(mstatus);\
-            _temp_status &= ~((3ULL << 11) | (1ULL << 39) | (1ULL << 7));\
-            if(to_priv == PRIV_M) _temp_status |= (3ULL << 11);\
-            if(to_priv == PRIV_VS || to_priv == PRIV_HS) _temp_status |= (1ULL << 11);\
-            if(to_priv == PRIV_VU || to_priv == PRIV_VS) _temp_status |= (1ULL << 39);\
-            CSRW(mstatus, _temp_status);\
-            if(!(cause & (1ULL << 63))) CSRW(mepc, next_instruction(epc));\
-        break;\
-        case PRIV_HS:\
-            _temp_status = CSRR(CSR_HSTATUS);\
-            _temp_status &= ~(0x1ULL << 7);\
-            if(to_priv == PRIV_VU || to_priv == PRIV_VS) _temp_status |= (0x1ULL << 7);\
-            CSRW(CSR_HSTATUS, _temp_status);\
-        case PRIV_VS:\
-            _temp_status = CSRR(sstatus);\
-            _temp_status &= ~((1ULL << 8) | (1ULL << 5));\
-            if(to_priv == PRIV_VS || to_priv == PRIV_HS) _temp_status |= (0x1ULL << 8);\
-            CSRW(sstatus, _temp_status);\
-            if(!(cause & (1ULL << 63))) CSRW(sepc, next_instruction(epc));\
-        break;\
-    }\
-    return from_priv;\
+// #define return_from_exception(from_priv, to_priv, cause, epc) {\
+//     uint64_t _temp_status;\
+//     switch(from_priv){\
+//         case PRIV_M:\
+//             _temp_status = CSRR(mstatus);\
+//             _temp_status &= ~((3ULL << 11) | (1ULL << 39) | (1ULL << 7));\
+//             if(to_priv == PRIV_M) _temp_status |= (3ULL << 11);\
+//             if(to_priv == PRIV_VS || to_priv == PRIV_HS) _temp_status |= (1ULL << 11);\
+//             if(to_priv == PRIV_VU || to_priv == PRIV_VS) _temp_status |= (1ULL << 39);\
+//             CSRW(mstatus, _temp_status);\
+//             if(!(cause & (1ULL << 63))) CSRW(mepc, next_instruction(epc));\
+//         break;\
+//         case PRIV_HS:\
+//             _temp_status = CSRR(CSR_HSTATUS);\
+//             _temp_status &= ~(0x1ULL << 7);\
+//             if(to_priv == PRIV_VU || to_priv == PRIV_VS) _temp_status |= (0x1ULL << 7);\
+//             CSRW(CSR_HSTATUS, _temp_status);\
+//         case PRIV_VS:\
+//             _temp_status = CSRR(sstatus);\
+//             _temp_status &= ~((1ULL << 8) | (1ULL << 5));\
+//             if(to_priv == PRIV_VS || to_priv == PRIV_HS) _temp_status |= (0x1ULL << 8);\
+//             CSRW(sstatus, _temp_status);\
+//             if(!(cause & (1ULL << 63))) CSRW(sepc, next_instruction(epc));\
+//         break;\
+//     }\
+//     return from_priv;\
+// }
+
+
+bool double_trap_enabled = false;  // 设为 true 来启用 double_trap 逻辑
+
+
+int return_from_exception(unsigned from_priv,unsigned to_priv,uint64_t cause,uint64_t epc) {
+    if(double_trap_enabled == true){
+        double_trap_enabled = false;
+        uint64_t _temp_status;
+        switch(from_priv){
+            case PRIV_M:
+                _temp_status = CSRR(mstatus);
+                _temp_status &= ~((3ULL << 11) | (1ULL << 39) | (1ULL << 7));
+                if(to_priv == PRIV_M) _temp_status |= (3ULL << 11);
+                if(to_priv == PRIV_VS || to_priv == PRIV_HS) _temp_status |= (1ULL << 11);
+                if(to_priv == PRIV_VU || to_priv == PRIV_VS) _temp_status |= (1ULL << 39);
+                CSRW(mstatus, _temp_status);
+                printf("mcause=%llx\n",CSRR(CSR_MCAUSE));
+                printf("mncause=%llx\n",CSRR(CSR_MNCAUSE));
+                printf("mtval2=%llx\n",CSRR(CSR_MTVAL2));
+                if (!(CSRR(CSR_MNSTATUS)& MNSTATUS_NMIE) ) 
+                { 
+                    if(!(CSRR(CSR_MNCAUSE) & (1ULL << 63))) CSRW(CSR_MNEPC, next_instruction(CSRR(CSR_MNEPC))); 
+                } 
+                else if(!(cause & (1ULL << 63))) CSRW(mepc, next_instruction(epc));
+            break;
+            case PRIV_HS:
+                _temp_status = CSRR(CSR_HSTATUS);
+                _temp_status &= ~(0x1ULL << 7);
+                if(to_priv == PRIV_VU || to_priv == PRIV_VS) _temp_status |= (0x1ULL << 7);
+                CSRW(CSR_HSTATUS, _temp_status);
+            case PRIV_VS:
+                _temp_status = CSRR(sstatus);
+                _temp_status &= ~((1ULL << 8) | (1ULL << 5));
+                if(to_priv == PRIV_VS || to_priv == PRIV_HS) _temp_status |= (0x1ULL << 8);
+                CSRW(sstatus, _temp_status);
+                if (!(CSRR(CSR_MNSTATUS)& (1ULL << 3))) 
+                { 
+                    if(!(CSRR(CSR_MNCAUSE) & (1ULL << 63))) CSRW(CSR_MNEPC, next_instruction(CSRR(CSR_MNEPC)));
+                } 
+                else if(!(cause & (1ULL << 63))) CSRW(sepc, next_instruction(epc));
+            break;
+        }
+        return from_priv;
+    }
+
+    else{
+        uint64_t _temp_status;
+        switch(from_priv){
+            case PRIV_M:
+                _temp_status = CSRR(mstatus);
+                _temp_status &= ~((3ULL << 11) | (1ULL << 39) | (1ULL << 7));
+                if(to_priv == PRIV_M) _temp_status |= (3ULL << 11);
+                if(to_priv == PRIV_VS || to_priv == PRIV_HS) _temp_status |= (1ULL << 11);
+                if(to_priv == PRIV_VU || to_priv == PRIV_VS) _temp_status |= (1ULL << 39);
+                CSRW(mstatus, _temp_status);
+                CSRW(mepc, next_instruction(epc));
+            break;
+            case PRIV_HS:
+                _temp_status = CSRR(CSR_HSTATUS);
+                _temp_status &= ~(0x1ULL << 7);
+                if(to_priv == PRIV_VU || to_priv == PRIV_VS) _temp_status |= (0x1ULL << 7);
+                CSRW(CSR_HSTATUS, _temp_status);
+            case PRIV_VS:
+                _temp_status = CSRR(sstatus);
+                _temp_status &= ~((1ULL << 8) | (1ULL << 5));
+                if(to_priv == PRIV_VS || to_priv == PRIV_HS) _temp_status |= (0x1ULL << 8);
+                CSRW(sstatus, _temp_status);
+                CSRW(sepc, next_instruction(epc));
+            break;
+        }
+        return from_priv;
+    }
 }
+
+
+
+
 
 uint64_t mhandler(){
 

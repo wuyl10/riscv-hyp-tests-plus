@@ -1,5 +1,5 @@
 make PLAT=spike LOG_LEVEL=4  CROSS_COMPILE=riscv64-unknown-elf-
-make PLAT=nemu LOG_LEVEL=4  CROSS_COMPILE=riscv64-unknown-elf-
+# make PLAT=nemu LOG_LEVEL=4  CROSS_COMPILE=riscv64-unknown-elf-
 
 # 从代码段中提取未注释的 TEST_REGISTER 名称
 selected_test=$(grep -oP 'TEST_REGISTER\(\K[^)]+' <(grep -v '^ *//' test_register.c))
@@ -17,12 +17,12 @@ cp "${source_dir}nemu/${file_name}.bin" "${target_dir}nemu+bin/${des_name}.bin"
 
 
 # 复制并重命名 elf 文件
-cp "${source_dir}spike/${file_name}.elf" "${target_dir}spike+elf/${des_name}.elf"
+# cp "${source_dir}spike/${file_name}.elf" "${target_dir}spike+elf/${des_name}.elf"
 
 
 # 复制并重命名 asm 文件
 cp "${source_dir}nemu/${file_name}.asm" "${target_dir}nemu+bin/${des_name}.asm"
-cp "${source_dir}spike/${file_name}.asm" "${target_dir}spike+elf/${des_name}.asm"
+# cp "${source_dir}spike/${file_name}.asm" "${target_dir}spike+elf/${des_name}.asm"
 
 
 

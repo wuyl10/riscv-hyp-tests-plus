@@ -4,7 +4,7 @@
 #include <csrs.h>
 
 
-#if defined(sv39) || defined(sv48)
+#if defined(sv39) || defined(sv48) 
     #if defined(sv39)
         #define SUPERPAGE_LEVEL 0
     #elif defined(sv48)
@@ -20,6 +20,28 @@
     #endif
 #endif
 
+#if defined(sv39sv48)
+
+    #define SUPERPAGE_LEVEL 1
+
+    #if ((MEM_BASE & (SUPERPAGE_SIZE(SUPERPAGE_LEVEL)-1)) != 0)
+    #   error "MEM_BASE must be aligned to the current level superpage size"
+    #endif
+
+    #if (MEM_BASE >= (SUPERPAGE_SIZE(SUPERPAGE_LEVEL) * 4))
+    #   error "MEM_BASE must be less than four times the current level superpage size"
+    #endif
+#endif
+
+void print_page_table_type() {
+    #if defined(sv39)
+        printf("sv39\n");
+    #elif defined(sv48)
+        printf("sv48\n");
+    #elif defined(sv39sv48)
+        printf("sv39sv48\n");
+    #endif
+}
 
 #if (MEM_SIZE < (0x10000000))
 #   error "MEM_SIZE not enough (less than 256MB)"
@@ -346,6 +368,56 @@ void hpt_init(){
     }
 }
 
+void page_table_add_vs_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | PTE_AD | test_page_perm_table[i].vs;
+
+    addr = 0x100000000 + i*0x1000;
+    vspt[3][i] = (addr >> 2) | PTE_AD | test_page_perm_table[i].vs;
+}
+
+void page_table_del_vs_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].vs;
+
+    addr = 0x100000000 + i*0x1000;
+    vspt[3][i] = (addr >> 2) | test_page_perm_table[i].vs;
+}
+
+
+void page_table_add_h_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].h;
+}
+
+void page_table_del_h_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].h;
+}
+
+void hspt_switch(){
+    pte_t temp = hspt[2][SWITCH1];
+    hspt[2][SWITCH1] = hspt[2][SWITCH2];
+    hspt[2][SWITCH2] = temp;
+}
+
+void vspt_switch(){
+    pte_t temp = vspt[3][SWITCH1];
+    vspt[3][SWITCH1] = vspt[3][SWITCH2];
+    vspt[3][SWITCH2] = temp;
+}
+
+void hpt_switch(){
+    pte_t temp = hpt[2][SWITCH1];
+    hpt[2][SWITCH1] = hpt[2][SWITCH2];
+    hpt[2][SWITCH2] = temp;
+}
+
+
 #endif
 
 
@@ -548,8 +620,6 @@ void hpt_init(){
 
 }
 
-#endif
-
 void page_table_add_vs_AD(int i){
     uintptr_t addr;
     addr = 0x88000000 + i*0x1000;
@@ -582,6 +652,259 @@ void page_table_del_h_AD(int i){
 }
 
 void hspt_switch(){
+    pte_t temp = hspt[4][SWITCH1];
+    hspt[4][SWITCH1] = hspt[4][SWITCH2];
+    hspt[4][SWITCH2] = temp;
+}
+
+void vspt_switch(){
+    pte_t temp = vspt[5][SWITCH1];
+    vspt[5][SWITCH1] = vspt[5][SWITCH2];
+    vspt[5][SWITCH2] = temp;
+}
+
+void hpt_switch(){
+    pte_t temp = hpt[5][SWITCH1];
+    hpt[5][SWITCH1] = hpt[5][SWITCH2];
+    hpt[5][SWITCH2] = temp;
+}
+
+#endif
+
+
+#ifdef sv39sv48     //sv48中改了vspt部分
+
+pte_t hspt[5][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));         //这是GCC的一个编译器属性，用来指定变量的对齐方式。在这里，hspt 被指定要按照页大小（PAGE_SIZE，通常是4KB）对齐
+
+void hspt_init(){
+
+    uintptr_t addr;
+
+    hspt[0][0] =
+        PTE_V | (((uintptr_t)&hspt[1][0]) >> 2);
+
+    addr = 0x00000000;
+    for(int i = 0; i < 4; i++){
+        hspt[1][i] = 
+            PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(1);
+    }
+
+    hspt[1][4] = 
+        PTE_V | (((uintptr_t)&hspt[2][0]) >> 2);
+    hspt[1][5] = 
+        PTE_V | (((uintptr_t)&hspt[3][0]) >> 2);
+    hspt[2][0] = 
+        PTE_V | (((uintptr_t)&hspt[4][0]) >> 2);
+
+    for(int i = 0; i < 4; i++){
+        hspt[3][i] = 
+            PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(2);
+    }
+
+    addr = TEST_PPAGE_BASE;
+    for(int i = 0; i < TEST_PAGE_MAX; i++){
+        hspt[4][i] = (addr >> 2) | PTE_AD |
+            test_page_perm_table[i].vs;
+        addr += PAGE_SIZE;
+    }
+
+
+    if(curr_priv == PRIV_HS || curr_priv == PRIV_M){
+        uintptr_t satp = (((uintptr_t)hspt) >> 12) | (0x9ULL << 60);
+        CSRW(satp, satp);
+    } else {
+        ERROR("trying to set hs level satp from lower privilege");
+    }
+}
+
+pte_t vspt[6][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));
+
+void vspt_init(){
+
+    uintptr_t addr;
+
+    addr = 0x00000000;
+    for(int i = 0; i < 4; i++){
+        vspt[0][i] = 
+            PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(1);
+    }
+
+    vspt[0][MEM_BASE/SUPERPAGE_SIZE(1)] = 
+        PTE_V | (((uintptr_t)&vspt[1][0]) >> 2);
+
+    addr = MEM_BASE;
+    for(int i = 0; i < 512; i++) vspt[1][i] = 0;
+    for(int i = 0; i <  MEM_SIZE/SUPERPAGE_SIZE(2)/2; i++){
+        vspt[1][i] = 
+           PTE_V | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(2);
+    }
+
+    vspt[0][4] =
+        PTE_V | (((uintptr_t)&vspt[2][0]) >> 2);
+
+    // vspt[0][5] =
+    //     PTE_V | PTE_U | PTE_AD | (((uintptr_t)&vspt[2][0]) >> 2);
+
+    vspt[2][0] = 
+        PTE_V | (((uintptr_t)&vspt[3][0]) >> 2);
+
+    addr = TEST_VPAGE_BASE;
+    for(int i = 0; i < TEST_PAGE_MAX; i++){
+        vspt[3][i] = (addr >> 2) | PTE_AD |
+            test_page_perm_table[i].vs;
+        addr +=  PAGE_SIZE;
+    }
+
+    vspt[2][1] = 
+        PTE_V | (((uintptr_t)&vspt[4][0]) >> 2);
+
+    addr = 4 * SUPERPAGE_SIZE(1) + SUPERPAGE_SIZE(2);
+    for(int i = 0; i < 512; i++){
+        vspt[4][i] = (addr >> 2) | 
+            PTE_V | PTE_AD | PTE_RWX; 
+        addr +=  PAGE_SIZE;
+    }  
+
+    vspt[0][5] = 
+        PTE_V | (((uintptr_t)&vspt[5][0]) >> 2);
+    
+    addr = 5 * SUPERPAGE_SIZE(1);
+    for(int i = 0; i < 512; i++){
+        vspt[5][i] = (addr >> 2) |
+             PTE_V | PTE_AD | PTE_RWX;  
+        addr +=  SUPERPAGE_SIZE(2);
+    }  
+
+    uintptr_t satp = (((uintptr_t)vspt) >> 12) | (0x8ULL << 60);
+    if(curr_priv == PRIV_VS){
+        CSRW(satp, satp);
+    } else if(curr_priv == PRIV_HS || curr_priv == PRIV_M){
+        CSRW(CSR_VSATP, satp);
+    } else {
+        ERROR("");
+    }
+}
+
+pte_t hpt_root[PAGE_SIZE*4/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE*4)));
+pte_t hpt[7][PAGE_SIZE/sizeof(pte_t)] __attribute__((aligned(PAGE_SIZE)));
+
+void hpt_init(){
+
+    for(int i = 0; i < 2048; i++){
+        hpt_root[i] = 0;
+    }
+
+    uintptr_t addr;
+
+    hpt_root[MEM_BASE/SUPERPAGE_SIZE(1)] =
+        PTE_V | (((uintptr_t)&hpt[0][0]) >> 2);
+
+    hpt_root[0] =
+        PTE_V | (((uintptr_t)&hpt[1][0]) >> 2);
+
+    hpt_root[2047] =
+        PTE_V | (((uintptr_t)&hpt[1][0]) >> 2);
+
+    addr = 0x0;
+    for(int i = 0; i < 4; i++){
+        hpt[1][i] = 
+            PTE_V | PTE_U | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(1);
+    }
+
+    hpt[1][4] = 
+        PTE_V | (((uintptr_t)&hpt[2][0]) >> 2);
+
+    hpt[0][0] = 
+        PTE_V | (((uintptr_t)&hpt[3][0]) >> 2);
+
+    hpt[0][1] = 
+        PTE_V | (((uintptr_t)&hpt[4][0]) >> 2);
+
+    addr = MEM_BASE;
+    for(int i = 0; i < 512; i++) hpt[3][i] = 0;
+    for(int i = 0; i < MEM_SIZE/SUPERPAGE_SIZE(2)/2; i++){
+        hpt[3][i] = 
+            PTE_V | PTE_U | PTE_AD | PTE_RWX | (addr >> 2);  
+        addr +=  SUPERPAGE_SIZE(2);
+    }    
+
+    addr = TEST_PPAGE_BASE;
+    for(int i = 0; i < 512; i++){
+        hpt[4][i] = (addr >> 2) |
+             PTE_V | PTE_U | PTE_AD | PTE_RWX;  
+        addr +=  SUPERPAGE_SIZE(2);
+    }  
+
+    hpt[2][0] = 
+        PTE_V | (((uintptr_t)&hpt[5][0]) >> 2);
+
+    hpt[2][1] = 
+        PTE_V | (((uintptr_t)&hpt[5][0]) >> 2);
+
+    hpt[2][511] = 
+        PTE_V | (((uintptr_t)&hpt[6][0]) >> 2);
+
+    addr = TEST_PPAGE_BASE;
+    for(int i = 0; i < TEST_PAGE_MAX; i++){
+        hpt[5][i] = (addr >> 2) | PTE_AD |
+            test_page_perm_table[i].h; 
+        addr +=  PAGE_SIZE;
+    }
+
+    addr = TEST_PPAGE_BASE;
+    for(int i = 0; i < 512; i++){
+        hpt[6][i] = (addr >> 2) | 
+            PTE_V | PTE_U | PTE_AD | PTE_RWX; 
+        addr +=  PAGE_SIZE;
+    }  
+
+    if(curr_priv == PRIV_HS || curr_priv == PRIV_M){
+        uintptr_t hsatp = (((uintptr_t)hpt_root) >> 12) | (0x9ULL << 60);
+        CSRW(CSR_HGATP, hsatp);
+    } else {
+        ERROR("trying to set hs hgatp from lower privilege");
+    }
+
+}
+
+void page_table_add_vs_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | PTE_AD | test_page_perm_table[i].vs;
+
+    addr = 0x100000000 + i*0x1000;
+    vspt[3][i] = (addr >> 2) | PTE_AD | test_page_perm_table[i].vs;
+}
+
+void page_table_del_vs_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].vs;
+
+    addr = 0x100000000 + i*0x1000;
+    vspt[3][i] = (addr >> 2) | test_page_perm_table[i].vs;
+}
+
+
+void page_table_add_h_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].h;
+}
+
+void page_table_del_h_AD(int i){
+    uintptr_t addr;
+    addr = 0x88000000 + i*0x1000;
+    hspt[2][i] = (addr >> 2) | test_page_perm_table[i].h;
+}
+
+
+void hspt_switch(){
     pte_t temp = hspt[2][SWITCH1];
     hspt[2][SWITCH1] = hspt[2][SWITCH2];
     hspt[2][SWITCH2] = temp;
@@ -594,7 +917,9 @@ void vspt_switch(){
 }
 
 void hpt_switch(){
-    pte_t temp = hpt[2][SWITCH1];
-    hpt[2][SWITCH1] = hpt[2][SWITCH2];
-    hpt[2][SWITCH2] = temp;
+    pte_t temp = hpt[5][SWITCH1];
+    hpt[5][SWITCH1] = hpt[5][SWITCH2];
+    hpt[5][SWITCH2] = temp;
 }
+
+#endif

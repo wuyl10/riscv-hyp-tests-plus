@@ -1601,3 +1601,33 @@ bool instruction_access_fault_10(){
 
     TEST_END();
 }
+
+bool pmp_granularity_test(){
+
+    TEST_START();
+
+    goto_priv(PRIV_M);
+
+    //访问了无效的地址范围，不在正确的pmpaddr范围内
+    
+    CSRW(CSR_PMPCFG0,(uint64_t)0x0);
+    CSRW(CSR_PMPADDR0,(uint64_t)0x0);
+
+
+    printf("pmpcfg0=%llx\n",CSRR(CSR_PMPCFG0));
+    // printf("pmpaddr0=%llx\n",CSRR(CSR_PMPADDR0));
+
+    CSRW(CSR_PMPADDR0, (uint64_t)-1);
+    // CSRS(CSR_PMPADDR0, 1ULL << 9);
+
+    printf("pmpaddr0=%llx\n",CSRR(CSR_PMPADDR0));
+    
+
+    TEST_ASSERT("An invalid address range was accessed and is not in the correct pmpaddr range leads to IAF",
+        excpt.triggered == true &&
+        excpt.cause == CAUSE_IAF
+    );
+
+
+    TEST_END();
+}

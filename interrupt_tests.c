@@ -11,7 +11,7 @@ bool check_xip_regs_1(){
     CSRW(mideleg, (uint64_t)-1);
     VERBOSE("setting mideleg and hideleg\n");
     CSRW(CSR_HIDELEG, (uint64_t)-1);
-    check_csr_wrrd("vsip", CSR_VSIP, (uint64_t) -1, 0x2);
+    check_csr_wrrd("vsip", CSR_VSIP, (uint64_t) -1, 0x2002);
     check_csr_wrrd("vsie", CSR_VSIE, (uint64_t) -1, 0x2222);        //开启Shlcofideleg 扩展则为2222，否则为222
     
     TEST_END();
@@ -31,12 +31,12 @@ bool check_xip_regs_2(){
     VERBOSE("setting all in mip\n");
     CSRW(mip, (uint64_t)-1);
     check_csr_rd("hip", CSR_HIP, 0x4);
-    check_csr_rd("sip", sip, 0x222);    
+    check_csr_rd("sip", sip, 0x2222);    
 
     // check_csr_rd_mask("mip", mip, 0x226, mtime_mask); // only test when nemu don't use difftest because spike, as ref, shut up time interrupt
-    check_csr_rd("vsip", CSR_VSIP, 0x2);
+    check_csr_rd("vsip", CSR_VSIP, 0x2002);
     goto_priv(PRIV_VS);
-    check_csr_rd("sip (vs perspective)", sip, 0x2);
+    check_csr_rd("sip (vs perspective)", sip, 0x2002);
     goto_priv(PRIV_M);
 
     VERBOSE("clearing all in mip\n");
@@ -62,8 +62,7 @@ bool check_xip_regs_3(){
 
     VERBOSE("setting all in hvip\n");
     CSRW(CSR_HVIP, (uint64_t)-1);
-    printf("hvip=%llx\n",CSRR(CSR_HVIP));
-    check_csr_rd("hvip", CSR_HVIP, 0xffffffffffffe444);
+    check_csr_rd("hvip", CSR_HVIP, 0x2444);
     check_csr_rd("hip", CSR_HIP, 0x444);
     check_csr_rd("sip", sip, 0x0);
     // check_csr_rd_mask("mip", mip, 0x444, mtime_mask);

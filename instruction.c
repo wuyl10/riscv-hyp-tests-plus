@@ -4,13 +4,14 @@
 #include <instructions.h> 
 #include <csrs.h>
 
-void random_m_instruction(){
-    int rand1=CSRR(time);
-    int rand2=CSRR(cycle);
-    int num0=rand1+rand2;
+void random_m_instruction(){    
+
+    int rand1=CSRR(CSR_TIME);  
+    int rand2=CSRR(CSR_CYCLE);    
+    int num0=rand1+rand2;   
     int num=num0%10;
 
-    switch (num)
+    switch (num)    //注意负数
     {
     case 0:
         printf("这是0号指令\n");
@@ -42,8 +43,7 @@ void random_m_instruction(){
     case 9:
         printf("这是9号指令\n");
         break;
-    
-    
+
     default:
         break;
     }

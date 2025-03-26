@@ -18,7 +18,7 @@ bool instruction_page_fault_1(){
     set_prev_priv(PRIV_VS);
 
     //执行取指指令时，pte.v=0
-    vaddr = hs_page_base(VSI_GI);
+    vaddr = vs_page_base(VSI_GI);
     TEST_SETUP_EXCEPT();
     TEST_EXEC_EXCEPT(vaddr); 
 
@@ -501,8 +501,8 @@ bool store_page_fault_2(){
     vspt_init();
 
     goto_priv(PRIV_M);
+    print_page_table_type();    //看当前页表类型是sv48还是sv39
     CSRC(CSR_VSSTATUS, SSTATUS_SUM);
-
     goto_priv(PRIV_HS);
     set_prev_priv(PRIV_VS);
     //执行hsvd指令时，设置了vsstatus.SUM=0，在S模式下访问U模式可以访问的页表项

@@ -309,13 +309,13 @@ bool priv_change_11(){
         excpt.triggered == true && 
         excpt.priv==PRIV_VS
     ); 
+    printf("excpt.priv== %d \n",excpt.priv);
 
 
     if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
          printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
     }
 }
-
 
 
 bool priv_change_12(){
@@ -451,6 +451,28 @@ bool priv_change_16(){
     if(LOG_LEVEL >= LOG_INFO && LOG_LEVEL < LOG_VERBOSE){\
          printf("%s\n" CDFLT, (test_status) ? CGRN "PASSED" : CRED "FAILED");
     }
+
+}
+
+bool priv_change_17(){
+    TEST_START();
+
+    CSRS(CSR_HSTATUS,HSTATUS_SPVP);
+    CSRS(CSR_HSTATUS,HSTATUS_HU);
+    goto_priv(PRIV_HS);
+    
+    uintptr_t addr = hs_page_base(VSURWX_GURWX);
+
+    printf("hstatus=%llx\n",CSRR(CSR_HSTATUS));
+
+    goto_priv(PRIV_M);
+    goto_priv(PRIV_HU);
+    TEST_SETUP_EXCEPT();
+    hlvb(addr);
+
+    TEST_ASSERT("hu hlvd when spvp=1 and hu=1",         
+        excpt.triggered == false 
+    );    
 
 }
 

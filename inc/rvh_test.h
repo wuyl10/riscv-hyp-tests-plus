@@ -119,11 +119,11 @@ extern size_t test_table_size;
 
 #define TEST_ASSERT(test, cond, ...) {\
     if(LOG_LEVEL >= LOG_DETAIL){\
-        size_t line_size = 130;\
+        size_t line_size = 140;\
         size_t size = strlen(test);\
-        printf(CBLU "\t%-130.*s" CDFLT, line_size, test);\
+        printf(CBLU "\t%-140.*s" CDFLT, line_size, test);\
         for(int i = line_size; i < size; i+=line_size)\
-            printf(CBLU "\n\t%-130.*s" CDFLT, line_size, &test[i]);\
+            printf(CBLU "\n\t%-140.*s" CDFLT, line_size, &test[i]);\
         printf("%s" CDFLT, (cond) ? CGRN "PASSED" : CRED "FAILED");\
         if(!(cond)) { printf("\n\t("); printf(""__VA_ARGS__); printf(")"); }\
         printf("\n");\
@@ -299,10 +299,15 @@ static inline uint32_t read_instruction(uintptr_t addr) {
     return instruction;
 }
 
+extern bool double_trap_enabled;  // 允许其他文件访问变量
+
 uint32_t expand_compressed_instruction(uint16_t ins);
 void reset_state();
 void set_prev_priv(int target_priv);
 void goto_priv(int target_priv);
 void excpt_info();
+uint64_t mhandler();        //为了测试xtvec_test
+uint64_t hshandler();        //为了测试xtvec_test
+uint64_t vshandler();        //为了测试xtvec_test
 
 #endif

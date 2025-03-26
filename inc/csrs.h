@@ -27,6 +27,8 @@
 #endif
 
 
+#define MSTATUS_SIE    (1ULL << 1)
+#define MSTATUS_MIE    (1ULL << 3)
 #define MSTATUS_MPRV_OFF    (17)
 #define MSTATUS_MPRV    (1ULL << MSTATUS_MPRV_OFF)
 #define MSTATUS_TW_OFF  (21)
@@ -34,7 +36,8 @@
 #define MSTATUS_GVA_OFF    (38)
 #define MSTATUS_GVA    (1ULL << MSTATUS_GVA_OFF)
 #define MSTATUS_TVM_OFF    (20)
-#define MSTATUS_TVM        (1ULL << MSTATUS_TVM_OFF)
+#define MSTATUS_TVM     (1ULL << MSTATUS_TVM_OFF)
+#define MSTATUS_MDT     (1ULL << 42)
 
 #define SATP_MODE_BARE (0ULL << SATP_MODE_OFF)
 #define SATP_MODE_32 (1ULL << SATP_MODE_OFF)
@@ -69,7 +72,12 @@
 #define SSTATUS_SUM (1ULL << 18)
 #define MSTATUS_MXR SSTATUS_MXR
 #define SSTATUS_MXR (1ULL << 19)
+#define SSTATUS_SDT (1ULL << 24)
 #define SSTATUS_SD (1ULL << 63)
+
+#define VSSTATUS_SDT (1ULL << 24)
+
+#define MNSTATUS_NMIE (1ULL << 3)
 
 #define SIE_USIE (1ULL << 0)
 #define SIE_SSIE (1ULL << 1)
@@ -94,7 +102,8 @@
 #define MIE_MEIE (1ULL << 11)
 #define MIP_MEIP (1ULL << 11)
 #define MIE_MSIE (1ULL << 3)
-#define MIE_MSIP (1ULL << 3)
+#define MIE_SSIE (1ULL << 1)
+#define MIP_SSIP (1ULL << 1)
 
 #define HIP_VSSIP HIE_VSSIE
 #define MIP_MSIP MIE_MSIE
@@ -102,6 +111,9 @@
 #define HIP_VSEIP HIE_VSEIE
 #define HIP_SGEIP HIE_SGEIE
 #define HIP_MEIP HIE_MEIE
+
+
+
 
 /*
 CAUSE_USI (0 | CAUSE_INT_BIT)：用户模式软件中断（User Software Interrupt）。
@@ -120,7 +132,7 @@ CAUSE_MEI (11 | CAUSE_INT_BIT)：机器模式外部中断（Machine External Int
 #define CAUSE_USI (0 | CAUSE_INT_BIT)
 #define CAUSE_SSI (1 | CAUSE_INT_BIT)
 #define CAUSE_VSSI (2 | CAUSE_INT_BIT)
-#define CAUSE_MSI (2 | CAUSE_INT_BIT)
+#define CAUSE_MSI (3 | CAUSE_INT_BIT)
 #define CAUSE_UTI (4 | CAUSE_INT_BIT)
 #define CAUSE_STI (5 | CAUSE_INT_BIT)
 #define CAUSE_VSTI (6 | CAUSE_INT_BIT)
@@ -223,6 +235,7 @@ CAUSE_SGPF (23): 存储全局页故障（Store/AMO Guest-Page Fault）
 #define HCOUNTEREN(N)   (1ULL << (N))
 
 #define MENVCFG_STCE  (1ULL << 63)
+#define MENVCFG_DTE  (1ULL << 59)
 
 #define TINST_ADDROFF_OFF (15)
 #define TINST_ADDROFF_LEN (5)

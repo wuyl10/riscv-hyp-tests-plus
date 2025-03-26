@@ -40,9 +40,10 @@ c_srcs := main.c page_tables.c rvh_test.c instruction.c interrupt_tests.c\
 	external_interrupt.c software_interrupt.c\
 	 page_fault.c guest_page_fault.c access_fault.c\
 	 csr_tests.c Zicntr_test.c mix_instruction.c\
-	 ebreak_tests.c stateen_test.c vec.c\
+	 ebreak_tests.c stateen_test.c vec.c xtvec_test.c\
+	 svpbmt_test.c sxpm_test.c\
 	$(addprefix $(plat_dir)/, $(notdir $(wildcard $(plat_dir)/*.c)))
-asm_srcs := boot.S handlers.S  $(wildcard $(plat_dir)/*.S)
+asm_srcs := boot.S handlers.S xtvec_test_asm.S  $(wildcard $(plat_dir)/*.S)
 ld_file:=linker.ld
 inc_dirs := ./inc $(plat_dir)/inc
 inc_dirs := $(addprefix -I, $(inc_dirs))
